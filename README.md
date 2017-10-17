@@ -1,5 +1,5 @@
 &copy; Jadissa Griffin 2017
-# someone.like.me
+# someone.like.me (✿◠‿◠)ﾉ゛
 
 ## Description
 Realtime, instant social media driven matchups
