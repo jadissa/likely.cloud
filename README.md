@@ -1,5 +1,5 @@
 &copy; Jadissa Griffin 2017
-# someone.like.me (✿◠‿◠)ﾉ゛
+# urlike.me (✿◠‿◠)ﾉ゛
 
 ### Description
 Realtime, instant social media driven matchups
@@ -58,8 +58,16 @@ date
 sex
 
 ### Names
-ice.breakers
-u.do.me
-someone.like.me
-something i care about
+like.me
+like.ly
+actual.ly
+close.ly
+connected.ly
+daring.ly
+fateful.ly
+yourlike.me
+urlike.me
 
+### Donain Registration
+.me domains: https://domain.me/?query=someonelike
+.ly domains: http://digitalgroup.ly/en/registration-form
