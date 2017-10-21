@@ -81,6 +81,7 @@ someonelike.us
 fateful.me
 fateful.click
 someonelike.us
+inthe.cloud
 
 ### Donain Registration
 .me domains: https://domain.me/?query=someonelike
