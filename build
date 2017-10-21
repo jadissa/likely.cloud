@@ -30,9 +30,6 @@ echo "Updating Composer..."
 echo 'export PATH=/var/www/html:$PATH' >>/home/jadii/.bashrc
 source /home/jadii/.bashrc
 
-php composer.phar selfupdate
 echo "Running Composer..."
 php composer.phar -V
-php composer.phar update
-php composer.phar dumpautoload -o
-php composer.phar install
+php composer.phar -v install
