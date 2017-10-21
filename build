@@ -1,9 +1,15 @@
 #!/bin/bash
 
 #
-#	Install Composer
+#	Get dependencies
 #
-# @todo: Install php first
+sudo yum -y update
+
+#
+#	Install npm
+#
+sudo yum -y install epel-release nodejs
+node --version
 
 
 #
