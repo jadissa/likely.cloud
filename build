@@ -10,12 +10,15 @@ sudo yum -y update
 #
 sudo yum -y install epel-release nodejs
 node --version
+cd /var/www/html/app
+npm init
 npm install express
 
 
 #
 #	Install Composer
 #
+cd /var/www/html/
 echo "Installing Composer..."
 curl -sS https://getcomposer.org/installer | php -- --install-dir=.
 
