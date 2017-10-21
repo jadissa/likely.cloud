@@ -1,12 +1,12 @@
 #!/bin/bash
 
 #
-#	Get dependencies
+# Get dependencies
 #
 sudo yum -y update
 
 #
-#	Install npm
+# Install npm
 #
 sudo yum -y install epel-release nodejs
 node --version
@@ -16,7 +16,7 @@ npm install express
 
 
 #
-#	Install Composer
+# Install Composer
 #
 cd /var/www/html/
 echo "Installing Composer..."
@@ -24,9 +24,12 @@ curl -sS https://getcomposer.org/installer | php -- --install-dir=.
 
 
 #
-#	Update Composer and install dependencies
+# Update Composer and install dependencies
 #
 echo "Updating Composer..."
+echo 'export PATH=/var/www/html:$PATH' >>/home/jadii/.bashrc
+source /home/jadii/.bashrc
+
 php composer.phar selfupdate
 echo "Running Composer..."
 php composer.phar -V
