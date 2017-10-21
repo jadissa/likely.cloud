@@ -1,5 +1,5 @@
 &copy; Jadissa Griffin 2017
-# urlike.me (✿◠‿◠)ﾉ゛
+# likely.cloud(✿◠‿◠)ﾉ゛
 
 ### Description
 Realtime, instant social media driven matchups
@@ -58,16 +58,37 @@ date
 sex
 
 ### Names
+### @todo: retry
+not.likely.cloud
+its.likely.cloud
+very.likely.cloud
+likely.cloud
 like.me
 like.ly
 actual.ly
 close.ly
-connected.ly
 daring.ly
+daring.you 
+daring.app
 fateful.ly
-yourlike.me
+weshould.click
 urlike.me
+wehave
+accidentallyonpurpo.se
+puposeful.ly
+justinti.me
+someonelike.us
+fateful.me
+fateful.click
+someonelike.us
 
 ### Donain Registration
 .me domains: https://domain.me/?query=someonelike
 .ly domains: http://digitalgroup.ly/en/registration-form
+
+### Possible Integrate/Deploy Services
+### @todo: Organize once settled upon
+twitter. https://blog.twitter.com/official/en_us/topics/company/2017/safetycalendar.html
+solr. https://www.tutorialspoint.com/apache_solr/apache_solr_overview.htm
+img42. https://img.betapage.co/logo/79450417-79450667.png?w=200&h=200&fit=crop
+discourse. https://en.wikipedia.org/wiki/Discourse_(software)
