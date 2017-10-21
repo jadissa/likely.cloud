@@ -1,0 +1,19 @@
+{
+  "name": "dreamloud/likely.cloud",
+  "description": "Realtime, instant social media driven matchups",
+  "license": "none",
+  "authors": [
+    {
+      "name": "dreamloud",
+      "email": "j@dreamloud.com"
+    }
+  ],
+  "autoload": {
+      "psr-4": {
+          "Discord\\OAuth\\": "src/Discord"
+      }
+  },
+  "require": {
+    "team-reflex/oauth2-discord": "^1.0"
+  }
+}
