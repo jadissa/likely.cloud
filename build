@@ -8,11 +8,12 @@ sudo yum -y update
 #
 # Install npm
 #
-sudo yum -y install epel-release nodejs
+sudo yum -y install firewalld epel-release nodejs
 node --version
 cd /var/www/html/app
 npm init
 npm install express
+#sudo npm install -g node-inspector
 
 
 #
@@ -33,3 +34,8 @@ source /home/jadii/.bashrc
 echo "Running Composer..."
 php composer.phar -V
 php composer.phar -v install
+
+#
+# Run node
+#
+node server.js
