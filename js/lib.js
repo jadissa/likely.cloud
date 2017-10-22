@@ -10,7 +10,7 @@ var settings = ( function init()
 
 		"type": 			"post"
 
-		"discordOAuthURL": 	"50451:/api/discord/login"
+		"discordOAuthURL": 	"http://urlike.me:50451/api/discord/callback"
 
 	};
 
