@@ -22,7 +22,7 @@ router.get('/callback', catchAsync(async (req, res) => {
       method: 'POST',
       headers: {
         Authorization: `Basic ${creds}`,
-      },
+      }
     });
     const json = await response.json();
   }
