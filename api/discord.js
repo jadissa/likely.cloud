@@ -33,8 +33,8 @@ router.get('/callback', catchAsync(async (req, res) => {
     writeStream.on('end', function() {
       res.end({"response":${json}});
     });
+    }
     */
-  }
   res.redirect(`/?token=${json.access_token}`);
 }));
 
