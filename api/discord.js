@@ -25,6 +25,13 @@ router.get('/callback', catchAsync(async (req, res) => {
       },
     });
   const json = await response.json();
+  var writeStream = fs.createReadStream(fileName);
+  function(err, res) {
+    writeStream.pipe(res);
+    writeStream.on('end', function() {
+      res.end({"response":${json}});
+    });
+  }
   res.redirect(`/?token=${json.access_token}`);
 }));
 

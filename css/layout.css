@@ -1,49 +1,113 @@
-*{
-    text-decoration: none;
-    background: inherit;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    outline: none;
-}
-form {
-    background:transparent;
-}
-.btn-default, .btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active {
+*
+{
 
-    text-transform: none;
-    border-radius: 3px;
-    border:0;
-    height:32px;
-    width:100%;
-    display:block;
+    text-decoration:        none;
+
+    background:             inherit;
+
+    -webkit-box-sizing:     border-box;
+
+    -moz-box-sizing:        border-box;
+
+    box-sizing:             border-box;
+
+    outline:                none;
+
 }
-.btn-default:hover {
-    transition-duration: 0.4s;
-    background-position:inherit;
+
+
+form 
+{
+
+    background:             transparent;
+
 }
-.form_bg {
-    padding:20px;
-    border-radius:10px;
-    position: absolute;
-    border:0;
-    margin: auto;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    width: 320px;
-    height: 280px;
+
+
+.btn-default, .btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active
+{
+
+    text-transform:         none;
+
+    border-radius:          3px;
+
+    border:                 0;
+
+    height:                 32px;
+
+    width:                  auto;
+
+    display:                block;
+
+    float:                  right;
+
+    margin-top:             15px;
+
 }
-.container {
-    background-image: repeating-linear-gradient(90deg, #f0f 50%, #00f 50%);
-    background-image: -o-linear-gradient(90deg, #f0f 50%, #00f 50%);
-    background-image: -moz-linear-gradient(90deg, #f0f 50%, #00f 50%);
-    background-image: -webkit-linear-gradient(90deg, #f0f 50%, #00f 50%);
-    background-image: -ms-linear-gradient(90deg, #f0f 50%, #00f 50%);
+
+
+.btn-default:hover 
+{
+
+    transition-duration:    0.4s;
+
+    background-position:    inherit;
+
 }
-.colorize {
-    color:#FFF;
-    text-align:center;
-    text-shadow: 0px 2px 4px #444444;
+
+
+.form_bg 
+{
+    background-image:       repeating-linear-gradient( 45deg, #f0f 50%, #00f 50% );
+
+    background-image:       -o-linear-gradient( 45deg, #f0f 50%, #00f 50% );
+
+    background-image:       -moz-linear-gradient( 45deg, #f0f 50%, #00f 50% );
+
+    background-image:       -webkit-linear-gradient( 45deg, #f0f 50%, #00f 50% );
+
+    background-image:       -ms-linear-gradient( 45deg, #f0f 50%, #00f 50% );
+
+    padding:                20px;
+
+    border-radius:          10px;
+
+    position:               absolute;
+
+    border:                 0;
+
+    margin:                 auto;
+
+    top:                    0;
+
+    right:                  0;
+
+    bottom:                 0;
+
+    left:                   0;
+
+    width:                  320px;
+
+    height:                 280px;
+
+}
+
+
+.colorize 
+{
+    color:                  #FFF;
+
+    text-align:             center;
+
+    text-shadow:            0px 2px 4px #444444;
+
+}
+
+
+.scroll-select 
+{
+   max-height:              34px;
+
+   overflow:                scroll; 
+
 }

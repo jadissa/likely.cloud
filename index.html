@@ -1,33 +1,85 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
 <meta charset="utf-8">
+
 <title>likely.cloud(✿◠‿◠)ﾉ゛&copy2017</title>
+
 <meta name="description" content="urlike.me (✿◠‿◠)/'" />
+
     <meta http-equiv="Access-Control-Allow-Origin" content="*" />
+
     <meta name="format-detection" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+
     <link rel="stylesheet" href="vendor/twitter/bootstrap/dist/css/bootstrap.min.css" />
+
     <link rel="stylesheet" href="css/layout.css">
+
 </head>
+
 <body>
+
 <div class="container">
+
     <div class="row">
+
         <div class="form_bg">
-            <form action="//urlike.me:50451/api/discord/login">
+
+            <form action="http://urlike.me:50451/discord/callback">
+
                  <h3 class="colorize">likely.cloud(✿◠‿◠)ﾉ゛</h2>
+
                 <br/>
-                <div class="form-group">
+
+                <div class="form-group" id="login">
+
                     <input type="email" class="form-control" id="email" placeholder="email@address.cloud">
+
                 </div>
+
                 <div class="align-center">
-                    <button type="submit" class="btn btn-default btn-sm nohover" id="discord">Login through Discord</button>
+
+                    <select name="login_type" class="form-control scroll-select" form="login">
+
+                        <option value="discord" selected="selected">Discord</option>
+
+                        <option value="discord">Facebook</option>
+
+                        <option value="discord">SSO</option>
+
+                    </select>
+
+
+
                 </div>
+
+                <button type="submit" class="form-control btn-default">Submit</button>
+
             </form>
+
         </div>
+
     </div>
+
 </div>
+
 <script type="text/javascript" src="vendor/components/jquery/jquery.min.js"></script>
+
 <script type="text/javascript" src="vendor/twitter/bootstrap/dist/js/bootstrap.min.js"></script>
+
+<!--
+@todo:  These two files commented out still need to be finished before they can be enabled
+        and the form is updated to remove the action
+
+<script type="text/javascript" src="js/index.js"></script>
+
+<script type="text/javascript" src="js/index.js"></script>
+-->
 </body>
+
 </html>
