@@ -98,7 +98,7 @@ $( document ).ready( function()
                 if ( _response.stat.toLowerCase() != 'ok' )
                 {
 
-                    alert(_response.message);
+                    alert( _response.message );
 
                 }
                 else
@@ -195,4 +195,4 @@ $( document ).ready( function()
 
     run( settings );
 
-});
+} );

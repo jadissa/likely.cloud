@@ -8,7 +8,7 @@ var settings = ( function init()
 
 		"async": 			true,
 
-		"type": 			"post"
+		"type": 			"post",
 
 		"discordOAuthURL": 	"http://urlike.me:50451/api/discord/callback"
 
