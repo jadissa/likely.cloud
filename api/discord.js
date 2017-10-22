@@ -28,15 +28,15 @@ router.get('/callback', catchAsync(async (req, res) => {
 
   const creds = btoa(`${CLIENT_ID}:${CLIENT_SECRET}`);
 
-  const response = await fetch(`https://discordapp.com/api/oauth2/token?grant_type=authorization_code&code=${code}&redirect_uri=${redirect}`
+  const response = await fetch(`https://discordapp.com/api/oauth2/token?grant_type=authorization_code&code=${code}&redirect_uri=${redirect}`,
   {
       method: 'POST',
 
       headers: {
 
-        Authorization: `Basic ${creds}`
+        Authorization: `Basic ${creds}`,
 
-      }
+      },
 
   } );
 
