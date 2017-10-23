@@ -9,8 +9,9 @@ const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const redirect = encodeURIComponent('http://urlike.me:50451/api/discord/callback');
 
+// Authorization code grant
 router.get('/login', (req, res) => {
-  res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${CLIENT_ID}&scope=identify&response_type=code&redirect_uri=${redirect}`);
+  res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&grant_type=identify&response_type=code&redirect_uri=${redirect}`);
 });
 
 router.get('/callback', catchAsync(async (req, res) => {
