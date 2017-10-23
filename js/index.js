@@ -3,80 +3,33 @@ $( document ).ready( function()
     //
     // Discord oauth
     //
-    function handleDiscord( _formdata )
+    function handleDiscord( _request )
     {
-        var result      = null;
+        if( _request.form.discordLoginURL )
+        {
 
-        $.ajax( {
-            url:        settings.discordOAuthURL,
+            window.location = _request.form.discordLoginURL;
 
-            dataType:   settings.dataType,
+        }
 
-            timeout:    settings.timeout,
-
-            async:      settings.async,
-
-            type:       "GET",
-
-            data:
-            {
-
-            },
-            success: function(_response)
-            {
-
-                console.log( _response );
-
-                /*
-                //
-                //  @todo: determine all valid response formats 
-                //  prior to reactivating these checks
-                //
-                if ( _response.stat.toLowerCase() != 'ok' )
-                {
-
-                    alert( _response.message );
-
-                }
-                else
-                {
-
-                    result = _response.message;
-
-                }
-                */
-
-            },
-            error: function( jq_xhr, status, error )
-            {
-
-                alert( error );
-
-            }
-
-        } );
-
-        return result;
     }
 
 
     //
     //  Email signup
     //
-    function handleEmail( _formdata )
+    function handleEmail( _request )
     {
         var result      = null;
 
         $.ajax( {
-            url:'50451:/api/email/login',
+            url:        _request.form.emailURL,
 
-            url:        settings.discordOAuthURL,
+            dataType:   _request.form.dataType,
 
-            dataType:   settings.dataType,
+            timeout:    _request.form.timeout,
 
-            timeout:    settings.timeout,
-
-            async:      settings.async,
+            async:      _request.form.async,
 
             type:       "GET",
 
@@ -84,7 +37,6 @@ $( document ).ready( function()
             {
 
                 email:  $( _formdata ).prop( email ),
-
 
                 //
                 //  @todo: We're gonna need to be able to handle auths 
@@ -141,27 +93,73 @@ $( document ).ready( function()
     function run( _settings )
     {
 
+        if( _settings.server.dev )
+        {
+
+            console.log("%cYou are running in dev mode", "background: pink; color: white; font-size: large");
+
+            console.log("%cLogging settings below", "background: pink; color: white; font-size: large");
+
+            console.log( _settings );
+
+        }
+
         $('form').submit( function( e )
         {
 
-            var response;
+            var _response;
+
+            if( _settings.server.dev )
+            {
+
+                try
+                {
+
+                    var _login_type = $( '[name=login_type]' ).val();
+
+                    var _request = mergeObjects( request(  mergeObjects( { "login_type": _login_type }, _settings ) ) );
+
+                    if( _settings.server.dev )
+                    {
+
+                        console.log( _request );
+
+                    }
+
+                }
+                catch(e)
+                {
+
+                    if( _settings.server.dev )
+                    {
+
+                        console.log( _request );
+
+                        e.preventDefault();
+
+                        return;
+
+                    }
+
+                }
+
+                e.preventDefault();
+
+            }
+
 
             //
             // Switch on auth type
             //
-            switch( $( this ).prop( 'login_type' ) )
+            switch( _login_type )
             {
-                //
-                //  @todo: merge _settings and this to send off both as our request
-                //
-
 
                 //
                 //  Discord oauth
                 //
                 case 'discord':
 
-                    response = handleDiscord( $( this ) );
+                    _response = handleDiscord( _request );
 
                 break;
 
@@ -171,7 +169,7 @@ $( document ).ready( function()
                 //
                 case 'email':
 
-                    response = handleEmail( $( this ) );
+                    _response = handleEmail( _request );
 
                 break;
 
@@ -189,10 +187,28 @@ $( document ).ready( function()
 
             e.preventDefault();
 
-        }
+            return _response;
+
+        } );
 
     }
 
-    run( settings );
+
+    //
+    //  Load app
+    //
+    try
+    {
+
+        var response = run( settings );
+
+    }
+    catch( e )
+    {
+
+        console.log( e );
+
+    }
+    
 
 } );
