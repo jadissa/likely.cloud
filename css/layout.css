@@ -35,8 +35,6 @@ body
 
     width:                  100%;
 
-    min-height:             900px;
-
 }
 
 
@@ -106,6 +104,8 @@ form
 
 .row 
 {
+
+    margin:                 0;
 
     margin-top:             20px;
 
