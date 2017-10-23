@@ -6,28 +6,36 @@
 #
 sudo yum -y update
 
+sudo yum -y install wget libicu-dev epel-release
 
-#
-# Install npm
-#
-sudo yum -y install firewalld epel-release nodejs
+wget --directory-prefix=/tmp/ https://nodejs.org/dist/v7.10.0/node-v7.10.0.tar.xz
 
-node --version
+mkdir /tmp/node-v7.10.0
 
-cd /var/www/html/app
+tar -xvf /tmp/node-v7.10.0.tar.xz -C /tmp/node-v7.10.0
+
+/tmp/node-v7.10.0/./configure --download=all
+
+/tmp/node-v7.10.0/make 
+
+/tmp/node-v7.10.0/make install /tmp/node-v7.10.0/
+
+which node
+
+node -v
 
 npm init
 
-npm install express
+npm install
 
-#sudo npm install -g node-inspector
+node install forever-monitor 
+
+forever list
 
 
 #
 # Install Composer
 #
-cd /var/www/html/
-
 echo "Installing Composer..."
 
 curl -sS https://getcomposer.org/installer | php -- --install-dir=.
@@ -52,4 +60,4 @@ php composer.phar -v install
 #
 # Run node
 #
-node server.js
+forever start server.js 
