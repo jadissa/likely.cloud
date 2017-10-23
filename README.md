@@ -58,7 +58,14 @@ date
 sex
 
 ### Names
-### @todo: retry
+### @todo: 
+Integrate https://github.com/scotch-io/easy-node-authentication/tree/facebook
+https://medium.com/@orels1/using-discord-oauth2-a-simple-guide-and-an-example-nodejs-app-71a9e032770
+https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-centos-7
+https://www.npmjs.com/package/monolog
+https://www.loggly.com/ultimate-guide/node-logging-basics/
+https://scotch.io/tutorials/easy-node-authentication-facebook
+
 not.likely.cloud
 its.likely.cloud
 very.likely.cloud
@@ -93,11 +100,3 @@ twitter. https://blog.twitter.com/official/en_us/topics/company/2017/safetycalen
 solr. https://www.tutorialspoint.com/apache_solr/apache_solr_overview.htm
 img42. https://img.betapage.co/logo/79450417-79450667.png?w=200&h=200&fit=crop
 discourse. https://en.wikipedia.org/wiki/Discourse_(software)
-
-### ToDo!
-https://medium.com/@orels1/using-discord-oauth2-a-simple-guide-and-an-example-nodejs-app-71a9e032770
-https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-centos-7
-https://www.npmjs.com/package/monolog
-https://www.loggly.com/ultimate-guide/node-logging-basics/
-https://scotch.io/tutorials/easy-node-authentication-facebook
-https://github.com/scotch-io/easy-node-authentication/tree/facebook
