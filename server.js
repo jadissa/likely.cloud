@@ -25,6 +25,7 @@ app.use('/api/discord', require('./api/discord'));
 app.use((err, req, res, next) => {
   switch (err.message) {
     case 'NoCodeProvided':
+      console.error(err.stack);
       return res.status(400).send({
         status: 'ERROR',
         error: err.message,
