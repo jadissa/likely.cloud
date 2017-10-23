@@ -24,45 +24,39 @@
 
 <body>
 
-<div class="container">
+    <div class="row" />
+    
+    <div class="form_bg">
 
-    <div class="row">
+    <form action="http://urlike.me:50451/api/discord/callback">
 
-        <div class="form_bg">
+         <h2 class="colorize">likely.cloud(✿◠‿◠)ﾉ゛</h2>
 
-            <form action="http://urlike.me:50451/api/discord/callback">
+        <br/>
 
-                 <h3 class="colorize">likely.cloud(✿◠‿◠)ﾉ゛</h2>
+        <div class="form-group" id="login">
 
-                <br/>
-
-                <div class="form-group" id="login">
-
-                    <input type="email" class="form-control" id="email" disabled="disabled" placeholder="email@address.cloud">
-
-                </div>
-
-                <div class="align-center">
-
-                    <select name="login_type" class="form-control scroll-select" form="login">
-
-                        <option value="discord" selected="selected">Discord</option>
-
-                        <option value="discord" disabled="disabled">Facebook</option>
-
-                        <option value="discord" disabled="disabled">SSO</option>
-
-                    </select>
-
-                </div>
-
-                <button type="submit" class="form-control btn-default">Submit</button>
-
-            </form>
+            <input type="email" class="form-control" id="email" disabled="disabled" placeholder="email@address.cloud">
 
         </div>
 
-    </div>
+        <div class="form-group align-center">
+
+            <select name="login_type" class="form-control scroll-select" form="login">
+
+                <option value="discord" selected="selected">Discord</option>
+
+                <option value="discord" disabled="disabled">Facebook</option>
+
+                <option value="discord" disabled="disabled">SSO</option>
+
+            </select>
+
+        </div>
+
+        <button type="submit" class="form-control btn-default">Submit</button>
+
+    </form>
 
 </div>
 

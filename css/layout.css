@@ -16,6 +16,30 @@
 }
 
 
+body
+{
+
+    background-color:       #f0f;
+
+    background-image:       repeating-linear-gradient( 180deg, #f0f 50%, #00f 50% );
+
+    background-image:       -o-linear-gradient( 180deg, #f0f 50%, #00f 50% );
+
+    background-image:       -moz-linear-gradient( 180deg, #f0f 50%, #00f 50% );
+
+    background-image:       -webkit-linear-gradient( 180deg, #f0f 50%, #00f 50% );
+
+    background-image:       -ms-linear-gradient( 180deg, #f0f 50%, #00f 50% );
+
+    height:                 100%;
+
+    width:                  100%;
+
+    min-height:             900px;
+
+}
+
+
 form 
 {
 
@@ -37,11 +61,7 @@ form
 
     width:                  auto;
 
-    display:                block;
-
     float:                  right;
-
-    margin-top:             15px;
 
 }
 
@@ -58,6 +78,20 @@ form
 
 .form_bg 
 {
+    margin-top:             20px;
+
+    padding:                20px;
+
+    border-radius:          10px;
+
+    border:                 0;
+
+    margin:                 0 auto;
+
+    width:                  320px;
+
+    height:                 280px;
+
     background-image:       repeating-linear-gradient( 45deg, #f0f 50%, #00f 50% );
 
     background-image:       -o-linear-gradient( 45deg, #f0f 50%, #00f 50% );
@@ -68,27 +102,12 @@ form
 
     background-image:       -ms-linear-gradient( 45deg, #f0f 50%, #00f 50% );
 
-    padding:                20px;
+}
 
-    border-radius:          10px;
+.row 
+{
 
-    position:               absolute;
-
-    border:                 0;
-
-    margin:                 auto;
-
-    top:                    0;
-
-    right:                  0;
-
-    bottom:                 0;
-
-    left:                   0;
-
-    width:                  320px;
-
-    height:                 280px;
+    margin-top:             20px;
 
 }
 
