@@ -99,3 +99,5 @@ https://medium.com/@orels1/using-discord-oauth2-a-simple-guide-and-an-example-no
 https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-centos-7
 https://www.npmjs.com/package/monolog
 https://www.loggly.com/ultimate-guide/node-logging-basics/
+https://scotch.io/tutorials/easy-node-authentication-facebook
+https://github.com/scotch-io/easy-node-authentication/tree/facebook
