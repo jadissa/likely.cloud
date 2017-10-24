@@ -47,6 +47,7 @@ router.get('/callback', catchAsync(async (req, res) => {
 
   console.log(util.inspect(token_json, {sowHidden: false, depth: null}));
 
+/*
   const profile_response = await fetch(`https://discordapp.com/api/users/@me`,
   {
 
@@ -63,7 +64,7 @@ router.get('/callback', catchAsync(async (req, res) => {
   const profile_json = await profile_response.json();
 
   console.log(util.inspect(profile_json, {sowHidden: false, depth: null}));
-
+*/
   res.redirect(`/?token=${token_json.access_token}`);
 
 }));
