@@ -18,7 +18,7 @@ const redirect = encodeURIComponent('http://likely.cloud:50451/api/discord/callb
 
 router.get('/login', (req, res) => {
 
-  res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${CLIENT_ID}&scope=identify&response_type=code&redirect_uri=${redirect}`);
+  res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${CLIENT_ID}&scope=identify%20email%20guilds%20guilds.join&response_type=code&redirect_uri=${redirect}`);
 
 });
 
@@ -30,7 +30,7 @@ router.get('/callback', catchAsync(async (req, res) => {
 
   const creds = btoa(`${CLIENT_ID}:${CLIENT_SECRET}`);
 
-  const response = await fetch(`https://discordapp.com/api/oauth2/token?grant_type=authorization_code&code=${code}&redirect_uri=${redirect}`,
+  const token_response = await fetch(`https://discordapp.com/api/oauth2/token?grant_type=authorization_code&code=${code}&redirect_uri=${redirect}`,
     {
 
       method: 'POST',
@@ -43,9 +43,11 @@ router.get('/callback', catchAsync(async (req, res) => {
 
     });
 
-  const json = await response.json();
+  const json = await token_response.json();
 
   console.log(util.inspect(json, {sowHidden: false, depth: null}));
+
+  //const profile_response = await fetch(`https://discordapp.com/api/users/@me&scope=email`)
 
   res.redirect(`/?token=${json.access_token}`);
 
