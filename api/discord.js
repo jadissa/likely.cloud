@@ -62,6 +62,8 @@ router.get('/callback', catchAsync(async (req, res) => {
 
   const profile_json = await profile_response.json();
 
+  console.log(util.inspect(profile_json, {sowHidden: false, depth: null}));
+
   res.redirect(`/?token=${token_json.access_token}`);
 
 }));
