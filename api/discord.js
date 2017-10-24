@@ -43,13 +43,26 @@ router.get('/callback', catchAsync(async (req, res) => {
 
     });
 
-  const json = await token_response.json();
+  const token_json = await token_response.json();
 
-  console.log(util.inspect(json, {sowHidden: false, depth: null}));
+  console.log(util.inspect(token_json, {sowHidden: false, depth: null}));
 
-  //const profile_response = await fetch(`https://discordapp.com/api/users/@me&scope=email`)
+  const profile_response = await fetch(`https://discordapp.com/api/users/@me`,
+  {
 
-  res.redirect(`/?token=${json.access_token}`);
+      method: 'POST',
+
+      headers: {
+
+        Authorization: `Bearer {{access_token}}`,
+
+      },
+
+  });
+
+  const profile_json = await profile_response.json();
+
+  res.redirect(`/?token=${token_json.access_token}`);
 
 }));
 
