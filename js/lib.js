@@ -17,9 +17,9 @@ var settings = ( function init()
 
 			"type": 			"post",
 
-			"discordLoginURL": 	"http://urlike.me:50451/api/discord/login",
+			"discordLoginURL": 	"http://likely.cloud:50451/api/discord/login",
 
-			"emailURL": 		"50451:/api/email/login"
+			"emailURL": 		"http://likely.cloud:50451/api/email/login"
 
 		}
 
