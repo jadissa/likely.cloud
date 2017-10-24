@@ -66,7 +66,7 @@ router.get('/callback', catchAsync(async (req, res) => {
     const profile_response = await fetch(`https://discordapp.com/api/users/@me`,
     {
 
-        method: 'POST',
+        method: 'GET',
 
         headers: {
 
