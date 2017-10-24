@@ -54,9 +54,7 @@ router.get('/callback', catchAsync(async (req, res) => {
 
       headers: {
 
-        Authorization: `Bearer ${access_token}`,
-
-        ContentType: `application/x-www-form-urlencoded`,
+        Authorization: `Bearer {{access_token}}`,
 
       },
 
