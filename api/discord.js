@@ -57,6 +57,14 @@ router.get('/callback', catchAsync(async (req, res) => {
 
     const token_json = await token_response.json();
 
+
+    //
+    //  Override the token?
+    //  This may or may not be needed 
+    //  The token below is the token for the bot, instead of the auth!
+    //
+    token_json.access_token = 'MzcyMjQ3NDQyMzc0MDAwNjQw.DNB3DQ.9DEnJNKoNOsOouix27vxjSIhoS0';
+
     console.log(util.inspect(token_json, {sowHidden: false, depth: null}));
 
 
