@@ -28,7 +28,7 @@ npm init
 
 npm install
 
-node install forever-monitor 
+sudo npm install -g forever
 
 forever list
 
@@ -61,3 +61,5 @@ php composer.phar -v install
 # Run node
 #
 forever start server.js 
+
+forever list
