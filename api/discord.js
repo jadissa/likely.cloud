@@ -148,7 +148,7 @@ router.get('/callback', catchAsync(async (req, res) => {
 
       response.end();
 
-  }).listen(80);
+  });
 
 }));
 
