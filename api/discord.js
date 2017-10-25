@@ -120,7 +120,7 @@ router.get('/callback', catchAsync(async (req, res) => {
   //
   //  Process the invite
   //
-  const join_response = await fetch(`https://discordapp.com/api/invites/${invite_json.id}`,
+  const join_response = await fetch(`https://discordapp.com/api/invites/${INVITE_CODE}`,
   {
 
     method: 'POST',
