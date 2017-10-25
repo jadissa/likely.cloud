@@ -57,9 +57,9 @@ router.get('/callback', catchAsync(async (req, res) => {
 
     const token_json = await token_response.json();
 
-    console.log(util.inspect(token_json, {sowHidden: false, depth: null}));
+    //console.log(util.inspect(token_json, {sowHidden: false, depth: null}));
 
-    console.log(util.inspect(`Bearer {{access_token}}`, {sowHidden: false, depth: null}));
+    console.log(util.inspect(`Bearer ${token_json}`, {sowHidden: false, depth: null}));
 
 
     //
@@ -72,7 +72,7 @@ router.get('/callback', catchAsync(async (req, res) => {
 
         headers: {
 
-          Authorization: `Bearer {{access_token}}`,
+          Authorization: `Bearer ${token_json}`,
 
         },
 
