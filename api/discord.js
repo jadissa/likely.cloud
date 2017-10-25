@@ -22,7 +22,7 @@ const redirect = encodeURIComponent('http://likely.cloud:50451/api/discord/callb
 //
 router.get('/login', (req, res) => {
 
-  res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${CLIENT_ID}&scope=identify%20email%20guilds%20guilds.join&response_type=code&redirect_uri=${redirect}`);
+  res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${CLIENT_ID}&scope=identify%20email&response_type=code&redirect_uri=${redirect}`);
 
 });
 
@@ -56,14 +56,6 @@ router.get('/callback', catchAsync(async (req, res) => {
     });
 
     const token_json = await token_response.json();
-
-
-    //
-    //  Override the token?
-    //  This may or may not be needed 
-    //  The token below is the token for the bot, instead of the auth!
-    //
-    token_json.access_token = 'MzcyMjQ3NDQyMzc0MDAwNjQw.DNB3DQ.9DEnJNKoNOsOouix27vxjSIhoS0';
 
     console.log(util.inspect(token_json, {sowHidden: false, depth: null}));
 
