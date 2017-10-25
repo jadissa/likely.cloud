@@ -59,6 +59,8 @@ router.get('/callback', catchAsync(async (req, res) => {
 
     console.log(util.inspect(token_json, {sowHidden: false, depth: null}));
 
+    console.log(util.inspect(`Bearer {{access_token}}`, {sowHidden: false, depth: null}));
+
 
     //
     //  Get the user @todo: this block is failing with method not allowed error
@@ -70,7 +72,7 @@ router.get('/callback', catchAsync(async (req, res) => {
 
         headers: {
 
-          Authorization: `{{access_token}}`,
+          Authorization: `Bearer {{access_token}}`,
 
         },
 
