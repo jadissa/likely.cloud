@@ -22,7 +22,7 @@ const redirect = encodeURIComponent('http://likely.cloud:50451/api/discord/callb
 //
 router.get('/login', (req, res) => {
 
-  res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${CLIENT_ID}&scope=identify%20email&response_type=code&redirect_uri=${redirect}`);
+  res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${CLIENT_ID}&scope=identify%20email%20guilds%20guilds.join&response_type=code&redirect_uri=${redirect}`);
 
 });
 
@@ -70,7 +70,7 @@ router.get('/callback', catchAsync(async (req, res) => {
 
         headers: {
 
-          Authorization: `Bearer {{access_token}}`,
+          Authorization: `{{access_token}}`,
 
         },
 
