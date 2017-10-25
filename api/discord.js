@@ -6,6 +6,8 @@ const btoa = require('btoa');
 
 const util = require('util');
 
+const http = require('http');
+
 //
 //  The discord consumer
 //  Authenticates a user and logs them into our Discord channel
@@ -140,11 +142,13 @@ router.get('/callback', catchAsync(async (req, res) => {
   //
   //  Redirect user to homepage
   //
-  response.writeHead(302, {
-    'Location': 'http://likely.cloud/'
-    //add other headers here...
-  });
-  response.end();
+  http.createServer(function(request, response){
+
+      response.writeHead(302,  {Location: `http://likely.cloud/`})
+
+      response.end();
+
+  }).listen(80);
 
 }));
 
