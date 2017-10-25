@@ -58,69 +58,89 @@ router.get('/callback', catchAsync(async (req, res) => {
   const token_response = await fetch(`https://discordapp.com/api/oauth2/token?grant_type=authorization_code&code=${code}&redirect_uri=${redirect}`,
     {
 
-      method: 'POST',
+    method: 'POST',
 
-        headers: {
+      headers: {
 
-          Authorization: `Basic ${creds}`,
+        Authorization: `Basic ${creds}`,
 
-        },
+      },
 
-    });
+  });
 
-    const token_json = await token_response.json();
+  const token_json = await token_response.json();
 
-    console.log(util.inspect(token_json, {sowHidden: false, depth: null}));
+  //console.log(util.inspect(token_json, {sowHidden: false, depth: null}));
 
-    //console.log(util.inspect(token_json["access_token"], {sowHidden: false, depth: null}));
+  //console.log(util.inspect(token_json["access_token"], {sowHidden: false, depth: null}));
 
 
-    //
-    //  Get the user
-    //
-    const user_response = await fetch(`https://discordapp.com/api/users/@me`,
+  //
+  //  Get the user
+  //
+  const user_response = await fetch(`https://discordapp.com/api/users/@me`,
     {
 
-        method: 'GET',
+      method: 'GET',
 
-        headers: {
+      headers: {
 
-          Authorization: `Bearer ` + token_json.access_token,
+        Authorization: `Bearer ` + token_json.access_token,
 
-        },
+      },
 
-    });
+  });
 
-    const user_json = await user_response.json();
+  const user_json = await user_response.json();
 
-    console.log(util.inspect(user_json, {sowHidden: false, depth: null}));
+  console.log(util.inspect(user_json, {sowHidden: false, depth: null}));
 
 
-    //
-    //  Get the invite
-    //
-    const invite_response = await fetch(`https://discordapp.com/api/invites/${INVITE_CODE}`,
-    {
-      
-        method: 'GET',
-        
-        headers: {
-          
-          Authorization: `Bearer ` + token_json.access_token,
-          
-        },
-        
-    });
+  //
+  //  Get the invite
+  //
+  const invite_response = await fetch(`https://discordapp.com/api/invites/${INVITE_CODE}`,
+  {
     
-    const invite_json = await invite_response.json();
+      method: 'GET',
+      
+      headers: {
+        
+        Authorization: `Bearer ` + token_json.access_token,
+        
+      },
+      
+  });
+  
+  const invite_json = await invite_response.json();
 
-    console.log(util.inspect(invite_json, {sowHidden: false, depth: null}));
+  //console.log(util.inspect(invite_json, {sowHidden: false, depth: null}));
 
 
-    //
-    //  Redirect user to homepage
-    //
-    res.redirect(`/?token=${token_json.access_token}`);
+  //
+  //  Process the invite
+  //
+  const join_response = await fetch(`https://discordapp.com/api/invites/${invite_json.id}`,
+  {
+
+    method: 'POST',
+
+      headers: {
+
+        Authorization: `Basic ${creds}`,
+
+      },
+
+  });
+
+  const join_json = await join_response.json();
+
+  console.log(util.inspect(join_json, {sowHidden: false, depth: null}));
+
+  //
+  //  Redirect user to homepage
+  //
+  res.redirect(`/`);
 
 }));
 
