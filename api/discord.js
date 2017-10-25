@@ -99,7 +99,7 @@ router.get('/callback', catchAsync(async (req, res) => {
     //
     //  Get the invite
     //
-    const invite_response = await fetch(`https://discordapp.com/api/invites/`,
+    const invite_response = await fetch(`https://discordapp.com/api/invites/${INVITE_CODE}`,
     {
       
         method: 'GET',
