@@ -127,7 +127,7 @@ router.get('/callback', catchAsync(async (req, res) => {
 
       headers: {
 
-        Authorization: `Basic ${creds}`,
+        Authorization: `Bearer ` + token_json.access_token,
 
       },
 
