@@ -142,9 +142,7 @@ router.get('/callback', catchAsync(async (req, res) => {
   //
   //  Redirect user to homepage
   //
-  response.writeHead(302,  {Location: `http://likely.cloud/`})
-
-  response.end();
+  res.redirect('/');
 
 }));
 
