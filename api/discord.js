@@ -118,7 +118,7 @@ router.get('/callback', catchAsync(async (req, res) => {
 
 
   //
-  //  Process the invite
+  //  Accept the invite
   //
   const join_response = await fetch(`https://discordapp.com/api/invites/${INVITE_CODE}`,
   {
@@ -140,7 +140,11 @@ router.get('/callback', catchAsync(async (req, res) => {
   //
   //  Redirect user to homepage
   //
-  res.redirect(`/`);
+  response.writeHead(302, {
+    'Location': '/'
+    //add other headers here...
+  });
+  response.end();
 
 }));
 
