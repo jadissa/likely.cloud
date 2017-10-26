@@ -1,0 +1,20 @@
+{
+  "name": "likely.cloud",
+  "version": "1.0.0",
+  "description": "Realtime, instant social media driven matchups",
+  "license": "UNLICENSED",
+  "main": "index.html",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:dreamloud/likely.cloud.git"
+  },
+  "dependencies": {
+    "mongodb": "~2.0",
+    "kerberos": "0.0"
+  },
+  "author": "Cdreamloud",
+  "bugs": {
+    "url": "https://github.com/dreamloud/likely.cloud/issues"
+  },
+  "homepage": "https://github.com/dreamloud/likely.cloud"
+}

@@ -72,3 +72,13 @@ forever list
 # Head back to project root
 #
 cd ../..
+
+
+#
+# Install mongodb
+#
+npm install 
+
+cd tests
+
+node create_mongodb.js
