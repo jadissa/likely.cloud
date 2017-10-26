@@ -17,7 +17,7 @@ var settings = ( function init()
 
 			"type": 			"post",
 
-			"discordLoginURL": 	"http://likely.cloud:50451/api/discord/login",
+			"discordLoginURL": 	"http://likely.cloud:50451/vendor/discord-token-generator/api/discord/login",
 
 			"emailURL": 		"http://likely.cloud:50451/api/email/login"
 
