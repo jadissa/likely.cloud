@@ -8,6 +8,8 @@ sudo yum -y update
 
 sudo yum -y install wget libicu-dev epel-release
 
+sudo yum -y groupinstall 'Development Tools'
+
 wget --directory-prefix=/tmp/ https://nodejs.org/dist/v7.10.0/node-v7.10.0.tar.xz
 
 mkdir /tmp/node-v7.10.0
@@ -78,6 +80,11 @@ cd ../..
 # Install mongodb
 #
 npm install 
+
+# https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-centos-7
+sudo yum -y install mongodb-org
+
+sudo systemctl start mongod
 
 cd tests
 
