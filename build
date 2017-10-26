@@ -24,14 +24,6 @@ which node
 
 node -v
 
-npm init
-
-npm install
-
-sudo npm install -g forever
-
-forever list
-
 
 #
 # Install Composer
@@ -58,8 +50,25 @@ php composer.phar -v install
 
 
 #
+# Install one-off dependencies that don't use composer 
+#
+git clone git@github.com:dreamloud/discord-token-generator.git vendor/discord-token-generator
+
+cd vendor/discord-token-generator
+
+npm install
+
+
+
+#
 # Run node
 #
 forever start server.js 
 
 forever list
+
+
+#
+# Head back to project root
+#
+cd ../..
