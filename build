@@ -1,54 +1,71 @@
 #!/bin/bash
-
+#https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-centos-7
 
 #
 # Get dependencies
 #
+cd ~
+
 sudo yum -y update
 
-sudo yum -y install wget libicu-dev epel-release
+sudo yum -y install wget libicu-dev epel-release git vim 
 
 sudo yum -y groupinstall 'Development Tools'
 
-wget --directory-prefix=/tmp/ https://nodejs.org/dist/v7.10.0/node-v7.10.0.tar.xz
+sudo yum -y install gcc-c++ make
 
-mkdir /tmp/node-v7.10.0
+sudo curl -sL https://rpm.nodesource.com/setup_8.x | sudo -E bash -
 
-tar -xvf /tmp/node-v7.10.0.tar.xz -C /tmp/node-v7.10.0
-
-/tmp/node-v7.10.0/./configure --download=all
-
-/tmp/node-v7.10.0/make 
-
-/tmp/node-v7.10.0/make install /tmp/node-v7.10.0/
+sudo yum install -y nodejs
 
 which node
 
 node -v
 
-
-#
-# Install Composer
-#
-echo "Installing Composer..."
-
-curl -sS https://getcomposer.org/installer | php -- --install-dir=.
+npm -v
 
 
 #
-# Update Composer and install dependencies
+# Setting up web root
 #
-echo "Updating Composer..."
+mkdir -p /var/www/html
 
-echo 'export PATH=/var/www/html:$PATH' >>/home/jadii/.bashrc
+cd /var/www/html
 
-source /home/jadii/.bashrc
+echo 'export PATH=/var/www/html:$PATH' >>~/.bashrc
 
-echo "Running Composer..."
+source ~/.bashrc
 
-php composer.phar -V
+curl -w "\n" http://169.254.169.254/metadata/v1/interfaces/private/0/ipv4/address
 
-php composer.phar -v install
+
+##
+## Install Composer
+##
+#cd /var/www/html/
+
+#echo "Installing Composer..."
+
+#curl -sS https://getcomposer.org/installer | php -- --install-dir=.
+
+
+##
+## Update Composer and install dependencies
+#
+#echo "Updating Composer..."
+
+#USER=`whoami`
+
+#echo "Running Composer..."
+
+#php composer.phar -V
+
+#php composer.phar -v install
+
+#
+# Test node
+#
+node start tests/server.js &
 
 
 #
@@ -61,6 +78,12 @@ cd vendor/discord-token-generator
 npm install
 
 
+#
+# Globally nstall react for UI
+#
+sudo /usr/local/node-v7.10.0-linux-x64/bin/npm install -g react-composer create-react-app
+
+create-react-app app
 
 #
 # Run node
@@ -70,22 +93,39 @@ forever start server.js
 forever list
 
 
-#
-# Head back to project root
-#
-cd ../..
+##
+## Head back to project root
+##
+#cd ../..
 
 
-#
-# Install mongodb
-#
-npm install 
+##
+## Install mongodb
+##
+#npm install 
 
-# https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-centos-7
-sudo yum -y install mongodb-org
+## https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-centos-7
+#sudo yum -y install mongodb-org
 
-sudo systemctl start mongod
+#sudo systemctl start mongod
 
-cd tests
+#cd tests
 
-node create_mongodb.js
+#node create_mongodb.js
+
+#npm install mongoose --save
+
+#npm install body-parser --save
+
+
+##
+## Configure mongodb
+##
+#mongod --port 27017 --dbpath /var/lib/mongo
+
+#sudo systemctl start mongod
+
+
+#use likelycloud
+
+
