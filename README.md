@@ -59,12 +59,39 @@ sex
 
 ### Names
 ### @todo: 
-Integrate https://github.com/scotch-io/easy-node-authentication/tree/facebook
-https://medium.com/@orels1/using-discord-oauth2-a-simple-guide-and-an-example-nodejs-app-71a9e032770
+Integrate
+
+https://www.objectrocket.com/
+
+http://www.wiredtiger.com/
+
+https://codeigniter.com/
+
+https://github.com/jkutianski/meetup-api/wiki
+
+https://www.tutorialspoint.com/mongodb/mongodb_create_database.htm
+
+https://stackoverflow.com/questions/41615574/mongodb-server-has-startup-warnings-access-control-is-not-enabled-for-the-dat
+
 https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-centos-7
+
+https://github.com/scotch-io/easy-node-authentication/tree/facebook
+
+https://medium.com/@orels1/using-discord-oauth2-a-simple-guide-and-an-example-nodejs-app-71a9e032770
+
 https://www.npmjs.com/package/monolog
+
 https://www.loggly.com/ultimate-guide/node-logging-basics/
+
 https://scotch.io/tutorials/easy-node-authentication-facebook
+
+twitter. https://blog.twitter.com/official/en_us/topics/company/2017/safetycalendar.html
+
+solr. https://www.tutorialspoint.com/apache_solr/apache_solr_overview.htm
+
+img42. https://img.betapage.co/logo/79450417-79450667.png?w=200&h=200&fit=crop
+
+discourse. https://en.wikipedia.org/wiki/Discourse_(software)
 
 not.likely.cloud
 its.likely.cloud
@@ -93,10 +120,3 @@ inthe.cloud
 ### Donain Registration
 .me domains: https://domain.me/?query=someonelike
 .ly domains: http://digitalgroup.ly/en/registration-form
-
-### Possible Integrate/Deploy Services
-### @todo: Organize once settled upon
-twitter. https://blog.twitter.com/official/en_us/topics/company/2017/safetycalendar.html
-solr. https://www.tutorialspoint.com/apache_solr/apache_solr_overview.htm
-img42. https://img.betapage.co/logo/79450417-79450667.png?w=200&h=200&fit=crop
-discourse. https://en.wikipedia.org/wiki/Discourse_(software)
