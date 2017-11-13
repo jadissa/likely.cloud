@@ -15,7 +15,8 @@
     "mongodb": "~2.0",
     "mongoose": "^4.12.4",
     "bootstrap": "~3.3",
-    "jquery": "1.9.*"
+    "jquery": "1.9.*",
+    "orels1/discord-token-generator": "1.0.*",
   },
   "repository": {
     "type": "git",
