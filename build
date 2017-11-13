@@ -6,9 +6,11 @@
 #
 cd ~
 
+sudo su - root
+
 sudo yum -y update
 
-sudo yum -y install wget libicu-dev epel-release git vim 
+sudo yum -y install nginx wget http-server libicu-dev epel-release net-tools git vim 
 
 sudo yum -y groupinstall 'Development Tools'
 
@@ -24,11 +26,23 @@ node -v
 
 npm -v
 
+sudo npm install -g forever
+
+sudo systemctl start nginx
+
+sudo systemctl enable nginx
+
+sudo npm install -g pm2@latest -g http-server
+
+sudo wget https://dl.yarnpkg.com/rpm/yarn.repo -O /etc/yum.repos.d/yarn.repo
+
+sudo yum -y install yarn
+
 
 #
 # Setting up web root
 #
-mkdir -p /var/www/html
+sudo mkdir -p /var/www/html
 
 cd /var/www/html
 
@@ -38,34 +52,9 @@ source ~/.bashrc
 
 curl -w "\n" http://169.254.169.254/metadata/v1/interfaces/private/0/ipv4/address
 
+git clone git@github.com:dreamloud/likely.cloud.git .
 
-##
-## Install Composer
-##
-#cd /var/www/html/
-
-#echo "Installing Composer..."
-
-#curl -sS https://getcomposer.org/installer | php -- --install-dir=.
-
-
-##
-## Update Composer and install dependencies
-#
-#echo "Updating Composer..."
-
-#USER=`whoami`
-
-#echo "Running Composer..."
-
-#php composer.phar -V
-
-#php composer.phar -v install
-
-#
-# Test node
-#
-node start tests/server.js &
+sudo yarn install
 
 
 #
@@ -75,22 +64,37 @@ git clone git@github.com:dreamloud/discord-token-generator.git vendor/discord-to
 
 cd vendor/discord-token-generator
 
-npm install
+sudo yarn install
+
+sudo pm2 startup systemd -u jadissa --hp /home/jadissa
+
+sudo su - jadissa 
+
+pm2 ls
+
+pm2 save
+
+sudo su - root
+
+
+# Fix the permission issue that prevents nginx from running
+sudo setenforce Permissive
+
+sudo chcon -Rt httpd_sys_content_t /var/www/html
+
+sudo setenforce Enforcing
+
+sudo systemctl restart nginx
 
 
 #
 # Globally nstall react for UI
 #
-sudo /usr/local/node-v7.10.0-linux-x64/bin/npm install -g react-composer create-react-app
+cd /var/www/html
+
+sudo npm install -g react-composer create-react-app
 
 create-react-app app
-
-#
-# Run node
-#
-forever start server.js 
-
-forever list
 
 
 ##

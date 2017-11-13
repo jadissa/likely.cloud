@@ -120,3 +120,6 @@ inthe.cloud
 ### Donain Registration
 .me domains: https://domain.me/?query=someonelike
 .ly domains: http://digitalgroup.ly/en/registration-form
+
+### Regularly Used README
+https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/

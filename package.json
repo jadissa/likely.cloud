@@ -1,20 +1,40 @@
 {
   "name": "likely.cloud",
   "version": "1.0.0",
+  "minimum-stability": "1.0.*",
   "description": "Realtime, instant social media driven matchups",
   "license": "UNLICENSED",
-  "main": "index.html",
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:dreamloud/likely.cloud.git"
+  "main": "server.js",
+  "scripts": {
+    "test": "npm test"
   },
   "dependencies": {
+    "express": "^4.16.2",
+    "body-parser": "^1.18.2",
+    "kerberos": "0.0",
     "mongodb": "~2.0",
-    "kerberos": "0.0"
+    "mongoose": "^4.12.4",
+    "bootstrap": "~3.3",
+    "jquery": "1.9.*"
   },
-  "author": "Cdreamloud",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/dreamloud/likely.cloud.git"
+  },
+  "authors": [
+    {
+      "name": "dreamloud",
+      "email": "j@dreamloud.com"
+    }
+  ],
   "bugs": {
     "url": "https://github.com/dreamloud/likely.cloud/issues"
   },
-  "homepage": "https://github.com/dreamloud/likely.cloud"
+  "homepage": "https://github.com/dreamloud/likely.cloud",
+  "keywords": [
+    "likely.cloud",
+    "meetup",
+    "dating",
+    "friends"
+  ]
 }
