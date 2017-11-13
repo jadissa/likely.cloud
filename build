@@ -1,6 +1,8 @@
 #!/bin/bash
 #https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-centos-7
 
+USER=`whoami`
+
 #
 # Get dependencies
 #
@@ -54,29 +56,23 @@ source ~/.bashrc
 
 curl -w "\n" http://169.254.169.254/metadata/v1/interfaces/private/0/ipv4/address
 
-git clone git@github.com:dreamloud/likely.cloud.git .
-
 sudo yarn install
 
 
 #
-# Install one-off dependencies that don't use composer 
+# Install node dependencies 
 #
-git clone git@github.com:dreamloud/discord-token-generator.git vendor/discord-token-generator
-
-cd vendor/discord-token-generator
-
 sudo yarn install
 
-sudo pm2 startup systemd -u jadissa --hp /home/jadissa
+sudo su - root
 
-sudo su - jadissa 
+sudo pm2 start node_modules/discord-token-generator/server.js --name discord-token-generator
 
 pm2 ls
 
 pm2 save
 
-sudo su - root
+sudo su - $USER 
 
 
 # Fix the permission issue that prevents nginx from running
