@@ -44,6 +44,8 @@ sudo yum -y install yarn
 #
 sudo mkdir -p /var/www/html
 
+sudo chown -R www:wheel /var/www/html
+
 cd /var/www/html
 
 echo 'export PATH=/var/www/html:$PATH' >>~/.bashrc
