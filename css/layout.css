@@ -21,15 +21,15 @@ body
 
     background-color:       #f0f;
 
-    background-image:       repeating-linear-gradient( 180deg, #f0f 50%, #00f 50% );
+    background-image:       repeating-linear-gradient( -55deg, #f0f 50%, #00f 50% );
 
-    background-image:       -o-linear-gradient( 180deg, #f0f 50%, #00f 50% );
+    background-image:       -o-linear-gradient( -55deg, #f0f 50%, #00f 50% );
 
-    background-image:       -moz-linear-gradient( 180deg, #f0f 50%, #00f 50% );
+    background-image:       -moz-linear-gradient( -55deg, #f0f 50%, #00f 50% );
 
-    background-image:       -webkit-linear-gradient( 180deg, #f0f 50%, #00f 50% );
+    background-image:       -webkit-linear-gradient( -55deg, #f0f 50%, #00f 50% );
 
-    background-image:       -ms-linear-gradient( 180deg, #f0f 50%, #00f 50% );
+    background-image:       -ms-linear-gradient( -55deg, #f0f 50%, #00f 50% );
 
     height:                 100%;
 
