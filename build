@@ -1,4 +1,4 @@
-
+#!/bin/bash
 #
 # ________                              .____                    .___
 # \______ \_______  ____ _____    _____ |    |    ____  __ __  __| _/
@@ -9,8 +9,22 @@
 #
 #                                                              © 2017
 
-#!/bin/bash
 #https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-centos-7
+
+#
+# Load
+#
+. /etc/os-release
+
+ID=$ID
+
+VER=$VERSION_ID
+
+PRIVATE_IP_ADDRESS=`curl -w "\n" http://169.254.169.254/metadata/v1/interfaces/private/0/ipv4/address`
+
+GROUP=www
+
+USER=www
 
 _init() {
 
@@ -356,20 +370,5 @@ fun() {
     _tests
 
 }
-
-#
-# Load
-#
-. /etc/os-release
-
-ID=$ID
-
-VER=$VERSION_ID
-
-PRIVATE_IP_ADDRESS=`curl -w "\n" http://169.254.169.254/metadata/v1/interfaces/private/0/ipv4/address`
-
-GROUP=www
-
-USER=www
 
 fun
