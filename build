@@ -179,6 +179,12 @@ _update() {
 
     fi
 
+    cd node_modules/geoip-lite/
+
+    npm run-script updatedb
+
+    cd $PROJECTPATH
+
 }
 
 _pm2() {
@@ -345,6 +351,10 @@ _tests() {
     curl http://$PRIVATE_IP_ADDRESS:8080
 
     pm2 stop tests/server.js
+
+    pm2 start tests/geoip-lite.js
+
+    pm2 stop tests/geoip-lite.js
 
     sudo systemctl status nginx
 
