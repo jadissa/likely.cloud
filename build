@@ -334,7 +334,7 @@ _nginx() {
         server_name  likely.cloud www.likely.cloud;
 
         location / {
-            root   $PROJECTPATH;
+            root   ${PROJECTPATH};
             index  index.html;
             try_files $uri $uri/ =404;
         }    
