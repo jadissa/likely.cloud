@@ -126,17 +126,15 @@ _deploy_key() {
 
     read CHOICE
 
-    if [ "$CHOICE" != "Y" ]; then
+    if [ "$CHOICE" == "Y" ]; then
 
-        _deploy_key
+        sudo -u $DEVELOPER ssh-keygen -t rsa -b 4096 -C "$EMAIL"
+
+        sudo -u $DEVELOPER eval "$(ssh-agent -s)"
+
+        sudo -u $DEVELOPER ssh-add -k ~/.ssh/id_rsa
 
     fi
-
-    sudo -u $DEVELOPER ssh-keygen -t rsa -b 4096 -C "$EMAIL"
-
-    sudo -u $DEVELOPER eval "$(ssh-agent -s)"
-
-    sudo -u $DEVELOPER ssh-add -k ~/.ssh/id_rsa
 
 }
 
@@ -148,15 +146,7 @@ _web_root() {
 
         read CHOICE
 
-        if [ -d $CHOICE ]; then
-
-            echo "Already exists, $CHOICE"
-
-            NOTEXISTPROJECT=N
-
-            _project
-
-        else
+        if [ ! -d $CHOICE ]; then
 
             echo "Installing $CHOICE..."
 
@@ -175,10 +165,6 @@ _web_root() {
                 source ~/.bashrc
                 
             fi
-
-            NOTEXISTPROJECT=Y
-
-            _project
 
         fi
         
@@ -243,10 +229,6 @@ _project() {
     #
     if [ "$NOTEXISTPROJECT" == "Y" ]; then
 
-        sudo yarn install
-
-    else 
-
         if [ -f ./package.json ]; then
 
             sudo yarn upgrade
@@ -258,7 +240,7 @@ _project() {
             sudo yarn install
 
         fi
-
+        
     fi
 
 }
