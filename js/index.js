@@ -104,16 +104,6 @@ $( document ).ready( function()
 
         }
 
-        $( '#open_agreement' ).click( function()
-        {
-            $('#modal_agreement').on( 'show', function()
-            {
-
-                $('iframe').attr( 'src', _terms);
-              
-            }).modal( {show:true} );
-        });
-
         $('form').submit( function( e )
         {
 
