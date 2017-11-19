@@ -1,5 +1,6 @@
 $( document ).ready( function()
 {
+
 	function handleGoodbyes( _request )
     {
         if( _request.response )
@@ -45,23 +46,36 @@ $( document ).ready( function()
 
         }
 
-        $( 'button[name=agree_terms]' ).click( function() 
+        $( 'button[name=agree_terms]' ).click( function( e ) 
         {
+
+        	var _agree_terms = $( this ).val();
+
+        	var _request = mergeObjects( request(  mergeObjects( { "response": _agree_terms }, _settings ) ) );
+
+        	if( _settings.server.dev )
+	        {
+
+	            console.log( _request );
+
+	        }
 
         	var _response;
 
         	if( $(this).val() == 'no' )
         	{
 
-        		_response = handleGoodbyes( {"response":"no"} );
+        		_response = handleGoodbyes( _request );
 
         	}
         	else
         	{
 
-        		_response = handleInit( {"response":"yes"} );
+        		_response = handleInit( _request );
 
         	}
+
+        	e.preventDefault();
 
         } );
 
