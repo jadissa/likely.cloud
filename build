@@ -190,6 +190,8 @@ _project() {
 
     echo "Configuring $PROJECTPATH..."
 
+    sudo chmod -R 0775 $PROJECTPATH
+
     #
     # Checkout project
     #
@@ -325,7 +327,7 @@ _nginx() {
 
     WORKER_PROCESS=`sudo grep -c 'model name' /proc/cpuinfo`
 
-    sudo cat > /etc/nginx/conf.d/likely.conf <<EOL
+    sudo cat << EOF > /etc/nginx/conf.d/likely.conf
     server {
 
         listen       80;
