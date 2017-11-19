@@ -110,7 +110,7 @@ _user_mod() {
 
     sudo useradd $DEVELOPER -g www -m
 
-    sudo usermod -a -G wheel username
+    sudo usermod -a -G wheel $DEVELOPER
 
 }
 
