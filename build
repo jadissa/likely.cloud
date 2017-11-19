@@ -151,7 +151,7 @@ _update() {
 
     sudo chmod -R 0775 $PROJECTPATH
 
-    sudo chown -R wheel:$GROUP
+    sudo chown -R wheel:$GROUP $PROJECTPATH
 
     #
     # Checkout project
