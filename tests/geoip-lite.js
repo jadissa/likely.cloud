@@ -22,6 +22,10 @@ http.createServer(function (req, res) {
 
     var geo = geoip.lookup(ip);
 
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+
+    res.end(JSON.stringify(geo));
+
     console.log(geo);
     
 }).listen(50451);
