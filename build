@@ -237,8 +237,6 @@ _nginx() {
 
     cp /usr/share/nginx/html/50x.html .
 
-    sudo chmod -R 0755 .
-
     sudo chown -R $USER:wheel $PROJECTPATH
 
     if [ ! -d /etc/nginx/conf.d/ ]; then 
