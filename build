@@ -12,7 +12,7 @@
 #!/bin/bash
 #https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-centos-7
 
-_user_mod() {
+_init() {
 
     echo ' ________                              .____                    .___'
 
@@ -32,6 +32,24 @@ _user_mod() {
 
     echo 'This script will check for needed configurations per run'
 
+    echo 'Create the following:'
+
+    echo 'Project directory:    /var/www/html'
+
+    echo 'Group:                www'
+
+    echo 'User:                 www'
+
+    USER=`whoami`
+
+    if [ "$USER" != "root" ]; then
+
+        echo 'You must run this script as root'
+
+        exit 1
+
+    fi
+
     echo 'Do you agree?'
 
     echo 'OK, Y/N'
@@ -46,46 +64,6 @@ _user_mod() {
 
     fi
 
-    USER=`whoami`
-
-    if [ "$USER" != "root" ]; then
-
-        echo 'You must run this script as root'
-
-        exit 1
-
-    fi
-
-    echo 'What username do you wish to go by?'
-
-    read DEVELOPER
-
-    echo "You chose $DEVELOPER, is that correct?"
-
-    echo 'OK, Y/N'
-
-    read CHOICE
-
-    if [ "$CHOICE" != "Y" ]; then
-
-        _user_mod
-
-    fi
-
-
-    #
-    # Prelims
-    #
-    . /etc/os-release
-
-    ID=$ID
-
-    VER=$VERSION_ID
-
-    PRIVATE_IP_ADDRESS=`curl -w "\n" http://169.254.169.254/metadata/v1/interfaces/private/0/ipv4/address`
-
-    GROUP=www
-
     if [ "$ID" != "centos" ] || [ "$VER" != "7" ]; then
 
         echo 'CentOS 7 required, exiting...'
@@ -94,104 +72,29 @@ _user_mod() {
 
     fi
 
-    if [ ! $(getent group www) ]; then
-
-        sudo groupadd www
-
-        sudo useradd www -g wheel
-
-    fi
-
-
-    #
-    # User specific
-    #
-    echo "Great to meet you $DEVELOPER, we're installing now..."
-
-    sudo useradd $DEVELOPER -g www -m
-
-    sudo usermod -a -G wheel $DEVELOPER
-
 }
 
-_deploy_key() {
+_group_mod() {
 
-    echo 'What is your email address?'
+    GROUP_EXISTS=`cat /etc/group | grep $GROUP`
 
-    read EMAIL 
+    if [ "$GROUP_EXISTS" == "" ]; then
 
-    echo "Generate key for $EMAIL?"
+        sudo groupadd $GROUP
 
-    echo 'OK, Y/N'
-
-    read CHOICE
-
-    if [ "$CHOICE" == "Y" ]; then
-
-        sudo -u $DEVELOPER ssh-keygen -t rsa -b 4096 -C "$EMAIL"
-
-        sudo -u $DEVELOPER eval "$(ssh-agent -s)"
-
-        sudo -u $DEVELOPER ssh-add -k ~/.ssh/id_rsa
+        sudo useradd $GROUP -g wheel
 
     fi
 
 }
 
-_web_root() {
-
-    if [ "$PROJECTPATH"=="" ]; then
-
-        echo 'What is your project path?'
-
-        read CHOICE
-
-        if [ ! -d $CHOICE ]; then
-
-            echo "Installing $CHOICE..."
-
-            PROJECTPATH=$CHOICE
-
-            echo 'OK, Y/N'
-
-            read CHOICE
-
-            if [ "$CHOICE" != "Y" ]; then
-
-                sudo mkdir -p $PROJECTPATH
-
-                echo "export PATH=$PROJECTPATH:$PATH" >>~/.bashrc
-
-                source ~/.bashrc
-                
-            fi
-
-        fi
-        
-    fi
-
-}
-
-_project() {
-
-    echo "Configuring $PROJECTPATH..."
-
-    sudo chmod -R 0775 $PROJECTPATH
-
-    #
-    # Checkout project
-    #
-    # Our project already exists so, not adding here 
-
-    sudo chown -R wheel:$GROUP
-
-    sudo chmod -R 0755 $PROJECTPATH
-
-    stat -c "Rights: %A Perms: %a Username:Owner: %U:%G File: %n Type: %F Bytes: %s" $PROJECTPATH
+_update() {
 
     #
     # Get dependencies
     #
+    echo 'Installing preliminary updates...'
+
     cd /tmp
 
     sudo yum -y update
@@ -222,25 +125,40 @@ _project() {
 
     sudo wget https://dl.yarnpkg.com/rpm/yarn.repo -O /etc/yum.repos.d/yarn.repo
 
+    echo "Configuring $PROJECTPATH..."
+
+    sudo mkdir -p $PROJECTPATH
+
+    echo "export PATH=$PROJECTPATH:$PATH" >>~/.bashrc
+
+    source ~/.bashrc
+
+    sudo chmod -R 0775 $PROJECTPATH
+
+    sudo chown -R wheel:$GROUP
+
+    #
+    # Checkout project
+    #
+    # Our project already exists so, not adding here 
+
+    stat -c "Rights: %A Perms: %a Username:Owner: %U:%G File: %n Type: %F Bytes: %s" $PROJECTPATH
+
     cd $PROJECT_PATH
 
     #
     # Install node dependencies 
     #
-    if [ "$NOTEXISTPROJECT" == "Y" ]; then
+    if [ -f ./package.json ]; then
 
-        if [ -f ./package.json ]; then
+        sudo yarn upgrade
 
-            sudo yarn upgrade
+    else 
 
-        else 
+        sudo yum -y install yarn
 
-            sudo yum -y install yarn
+        sudo yarn install
 
-            sudo yarn install
-
-        fi
-        
     fi
 
 }
@@ -425,13 +343,11 @@ _tests() {
 
 fun() {
 
-    _user_mod
+    _init
 
-    _deploy_key
+    _group_mod
 
-    _web_root
-
-    _project
+    _update
 
     _pm2
 
@@ -440,5 +356,20 @@ fun() {
     _tests
 
 }
+
+#
+# Load
+#
+. /etc/os-release
+
+ID=$ID
+
+VER=$VERSION_ID
+
+PRIVATE_IP_ADDRESS=`curl -w "\n" http://169.254.169.254/metadata/v1/interfaces/private/0/ipv4/address`
+
+GROUP=www
+
+USER=www
 
 fun
