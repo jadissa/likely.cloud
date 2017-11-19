@@ -179,7 +179,7 @@ _update() {
 
     fi
 
-    files=($PROJECTPATH/node_modules/geoip-lite/tmp/*)
+    files=(./node_modules/geoip-lite/tmp/*)
 
     if [ ! -e "${files[0]}" ]; then 
         
