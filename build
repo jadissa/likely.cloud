@@ -181,7 +181,11 @@ _update() {
 
     cd node_modules/geoip-lite/
 
-    npm run-script updatedb
+    if [ ! -f node_modules/geoip-lite/data/*.dat ]; then
+        
+        npm run-script updatedb
+
+    fi
 
     cd $PROJECTPATH
 
