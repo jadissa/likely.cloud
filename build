@@ -114,6 +114,32 @@ _user_mod() {
 
 }
 
+_deploy_key() {
+
+    echo 'What is your email address?'
+
+    read EMAIL 
+
+    echo "Generate key for $EMAIL?"
+
+    echo 'OK, Y/N'
+
+    read CHOICE
+
+    if [ "$CHOICE"!="Y" ]; then
+
+        _deploy_key
+
+    fi
+
+    sudo -u $DEVELOPER ssh-keygen -t rsa -b 4096 -C "$EMAIL"
+
+    sudo -u $DEVELOPER eval "$(ssh-agent -s)"
+
+    sudo -u $DEVELOPER ssh-add -k ~/.ssh/id_rsa
+
+}
+
 _web_root() {
 
     if [ "$PROJECTPATH"=="" ]; then
@@ -416,6 +442,8 @@ _tests() {
 fun() {
 
     _user_mod
+
+    _deploy_key
 
     _web_root
 
