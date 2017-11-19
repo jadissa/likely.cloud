@@ -38,7 +38,7 @@ _user_mod() {
 
     read CHOICE
 
-    if [ "$CHOICE"!="Y" ]; then
+    if [ "$CHOICE" != "Y" ]; then
 
         echo 'Exiting...'
 
@@ -48,7 +48,7 @@ _user_mod() {
 
     USER=`whoami`
 
-    if [ "$USER"!="root" ]; then
+    if [ "$USER" != "root" ]; then
 
         echo 'You must run this script as root'
 
@@ -66,7 +66,7 @@ _user_mod() {
 
     read CHOICE
 
-    if [ "$CHOICE"!="Y" ]; then
+    if [ "$CHOICE" != "Y" ]; then
 
         _user_mod
 
@@ -86,7 +86,7 @@ _user_mod() {
 
     GROUP=www
 
-    if [ "$ID"!="centos" ] || [ "$VER"!="7" ]; then
+    if [ "$ID" != "centos" ] || [ "$VER" != "7" ]; then
 
         echo 'CentOS 7 required, exiting...'
 
@@ -126,7 +126,7 @@ _deploy_key() {
 
     read CHOICE
 
-    if [ "$CHOICE"!="Y" ]; then
+    if [ "$CHOICE" != "Y" ]; then
 
         _deploy_key
 
@@ -166,7 +166,7 @@ _web_root() {
 
             read CHOICE
 
-            if [ "$CHOICE"!="Y" ]; then
+            if [ "$CHOICE" != "Y" ]; then
 
                 sudo mkdir -p $PROJECTPATH
 
@@ -241,7 +241,7 @@ _project() {
     #
     # Install node dependencies 
     #
-    if [ "$NOTEXISTPROJECT"=="Y" ]; then
+    if [ "$NOTEXISTPROJECT" == "Y" ]; then
 
         sudo yarn install
 
