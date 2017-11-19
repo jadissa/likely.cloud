@@ -19,17 +19,7 @@
 body
 {
 
-    background-color:       #f0f;
-
-    background-image:       repeating-linear-gradient( 180deg, #f0f 50%, #00f 50% );
-
-    background-image:       -o-linear-gradient( 180deg, #f0f 50%, #00f 50% );
-
-    background-image:       -moz-linear-gradient( 180deg, #f0f 50%, #00f 50% );
-
-    background-image:       -webkit-linear-gradient( 180deg, #f0f 50%, #00f 50% );
-
-    background-image:       -ms-linear-gradient( 180deg, #f0f 50%, #00f 50% );
+    background-color:       #272822;
 
     height:                 100%;
 
@@ -90,15 +80,15 @@ form
 
     height:                 280px;
 
-    background-image:       repeating-linear-gradient( -50deg, #f0f 50%, #00f 50% );
+    background-image:       repeating-linear-gradient( 0deg, #f0f 50%, #00f 50% );
 
-    background-image:       -o-linear-gradient( -50deg, #f0f 50%, #00f 50% );
+    background-image:       -o-linear-gradient( 0deg, #f0f 50%, #00f 50% );
 
-    background-image:       -moz-linear-gradient( -50deg, #f0f 50%, #00f 50% );
+    background-image:       -moz-linear-gradient( 0deg, #f0f 50%, #00f 50% );
 
-    background-image:       -webkit-linear-gradient( -50deg, #f0f 50%, #00f 50% );
+    background-image:       -webkit-linear-gradient( 0deg, #f0f 50%, #00f 50% );
 
-    background-image:       -ms-linear-gradient( -50deg, #f0f 50%, #00f 50% );
+    background-image:       -ms-linear-gradient( 0deg, #f0f 50%, #00f 50% );
 
 }
 
@@ -112,7 +102,7 @@ form
 }
 
 
-.colorize 
+.subheading 
 {
     color:                  #FFF;
 
@@ -128,5 +118,12 @@ form
    max-height:              34px;
 
    overflow:                scroll; 
+
+}
+
+.center
+{
+
+    text-align: center;
 
 }

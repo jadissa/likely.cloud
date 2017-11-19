@@ -30,21 +30,39 @@
 
     <form action="">
 
-         <h3 class="colorize">likely.cloud(✿◠‿◠)ﾉ゛</h3>
+         <h3 class="subheading">likely.cloud(✿◠‿◠)ﾉ゛</h3>
 
-         <h6 class="colorize">Realtime, instant social media driven matchups</h6>
+         <h6 class="subheading">Realtime, instant social media driven matchups</h6>
 
         <br/>
 
         <div class="form-group" id="login">
 
+            <h6 class="alert alert-danger">This website tracks your geoip and associated information as well as your email address. Will you agree to these terms? </h6>
+
+            <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+
+            <div class="radio">
+
+                <label><input type="radio" name="agree_terms">Yes</label>
+
+            </div>
+
+            <div class="radio">
+
+                <label><input type="radio" name="optradio">No</label>
+
+            </div>
+
             <!--<input type="email" class="form-control" id="email" disabled="disabled" placeholder="email@address.cloud">-->
 
         </div>
 
-        <!--<div class="form-group align-center">
+        <div class="form-group align-center">
 
-            <select name="login_type" class="form-control scroll-select" form="login">
+            <button type="submit" class="form-control btn-default">Submit</button>
+
+            <!--<select name="login_type" class="form-control scroll-select" form="login">
 
                 <option value="discord" selected="selected">Discord</option>
 
