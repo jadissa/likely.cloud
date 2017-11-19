@@ -9,15 +9,16 @@
     "test": "npm test"
   },
   "dependencies": {
-    "express": "^4.16.2",
     "body-parser": "^1.18.2",
+    "bootstrap": "~3.3",
+    "discord-token-generator": "1.0.*",
+    "express": "^4.16.2",
+    "geoip-lite": "^1.2.1",
+    "ip": "^1.1.5",
+    "jquery": "1.9.*",
     "kerberos": "0.0",
     "mongodb": "~2.0",
-    "mongoose": "^4.12.4",
-    "bootstrap": "~3.3",
-    "jquery": "1.9.*",
-    "discord-token-generator": "1.0.*",
-    "geoip-lite": "^1.2.1"
+    "mongoose": "^4.12.4"
   },
   "repository": {
     "type": "git",
