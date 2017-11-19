@@ -167,6 +167,8 @@ _update() {
     #
     if [ -f ./package.json ]; then
 
+        sudo yarn install
+
         sudo yarn upgrade
 
     else 
@@ -186,13 +188,13 @@ _pm2() {
     #
     PM2PROCESSLIST=`pm2 jlist`
     
-    PROCESS_NAME=`pm2 id discord-token-generator`
+    PROCESSNAME=`pm2 id discord-token-generator`
 
-    if [ $PROCESS_NAME!="discord-token-generator" ]; then
+    if [ $PROCESSNAME != "discord-token-generator" ]; then
 
     #    mkdir -p $PROJECTPATH/.pm2/logs
 
-    #    sudo chown -R root:www $PROJECTPATH/.pm2/logs
+    #    sudo chown -R root:$USER $PROJECTPATH/.pm2/logs
 
     #    sudo pm2 --log $PROJECTPATH/.pm2/logs --output $PROJECTPATH/.pm2/logs/output.log --error $PROJECTPATH/.pm2/logs/error.log --pid $PROJECTPATH/.pm2/p.id logrotate tart node_modules/discord-token-generator/server.js --name discord-token-generator
 
@@ -202,7 +204,7 @@ _pm2() {
 
         pm2 save
 
-        sudo chown -R $www:www ~/.pm2
+        sudo chown -R $GROUP:$USER ~/.pm2
 
         pkill -f PM2
 
@@ -237,9 +239,13 @@ _nginx() {
 
     sudo chmod -R 0755 .
 
-    sudo chown -R www:wheel $PROJECTPATH
+    sudo chown -R $USER:wheel $PROJECTPATH
 
-    sudo mkdir /etc/nginx/conf.d/
+    if [ ! -d /etc/nginx/conf.d/ ]; then 
+
+        sudo mkdir /etc/nginx/conf.d/ 
+
+    fi
 
     WORKER_PROCESS=`sudo grep -c 'model name' /proc/cpuinfo`
 
@@ -285,7 +291,7 @@ EOF
     # Fix the permission issue that prevents nginx from running
     sudo setenforce Permissive
 
-    sudo chcon -Rt httpd_sys_content_t /var/www/html
+    sudo chcon -Rt httpd_sys_content_t $PROJECTPATH
 
     sudo setenforce Enforcing
 
@@ -298,18 +304,11 @@ _tests() {
     #
     # Globally install react for UI
     #
-    #cd /var/www/html
+    #cd $PROJECTPATH
 
     #sudo npm install -g react-composer create-react-app
 
     #create-react-app app
-
-
-    ##
-    ## Head back to project root
-    ##
-    #cd ../..
-
 
     ##
     ## Install mongodb
@@ -345,12 +344,15 @@ _tests() {
     # Tests
     #
     netstat -tln
+
     pm2 status
 
     sudo nginx -t
 
     pm2 start tests/server.js
+
     curl http://$PRIVATE_IP_ADDRESS:8080
+
     pm2 stop tests/server.js
 
     sudo systemctl status nginx
