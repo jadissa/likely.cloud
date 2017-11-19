@@ -104,8 +104,6 @@ $( document ).ready( function()
 
         }
 
-        var _terms = '/terms.html';
-
         $( '#open_agreement' ).click( function()
         {
             $('#modal_agreement').on( 'show', function()
@@ -113,9 +111,7 @@ $( document ).ready( function()
 
                 $('iframe').attr( 'src', _terms);
               
-            });
-
-            $('#modal_agreement').modal( {show:true} )
+            }).modal( {show:true} );
         });
 
         $('form').submit( function( e )
