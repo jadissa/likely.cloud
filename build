@@ -151,7 +151,7 @@ _update() {
 
     sudo chmod -R 0775 $PROJECTPATH
 
-    sudo chown -R wheel:$GROUP $PROJECTPATH
+    sudo chown -R $USER:wheel $PROJECTPATH
 
     #
     # Checkout project
@@ -179,15 +179,17 @@ _update() {
 
     fi
 
-    cd node_modules/geoip-lite/
+    files=($PROJECTPATH/node_modules/geoip-lite/tmp/*)
 
-    if [ ! -f $PROJECTPATH/node_modules/geoip-lite/tmp/*.zip ]; then
+    if [ ! -e "${files[0]}" ]; then 
         
+        cd node_modules/geoip-lite/
+
         npm run-script updatedb
 
-    fi
+        cd $PROJECTPATH
 
-    cd $PROJECTPATH
+    fi
 
 }
 
