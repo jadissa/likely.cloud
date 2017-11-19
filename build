@@ -115,7 +115,7 @@ _update() {
 
     sudo yum -y update
 
-    sudo yum -y install nginx wget http-server libicu-dev epel-release policycoreutils-python net-tools git vim 
+    sudo yum -y install nginx wget http-server libicu-dev epel-release policycoreutils-python net-tools git vim mlocate
 
     sudo yum -y groupinstall 'Development Tools'
 
