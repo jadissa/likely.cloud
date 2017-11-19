@@ -43,6 +43,16 @@ form
 }
 
 
+.header
+{
+
+    padding: 20px;
+
+    background-color: #f0f;
+
+}
+
+
 .btn-default, .btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active
 {
 
@@ -75,7 +85,6 @@ form
 
 .form_bg 
 {
-    margin-top:             20px;
 
     padding:                20px;
 
@@ -104,7 +113,7 @@ form
 .row 
 {
 
-    margin:                 0;
+    margin:                 20px;
 
     margin-top:             20px;
 
@@ -134,50 +143,5 @@ form
 {
 
     text-align: center;
-
-}
-
-.modal, .modal-body
-{
-
-    margin: 0 !important;
-
-    padding: 0 !important;
-
-}
-
-.modal-header
-{
-
-    background-color:       #f0f;
-
-    border:                 0;
-
-}
-
-.modal-footer
-{
-
-    background-color:       #00f;
-
-    border:                 0;
-
-}
-
-
-#modal_agreement
-{
-
-    color:                  #FFF;
-
-    text-shadow:            0px 2px 4px #444444;
-
-}
-
-
-#modal_agreement .btn
-{
-
-    background-color: #272822;
 
 }
