@@ -233,11 +233,9 @@ _nginx() {
     #
     # Configure nginx
     #
-    cp /usr/share/nginx/html/404.html .
+    cp -rf /usr/share/nginx/html/404.html .
 
-    cp /usr/share/nginx/html/50x.html .
-
-    sudo chown -R $USER:wheel $PROJECTPATH
+    cp -rf /usr/share/nginx/html/50x.html .
 
     if [ ! -d /etc/nginx/conf.d/ ]; then 
 
@@ -268,6 +266,8 @@ _nginx() {
     }
 EOF
 
+    sudo nginx -t
+
     sudo chmod -R 0766 /var/log/nginx
 
     sudo chown -R nginx:nginx /var/log/nginx
@@ -278,15 +278,12 @@ EOF
 
     PRIVATE_IP_ADDRESS=`curl -s -w "\n" http://169.254.169.254/metadata/v1/interfaces/private/0/ipv4/address`
 
-    sudo systemctl start nginx
-
     sudo systemctl restart nginx
 
-    sudo /etc/nginx/nginx.conf
+    sudo cat /etc/nginx/nginx.conf
 
     sudo cat /var/log/nginx/error.log
 
-    # Fix the permission issue that prevents nginx from running
     sudo setenforce Permissive
 
     sudo chcon -Rt httpd_sys_content_t $PROJECTPATH
@@ -337,10 +334,6 @@ _tests() {
 
     #use likelycloud
 
-
-    #
-    # Tests
-    #
     netstat -tln
 
     pm2 status
