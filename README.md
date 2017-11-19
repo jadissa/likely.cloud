@@ -13,6 +13,7 @@ platform agnostic
 DB should be offloaded somehow into memory, as much as possible
 user confirms location
 shows confirmed locations from others matching already filtered stats
+package.json https://medium.com/@Nasita_Haque/package-json-cheat-sheet-4fe1b8baa102
 
 ### Restrictions
 User must declare 18+,
@@ -60,6 +61,20 @@ sex
 ### Names
 ### @todo: 
 Integrate
+
+https://img42.com/
+
+https://clyp.it/api
+
+https://justentrepreneurs.co.uk/entrepreneurs-network/
+
+https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=2&cad=rja&uact=8&ved=0ahUKEwi-9uv8hcrXAhXCw1QKHWXCAaUQFgg6MAE&url=http%3A%2F%2Ftechdev-solutions.github.io%2Ftrackr-api-documentation%2Fgetting_started.html&usg=AOvVaw0mzbNknmYkGLYLbWd3Jd-B
+
+https://www.thetrackr.com/privacy-policy/?_ga=2.225942553.2036808230.1511065553-1296154569.1511065553&_gac=1.220632682.1511065554.Cj0KCQiA0b_QBRCeARIsAFntQ9oDkOy2z22RnmoW9aDIoD47KIWTXUYr_9HPtb8mIdGMjj3X2NH1KPgaAkmzEALw_wcB
+
+https://www.npmjs.com/package/trackr
+
+https://mapzen.com/products/
 
 https://www.objectrocket.com/
 

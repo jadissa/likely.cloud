@@ -16,7 +16,8 @@
     "mongoose": "^4.12.4",
     "bootstrap": "~3.3",
     "jquery": "1.9.*",
-    "discord-token-generator": "1.0.*"
+    "discord-token-generator": "1.0.*",
+    "npm install geoip-lite": "^1.2.1"
   },
   "repository": {
     "type": "git",

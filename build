@@ -1,133 +1,460 @@
+
+#
+# ________                              .____                    .___
+# \______ \_______  ____ _____    _____ |    |    ____  __ __  __| _/
+#  |    |  \_  __ _/ __ \\__  \  /     \|    |   /  _ \|  |  \/ __ | 
+#  |    `   |  | \\  ___/ / __ \|  Y Y  |    |__(  <_> |  |  / /_/ | 
+# /_______  |__|   \___  (____  |__|_|  |_______ \____/|____/\____ | 
+#         \/           \/     \/      \/        \/                \/ 
+#
+#                                                              © 2017
+
 #!/bin/bash
 #https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-centos-7
 
-USER=`whoami`
+_user_mod() {
 
-#
-# Get dependencies
-#
-cd ~
+    echo ' ________                              .____                    .___'
 
-sudo su - root
+    echo '\______ \_______  ____ _____    _____ |    |    ____  __ __  __| _/'
 
-sudo yum -y update
+    echo ' |    |  \_  __ _/ __ \\__  \  /     \|    |   /  _ \|  |  \/ __ |'
 
-sudo yum -y install nginx wget http-server libicu-dev epel-release net-tools git vim 
+    echo ' |    `   |  | \\  ___/ / __ \|  Y Y  |    |__(  <_> |  |  / /_/ |'
 
-sudo yum -y groupinstall 'Development Tools'
+    echo '/_______  |__|   \___  (____  |__|_|  |_______ \____/|____/\____ |'
 
-sudo yum -y install gcc-c++ make
+    echo '        \/           \/     \/      \/        \/                \/'
 
-sudo curl -sL https://rpm.nodesource.com/setup_8.x | sudo -E bash -
+    echo 
 
-sudo yum install -y nodejs
+    echo '                                                              © 2017'
 
-which node
+    echo 'This script will check for needed configurations per run'
 
-node -v
+    echo 'Do you agree?'
 
-npm -v
+    echo 'OK, Y/N'
 
-sudo npm install -g forever
+    read CHOICE
 
-sudo systemctl start nginx
+    if [ "$CHOICE"!="Y" ]; then
 
-sudo systemctl enable nginx
+        echo 'Exiting...'
 
-sudo npm install -g pm2@latest -g http-server
+        exit 1
 
-sudo wget https://dl.yarnpkg.com/rpm/yarn.repo -O /etc/yum.repos.d/yarn.repo
+    fi
 
-sudo yum -y install yarn
+    USER=`whoami`
 
+    if [ "$USER"!="root" ]; then
 
-#
-# Setting up web root
-#
-sudo mkdir -p /var/www/html
+        echo 'You must run this script as root'
 
-sudo chown -R www:wheel /var/www/html
+        exit 1
 
-cd /var/www/html
+    fi
 
-echo 'export PATH=/var/www/html:$PATH' >>~/.bashrc
+    echo 'What username do you wish to go by?'
 
-source ~/.bashrc
+    read DEVELOPER
 
-curl -w "\n" http://169.254.169.254/metadata/v1/interfaces/private/0/ipv4/address
+    echo "You chose $DEVELOPER, is that correct?"
 
-sudo yarn install
+    echo 'OK, Y/N'
 
+    read CHOICE
 
-#
-# Install node dependencies 
-#
-sudo yarn install
+    if [ "$CHOICE"!="Y" ]; then
 
-sudo su - root
+        _user_mod
 
-sudo pm2 start node_modules/discord-token-generator/server.js --name discord-token-generator
-
-pm2 ls
-
-pm2 save
-
-sudo su - $USER 
+    fi
 
 
-# Fix the permission issue that prevents nginx from running
-sudo setenforce Permissive
+    #
+    # Prelims
+    #
+    . /etc/os-release
 
-sudo chcon -Rt httpd_sys_content_t /var/www/html
+    ID=$ID
 
-sudo setenforce Enforcing
+    VER=$VERSION_ID
 
-sudo systemctl restart nginx
+    PRIVATE_IP_ADDRESS`curl -w "\n" http://169.254.169.254/metadata/v1/interfaces/private/0/ipv4/address`
 
+    GROUP=www
 
-#
-# Globally nstall react for UI
-#
-cd /var/www/html
+    if [ "$ID"!="centos" ] || [ "$VER"!="7" ]; then
 
-sudo npm install -g react-composer create-react-app
+        echo 'CentOS 7 required, exiting...'
 
-create-react-app app
+        exit 1
 
+    fi
 
-##
-## Head back to project root
-##
-#cd ../..
+    if [ ! $(getent group www) ]; then
 
+        sudo groupadd www
 
-##
-## Install mongodb
-##
-#npm install 
+        sudo useradd www -g wheel
 
-## https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-centos-7
-#sudo yum -y install mongodb-org
-
-#sudo systemctl start mongod
-
-#cd tests
-
-#node create_mongodb.js
-
-#npm install mongoose --save
-
-#npm install body-parser --save
+    fi
 
 
-##
-## Configure mongodb
-##
-#mongod --port 27017 --dbpath /var/lib/mongo
+    #
+    # User specific
+    #
+    echo "Great to meet you $DEVELOPER, we're installing now..."
 
-#sudo systemctl start mongod
+    sudo useradd $DEVELOPER -g www -m
+
+    sudo usermod -a -G wheel username
+
+}
+
+_deploy_key() {
+
+    echo 'What is your email address?'
+
+    read EMAIL 
+
+    echo "Generate key for $EMAIL?"
+
+    echo 'OK, Y/N'
+
+    read CHOICE
+
+    if [ "$CHOICE"!="Y" ]; then
+
+        _deploy_key
+
+    fi
+
+    sudo -u $DEVELOPER ssh-keygen -t rsa -b 4096 -C "$EMAIL"
+
+    sudo -u $DEVELOPER eval "$(ssh-agent -s)"
+
+    sudo -u $DEVELOPER ssh-add -k ~/.ssh/id_rsa
+
+}
+
+_web_root() {
+
+    if [ "$PROJECTPATH"=="" ]; then
+
+        echo 'What is your project path?'
+
+        read CHOICE
+
+        if [ -d $CHOICE ]; then
+
+            echo "Already exists, $CHOICE"
+
+            NOTEXISTPROJECT=N
+
+            _project
+
+        else
+
+            echo "Installing $CHOICE..."
+
+            PROJECTPATH=$CHOICE
+
+            echo 'OK, Y/N'
+
+            read CHOICE
+
+            if [ "$CHOICE"!="Y" ]; then
+
+                sudo mkdir -p $PROJECTPATH
+
+                echo "export PATH=$PROJECTPATH:$PATH" >>~/.bashrc
+
+                source ~/.bashrc
+                
+            fi
+
+            NOTEXISTPROJECT=Y
+
+            _project
+
+        fi
+        
+    fi
+
+}
+
+_project() {
+
+    echo "Configuring $PROJECTPATH..."
+
+    #
+    # Checkout project
+    #
+    # Our project already exists so, not adding here 
+
+    sudo chown -R wheel:$GROUP
+
+    sudo chmod -R 0755 $PROJECTPATH
+
+    stat -c "Rights: %A Perms: %a Username:Owner: %U:%G File: %n Type: %F Bytes: %s" $PROJECTPATH
+
+    #
+    # Get dependencies
+    #
+    cd /tmp
+
+    sudo yum -y update
+
+    sudo yum -y install nginx wget http-server libicu-dev epel-release policycoreutils-python net-tools git vim 
+
+    sudo yum -y groupinstall 'Development Tools'
+
+    sudo yum -y install gcc-c++ make
+
+    sudo curl -sL https://rpm.nodesource.com/setup_8.x | sudo -E bash -
+
+    sudo yum install -y nodejs
+
+    which node
+
+    node -v
+
+    npm -v
+
+    sudo npm install -g forever
+
+    sudo systemctl start nginx
+
+    sudo systemctl enable nginx
+
+    sudo npm install -g pm2@latest -g http-server
+
+    sudo wget https://dl.yarnpkg.com/rpm/yarn.repo -O /etc/yum.repos.d/yarn.repo
+
+    cd $PROJECT_PATH
+
+    #
+    # Install node dependencies 
+    #
+    if [ "$NOTEXISTPROJECT"=="Y" ]; then
+
+        sudo yarn install
+
+    else 
+
+        if [ -f ./package.json ]; then
+
+            sudo yarn upgrade
+
+        else 
+
+            sudo yum -y install yarn
+
+            sudo yarn install
+
+        fi
+
+    fi
+
+}
+
+_pm2() {
+
+    #
+    # Manage pm2
+    #
+    PM2PROCESSLIST=`pm2 jlist`
+    
+    PROCESS_NAME=`pm2 id discord-token-generator`
+
+    if [ $PROCESS_NAME!="discord-token-generator" ]; then
+
+    #    mkdir -p $PROJECTPATH/.pm2/logs
+
+    #    sudo chown -R root:www $PROJECTPATH/.pm2/logs
+
+    #    sudo pm2 --log $PROJECTPATH/.pm2/logs --output $PROJECTPATH/.pm2/logs/output.log --error $PROJECTPATH/.pm2/logs/error.log --pid $PROJECTPATH/.pm2/p.id logrotate tart node_modules/discord-token-generator/server.js --name discord-token-generator
+
+        pm2 start
+
+        pm2 ls
+
+        pm2 save
+
+        sudo chown -R $www:www ~/.pm2
+
+        pkill -f PM2
+
+        pm2 resurrect
+
+        pm2 logs -h
+
+        pm2 logs --raw discord-token-generator
+
+    else
+
+        pm2 ls 
+
+        pm2 logs --nostream
+
+        #pm2 logs
+
+    fi
+
+}
 
 
-#use likelycloud
+
+_nginx() {
+
+    #
+    # Configure nginx
+    #
+    cp /usr/share/nginx/html/404.html .
+
+    cp /usr/share/nginx/html/50x.html .
+
+    sudo chmod -R 0755 .
+
+    sudo chown -R www:wheel $PROJECTPATH
+
+    sudo mkdir /etc/nginx/conf.d/
+
+    WORKER_PROCESS=`sudo grep -c 'model name' /proc/cpuinfo`
+
+    sudo cat > /etc/nginx/conf.d/likely.conf <<EOL
+    server {
+
+        listen       80;
+        server_name  likely.cloud www.likely.cloud;
+
+        location / {
+            root   $PROJECTPATH;
+            index  index.html;
+            try_files $uri $uri/ =404;
+        }    
+       
+        error_page   500 502 503 504  /50x.html;
+
+        location = /50x.html {
+            root   html;
+        }
+
+    }
+    EOL
+
+    sudo chmod -R 0766 /var/log/nginx
+
+    sudo chown -R nginx:nginx /var/log/nginx
+
+    sudo touch /run/nginx.pid
+
+    sudo chown nginx:nginx /run/nginx.pid
+
+    PRIVATE_IP_ADDRESS=`curl -s -w "\n" http://169.254.169.254/metadata/v1/interfaces/private/0/ipv4/address`
+
+    sudo systemctl start nginx
+
+    sudo systemctl restart nginx
+
+    sudo /etc/nginx/nginx.conf
+
+    sudo cat /var/log/nginx/error.log
+
+    # Fix the permission issue that prevents nginx from running
+    sudo setenforce Permissive
+
+    sudo chcon -Rt httpd_sys_content_t /var/www/html
+
+    sudo setenforce Enforcing
+
+    sudo systemctl restart nginx
+
+}
+
+_tests() {
+
+    #
+    # Globally install react for UI
+    #
+    #cd /var/www/html
+
+    #sudo npm install -g react-composer create-react-app
+
+    #create-react-app app
 
 
+    ##
+    ## Head back to project root
+    ##
+    #cd ../..
+
+
+    ##
+    ## Install mongodb
+    ##
+    #npm install 
+
+    ## https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-centos-7
+    #sudo yum -y install mongodb-org
+
+    #sudo systemctl start mongod
+
+    #cd tests
+
+    #node create_mongodb.js
+
+    #npm install mongoose --save
+
+    #npm install body-parser --save
+
+
+    ##
+    ## Configure mongodb
+    ##
+    #mongod --port 27017 --dbpath /var/lib/mongo
+
+    #sudo systemctl start mongod
+
+
+    #use likelycloud
+
+
+    #
+    # Tests
+    #
+    netstat -tln
+    pm2 status
+
+    sudo nginx -t
+
+    pm2 start tests/server.js
+    curl http://$PRIVATE_IP_ADDRESS:8080
+    pm2 stop tests/server.js
+
+    sudo systemctl status nginx
+
+}
+
+fun() {
+
+    _user_mod
+
+    _deploy_key
+
+    _web_root
+
+    _project
+
+    _pm2
+
+    _nginx
+
+    _tests
+
+}
+
+fun
