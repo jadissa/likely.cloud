@@ -346,7 +346,7 @@ _nginx() {
         }
 
     }
-    EOF
+EOF
 
     sudo chmod -R 0766 /var/log/nginx
 
