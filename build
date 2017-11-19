@@ -20,6 +20,8 @@ ID=$ID
 
 VER=$VERSION_ID
 
+PROJECTPATH=/var/www/html
+
 PRIVATE_IP_ADDRESS=`curl -w "\n" http://169.254.169.254/metadata/v1/interfaces/private/0/ipv4/address`
 
 GROUP=www
@@ -158,7 +160,7 @@ _update() {
 
     stat -c "Rights: %A Perms: %a Username:Owner: %U:%G File: %n Type: %F Bytes: %s" $PROJECTPATH
 
-    cd $PROJECT_PATH
+    cd $PROJECTPATH
 
     #
     # Install node dependencies 
