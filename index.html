@@ -38,24 +38,12 @@
 
         <div class="form-group" id="login">
 
-            <h6 class="alert alert-danger">This website tracks your geoip and associated information as well as your email address. Will you agree to these terms? </h6>
+            <h6 class="alert alert-danger" role="alert">This website tracks your geoip and associated information as well as your email address. Will you agree to these terms? <a href="#">Learn More</a></h6>
 
-            <div class="radio">
+            <button name="agree_terms" value="yes" class="form-control btn-default" href="#" role="button">Yes</button>
 
-                <label><input type="radio" name="agree_terms">Yes</label>
+            <button name="agree_terms" value="no" type="submit" class="form-control btn-default">No</button>
 
-            </div>
-
-            <div class="radio">
-
-                <label><input type="radio" name="optradio">No</label>
-
-            </div>
-            
-            <button class="form-control btn-default" href="#" role="button">Learn more</button>
-
-            <button type="submit" class="form-control btn-default">Submit</button>
-            
             <!--<input type="email" class="form-control" id="email" disabled="disabled" placeholder="email@address.cloud">-->
 
         </div>
