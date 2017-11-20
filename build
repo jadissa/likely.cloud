@@ -306,6 +306,27 @@ EOF
 
 }
 
+_mongodb() {
+
+sudo cat << EOF > /etc/yum.repos.d/mongodb-org.repo
+[mongodb-org-3.4]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.4/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://www.mongodb.org/static/pgp/server-3.4.asc
+EOF
+
+sudo yum repolist
+
+sudo yum -y install mongodb-org
+
+sudo systemctl start mongod
+
+mongod --port 27017 --dbpath /var/lib/mongo
+
+}
+
 _tests() {
 
     #
@@ -316,35 +337,6 @@ _tests() {
     #sudo npm install -g react-composer create-react-app
 
     #create-react-app app
-
-    ##
-    ## Install mongodb
-    ##
-    #npm install 
-
-    ## https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-centos-7
-    #sudo yum -y install mongodb-org
-
-    #sudo systemctl start mongod
-
-    #cd tests
-
-    #node create_mongodb.js
-
-    #npm install mongoose --save
-
-    #npm install body-parser --save
-
-
-    ##
-    ## Configure mongodb
-    ##
-    #mongod --port 27017 --dbpath /var/lib/mongo
-
-    #sudo systemctl start mongod
-
-
-    #use likelycloud
 
     netstat -tln
 
@@ -364,6 +356,8 @@ _tests() {
 
     sudo systemctl status nginx
 
+    sudo systemctl status mongodb
+
 }
 
 fun() {
@@ -377,6 +371,8 @@ fun() {
     _pm2
 
     _nginx
+
+    _mongodb
 
     _tests
 
