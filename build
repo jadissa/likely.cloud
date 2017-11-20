@@ -220,6 +220,8 @@ _pm2() {
 
         pkill -f PM2
 
+        pm2 delete all
+
         pm2 resurrect
 
         pm2 logs -h
