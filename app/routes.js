@@ -2,7 +2,7 @@ var url = require( 'url' );
 
 var fs = require( 'fs' );
 
-var geoip = require('../tests/geoip-lite');
+var geoip = require('./tests/geoip-lite');
 
 function renderHTML( path, resp ) {
 
@@ -43,7 +43,7 @@ module.exports = {
 
 			case '/geoip':
 
-				eval( fs.readFileSync('../tests/geoip-lite.js') +'' );
+				eval( fs.readFileSync('./tests/geoip-lite.js') +'' );
 
 				console.log( geoip );
 				
