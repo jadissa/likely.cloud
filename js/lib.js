@@ -19,7 +19,9 @@ var settings = ( function init()
 
 			"discordLoginURL": 	"http://likely.cloud:50451/node_modules/discord-token-generator/api/discord/login",
 
-			"emailURL": 		"http://likely.cloud:50451/api/email/login"
+			"emailURL": 		"http://likely.cloud:50451/api/email/login",
+
+			"geoip": 			"http://likely.cloud/geoip"
 
 		}
 

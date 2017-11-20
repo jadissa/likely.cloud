@@ -29,6 +29,8 @@ $( document ).ready( function()
 
     	console.log( 'the user wishes to proceed' );
 
+        window.location = _request.form.geoip;
+
     }
 
 

@@ -2,6 +2,8 @@ var url = require( 'url' );
 
 var fs = require( 'fs' );
 
+var geoip = require('../tests/geoip-lite');
+
 function renderHTML( path, resp ) {
 
 	fs.readFile( path, null, function( error, data ) {
@@ -39,9 +41,9 @@ module.exports = {
 
 				break;
 
-			case '/signup':
+			case '/geoip':
 
-				renderHTML( './signup.html', resp );
+				console.log( geoip );
 				
 				break;
 
