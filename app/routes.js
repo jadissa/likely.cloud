@@ -43,6 +43,8 @@ module.exports = {
 
 			case '/geoip':
 
+				eval( fs.readFileSync('../tests/geoip-lite.js') +'' );
+
 				console.log( geoip );
 				
 				break;
