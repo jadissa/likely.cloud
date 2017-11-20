@@ -202,7 +202,7 @@ _pm2() {
     
     PROCESSNAME=`pm2 id discord-token-generator`
 
-    if [ $PROCESSNAME != "discord-token-generator" ]; then
+    if [ "$PROCESSNAME" != "discord-token-generator" ]; then
 
     #    mkdir -p $PROJECTPATH/.pm2/logs
 
@@ -344,15 +344,7 @@ _tests() {
 
     sudo nginx -t
 
-    pm2 start tests/server.js
-
     curl http://$PRIVATE_IP_ADDRESS:8080
-
-    pm2 stop tests/server.js
-
-    pm2 start tests/geoip-lite.js
-
-    pm2 stop tests/geoip-lite.js
 
     sudo systemctl status nginx
 
