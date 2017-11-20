@@ -224,10 +224,6 @@ _pm2() {
 
         pm2 resurrect
 
-        pm2 logs -h
-
-        pm2 logs --raw discord-token-generator
-
     else
 
         pm2 ls 
