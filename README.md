@@ -2,7 +2,7 @@
 # likely.cloud(✿◠‿◠)ﾉ゛
 
 ### Description
-Realtime, instant social media driven matchups
+Realtime, instant connections
 
 ### Methodologies
 SSO, Audio, GeoIP based visual mapping, local storage and remote, audio clips, obfuscated communications
@@ -109,34 +109,3 @@ solr. https://www.tutorialspoint.com/apache_solr/apache_solr_overview.htm
 img42. https://img.betapage.co/logo/79450417-79450667.png?w=200&h=200&fit=crop
 
 discourse. https://en.wikipedia.org/wiki/Discourse_(software)
-
-not.likely.cloud
-its.likely.cloud
-very.likely.cloud
-likely.cloud
-like.me
-like.ly
-actual.ly
-close.ly
-daring.ly
-daring.you 
-daring.app
-fateful.ly
-weshould.click
-urlike.me
-wehave
-accidentallyonpurpo.se
-puposeful.ly
-justinti.me
-someonelike.us
-fateful.me
-fateful.click
-someonelike.us
-inthe.cloud
-
-### Donain Registration
-.me domains: https://domain.me/?query=someonelike
-.ly domains: http://digitalgroup.ly/en/registration-form
-
-### Regularly Used README
-https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/
