@@ -6,15 +6,17 @@
 
 <meta charset="utf-8">
 
-<title>likely.cloud(◠‿◠)ﾉ゛&copy;2017</title>
+<title>likely.cloud(◠‿◠)ﾉ゛</title>
 
-<meta name="description" content="Realtime, instant social media driven matchups" />
+    <meta name="description" content="Realtime, instant connections. Connecting people based on aggregated user-driven media" />
+
+    <meta name="keywords" content="likely.cloud, realtime, instant connections" />
 
     <meta http-equiv="Access-Control-Allow-Origin" content="*" />
 
     <meta name="format-detection" />
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, shrink-to-fit=no" />
 
     <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
 
@@ -24,45 +26,91 @@
 
 <body>
 
-    <div class="row" />
+    <div class="row"></div>
 
-    <div class="form_bg">
+    <div class="row">
 
-        <form action="">
+        <div class="form_bg">
 
-             <h3 class="subheading">likely.cloud(✿◠‿◠)ﾉ゛</h3>
+            <form id="loginform" class="form-horizontal" role="form" action="/login">
 
-             <h6 class="subheading">Realtime, instant social media driven matchups</h6>
+                <div class="row">
 
-            <br/>
+                     <h3 class="title">likely.cloud(✿◠‿◠)ﾉ゛</h3>
 
-            <div class="form-group" id="login">
+                     <h6 class="description">Realtime, instant connections</h6>
 
-                <h6 id="terms" class="alert alert-danger" role="alert">This website tracks your personal information. Will you agree to these terms? <a href="/terms.html">Learn More</a></h6>
+                </div>
 
-                <!--<input type="email" class="form-control" id="email" disabled="disabled" placeholder="email@address.cloud">-->
+                <div class="form-group">
 
-            </div>
+                    <div class="input-group">
 
-            <!--<div class="form-group align-center">
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+
+                        <input id="login-username" type="text" class="form-control" name="username" value="" placeholder="username or email" disabled="disabled">
+
+                    </div>
+
+                    <div class="input-group">
+
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+
+                        <input id="login-password" type="password" class="form-control" name="password" placeholder="password" disabled="disabled">
+
+                    </div>
+
+                    <div class="input-group">
+
+                        <div class="checkbox inline">
+
+                            <label>
+
+                                <input id="login-remember" type="checkbox" name="remember" value="1" disabled="disabled"> Remember me
+
+                            </label>
+
+                            <!--
+                            <div class="inline margin-left-30">
+
+                                <a href="#">Forgot password?</a>
+
+                            </div>
+                            -->
+
+                        </div>
+
+                        <div class="inline">
 
 
 
-                <select name="login_type" class="form-control scroll-select" form="login">
+                        </div>
 
-                    <option value="discord" selected="selected">Discord</option>
+                    </div>
 
-                    <option value="facebook" disabled="disabled">Facebook</option>
+                    <div class="input-group center">
 
-                    <option value="sso" disabled="disabled">SSO</option>
+                        <button href="#" class="button form-control btn-default" disabled="disabled">Login</button>
 
-                </select>
+                        <button href="#" class="button form-control btn-default" disabled="disabled">Signup with social media</button>
 
-            </div>
+                    </div>
 
-            <button type="submit" class="form-control btn-default">Submit</button>-->
+                </div>
 
-        </form>
+            </form>
+
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div class="footer center x-small">
+
+            <a href="/terms.html">Privacy Policy</a> &copy;2017
+
+        </div>
 
     </div>
 

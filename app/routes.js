@@ -6,59 +6,59 @@ var geoip = require('./tests/geoip-lite');
 
 function renderHTML( path, resp ) {
 
-	fs.readFile( path, null, function( error, data ) {
+    fs.readFile( path, null, function( error, data ) {
 
-		if( error ) {
+        if( error ) {
 
-			resp.writeHead( 404 );
+            resp.writeHead( 404 );
 
-			resp.write( 'File not found!' );
+            resp.write( 'File not found!' );
 
-		} else {
+        } else {
 
-			resp.write( data );
-		}
+            resp.write( data );
+        }
 
-		resp.end();
+        resp.end();
 
-	});
+    });
 
 }
 
 module.exports = {
 
-	handleRequest: function( req, resp) {
+    handleRequest: function( req, resp) {
 
-		resp.writeHead( 200, {'Content-Type': 'text/html'} );
+        resp.writeHead( 200, {'Content-Type': 'text/html'} );
 
-		var path = url.parse( req.url ).pathname;
+        var path = url.parse( req.url ).pathname;
 
-		switch( path ) {
+        switch( path ) {
 
-			case '/':
+            case '/':
 
-				renderHTML( './index.html', resp );
+                renderHTML( './index.html', resp );
 
-				break;
+                break;
 
-			case '/geoip':
+            case '/geoip':
 
-				eval( fs.readFileSync('./tests/geoip-lite.js') +'' );
+                eval( fs.readFileSync('./tests/geoip-lite.js') +'' );
 
-				console.log( geoip );
-				
-				break;
+                console.log( geoip );
 
-			default: 
+                break;
 
-				resp.writeHead( 404 );
+            default:
 
-				resp.write( 'Route note defined' );
+                resp.writeHead( 404 );
 
-				resp.end();
+                resp.write( 'Route note defined' );
 
-		}
+                resp.end();
 
-	}
+        }
+
+    }
 
 }
