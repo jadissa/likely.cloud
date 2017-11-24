@@ -243,11 +243,7 @@ _nginx() {
     #
     # Configure nginx
     #
-    cp -rf /usr/share/nginx/html/404.html .
-
-    cp -rf /usr/share/nginx/html/50x.html .
-
-    if [ ! -d /etc/nginx/conf.d/ ]; then 
+    if [ ! -d /etc/nginx/conf.d/ ]; then
 
         sudo mkdir /etc/nginx/conf.d/ 
 
@@ -255,26 +251,70 @@ _nginx() {
 
     WORKER_PROCESS=`sudo grep -c 'model name' /proc/cpuinfo`
 
-    sudo cat << EOF > /etc/nginx/conf.d/likely.conf
-    server {
+    sudo cat << EOF > /etc/nginx/nginx.conf
+    worker_processes  ${WORKER_PROCESS};
 
-        listen       80;
-        server_name  likely.cloud www.likely.cloud;
+    pid        /run/nginx.pid;
 
-        location / {
-            root   ${PROJECTPATH};
-            index  index.html;
-            try_files $uri $uri/ =404;
-        }    
-       
-        error_page   500 502 503 504  /50x.html;
+    events {
+        worker_connections  1024;
+    }
 
-        location = /50x.html {
-            root   html;
+    http {
+
+        ##
+        # Basic Settings
+        ##
+        sendfile on;
+        tcp_nopush on;
+        tcp_nodelay on;
+        keepalive_timeout 65;
+        types_hash_max_size 2048;
+
+        include /etc/nginx/mime.types;
+        default_type application/octet-stream;
+
+        ##
+        # Logging Settings
+        ##
+        access_log /var/log/nginx/access.log;
+        error_log /var/log/nginx/error.log;
+
+        ##
+        # Gzip Settings
+        ##
+        gzip on;
+        gzip_disable "msie6";
+
+        include /etc/nginx/conf.d/*.conf;
+
+        server {
+            listen 80 default_server;
+            listen [::]:80 default_server;
+            server_name _;
+
+            root /usr/share/nginx/html;
+
+            location / {
+            }
+
         }
 
     }
-EOF
+    EOF
+
+    sudo cat << EOF > /etc/nginx/conf.d/likely.conf
+    server {
+        listen 80;
+        listen [::]:80;
+        server_name likely.cloud;
+
+        location / {
+            proxy_pass "http://localhost:50451/";
+        }
+
+    }
+    EOF
 
     sudo nginx -t
 
@@ -300,28 +340,30 @@ EOF
 
     sudo setenforce Enforcing
 
+    setsebool -P httpd_can_network_connect true solved my issue
+
     sudo systemctl restart nginx
 
 }
 
 _mongodb() {
 
-sudo cat << EOF > /etc/yum.repos.d/mongodb-org.repo
-[mongodb-org-3.4]
-name=MongoDB Repository
-baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.4/x86_64/
-gpgcheck=1
-enabled=1
-gpgkey=https://www.mongodb.org/static/pgp/server-3.4.asc
-EOF
+    sudo cat << EOF > /etc/yum.repos.d/mongodb-org.repo
+    [mongodb-org-3.4]
+    name=MongoDB Repository
+    baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.4/x86_64/
+    gpgcheck=1
+    enabled=1
+    gpgkey=https://www.mongodb.org/static/pgp/server-3.4.asc
+    EOF
 
-sudo yum repolist
+    sudo yum repolist
 
-sudo yum -y install mongodb-org
+    sudo yum -y install mongodb-org
 
-sudo systemctl start mongod
+    sudo systemctl start mongod
 
-mongod --port 27017 --dbpath /var/lib/mongo
+    mongod --port 27017 --dbpath /var/lib/mongo
 
 }
 
