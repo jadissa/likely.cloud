@@ -2,7 +2,7 @@
   "name": "likely.cloud",
   "version": "1.0.0",
   "minimum-stability": "1.0.*",
-  "description": "Realtime, instant social media driven matchups",
+  "description": "Realtime, instant connections",
   "license": "UNLICENSED",
   "main": "server.js",
   "scripts": {
