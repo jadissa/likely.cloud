@@ -6,7 +6,7 @@
   "license": "UNLICENSED",
   "main": "server.js",
   "scripts": {
-    "test": "npm tests/server.js"
+    "test": "npm server tests/server.js"
   },
   "dependencies": {
     "body-parser": "^1.18.2",
