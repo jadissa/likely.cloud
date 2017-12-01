@@ -22,13 +22,52 @@
 
     <link rel="stylesheet" href="css/layout.css">
 
+    <link rel="stylesheet" href="css/signup.css">
+
 </head>
 
 <body>
 
 <div class="row"></div>
 
-<div class="row">Hello world</div>
+<div class="row">
+
+    <div class="form_bg">
+
+        <form id="signup" class="form-horizontal" role="form">
+
+            <div class="row">
+
+                <h3 class="title"><%= title %></h3>
+
+                <h6 class="description"><%= description %></h6>
+
+            </div>
+
+            <div class="form-group">
+
+                <div class="input-group">
+
+                    <div class="row">
+
+                    <button name="discord" href="/srt/discord" class="button form-control btn-default" disabled="disabled">Signup using Discord</button>
+
+                    </div>
+
+                    <div class="row">
+
+                    <button name="facebook" href="#" class="button form-control btn-default" disabled="disabled">Coming Soon!</button>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
 
 </body>
 
