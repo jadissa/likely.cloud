@@ -30,21 +30,59 @@ USER=www
 
 _init() {
 
-    echo ' ________                              .____                    .___'
+    echo '.__  .__ __          .__            _________ .__                   .___'
 
-    echo '\______ \_______  ____ _____    _____ |    |    ____  __ __  __| _/'
+    echo '|  | |__|  | __ ____ |  | ___.__.   \_   ___ \|  |   ____  __ __  __| _/'
 
-    echo ' |    |  \_  __ _/ __ \\__  \  /     \|    |   /  _ \|  |  \/ __ |'
+    echo '|  | |  |  |/ _/ __ \|  |<   |  |   /    \  \/|  |  /  _ \|  |  \/ __ | '
 
-    echo ' |    `   |  | \\  ___/ / __ \|  Y Y  |    |__(  <_> |  |  / /_/ |'
+    echo '|  |_|  |    <\  ___/|  |_\___  |   \     \___|  |_(  <_> |  |  / /_/ | '
 
-    echo '/_______  |__|   \___  (____  |__|_|  |_______ \____/|____/\____ |'
+    echo '|____|__|__|_ \\___  |____/ ____| /\ \______  |____/\____/|____/\____ | '
 
-    echo '        \/           \/     \/      \/        \/                \/'
+    echo '             \/    \/     \/      \/        \/                       \/ '
 
     echo 
 
-    echo '                                                              © 2017'
+    echo '                                                         ©dreamloud 2017'
+
+    echo
+
+    echo '.__  .__ __          .__         '
+
+    echo '|  | |__|  | __ ____ |  | ___.__.'
+
+    echo '|  | |  |  |/ _/ __ \|  |<   |  |'
+
+    echo '|  |_|  |    <\  ___/|  |_\___  |'
+
+    echo '|____|__|__|_ \\___  |____/ ____|'
+
+    echo '             \/    \/     \/     '
+
+    echo
+
+    echo '                  ©dreamloud 2017'
+
+    echo
+
+    echo '.____   _________ '
+
+    echo '|    |  \_   ___ \ '
+
+    echo '|    |  /    \  \/ '
+
+    echo '|    |__\     \____'
+
+    echo '|_______ \______  /'
+
+    echo '        \/      \/ '
+
+    echo
+
+    echo '     ©dreamloud 2017'
+
+    echo
 
     echo 'This script will check for needed configurations per run'
 
@@ -301,7 +339,7 @@ _nginx() {
         }
 
     }
-    EOF
+EOF
 
     sudo cat << EOF > /etc/nginx/conf.d/likely.conf
     server {
@@ -314,7 +352,7 @@ _nginx() {
         }
 
     }
-    EOF
+EOF
 
     sudo nginx -t
 
@@ -355,7 +393,7 @@ _mongodb() {
     gpgcheck=1
     enabled=1
     gpgkey=https://www.mongodb.org/static/pgp/server-3.4.asc
-    EOF
+EOF
 
     sudo yum repolist
 
