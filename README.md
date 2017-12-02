@@ -71,6 +71,12 @@ https://www.okcupid.com/1/apitun/interests/query?q=world+of+warcraft
 
 https://img42.com/
 
+https://api.imgur.com/endpoints/image/
+
+https://www.tumblr.com/docs/en/api/v2
+
+https://www.instagram.com/developer/
+
 https://clyp.it/api
 
 https://justentrepreneurs.co.uk/entrepreneurs-network/
