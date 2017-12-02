@@ -17,8 +17,8 @@
     "geoip-lite": "^1.2.1",
     "jquery": "1.9.*",
     "kerberos": "0.0",
-    "mongodb": "~2.0",
-    "mongoose": "^4.12.4",
+    "mongodb": "^2.0.55",
+    "mongoose": "^4.13.5",
     "request-ip": "^2.0.2"
   },
   "repository": {
