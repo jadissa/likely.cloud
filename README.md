@@ -1,4 +1,4 @@
-&copy; Jadissa Griffin 2017
+&copy; dreamloud and Jadissa Griffin 2017
 # likely.cloud(✿◠‿◠)ﾉ゛
 
 ### Description
@@ -27,6 +27,9 @@ app does simple lookup in apache solr or something lightweight/filedriven db
 scalable, pro or agnostic somehow
 filters are instant for each choice/field
 platform agnostic
+Whatever you share, you see and if you don't share it, you won't see others who do
+Content must be reviewed prior to publicizing 
+content reviewing is considered prestigious
 
 ### Filters
 Provide possible  matches
