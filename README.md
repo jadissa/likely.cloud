@@ -27,7 +27,7 @@ app does simple lookup in apache solr or something lightweight/filedriven db
 scalable, pro or agnostic somehow
 filters are instant for each choice/field
 platform agnostic
-Whatever you share, you see and if you don't share it, you won't see others who do
+Whatever you share, you see online. Whatever you cannot see is something you haven't shared.
 Content must be reviewed prior to publicizing 
 content reviewing is considered prestigious
 
