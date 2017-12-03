@@ -9,6 +9,7 @@
     "test": "npm server tests/server.js"
   },
   "dependencies": {
+    "args": "^3.0.8",
     "body-parser": "^1.18.2",
     "bootstrap": "~3.3",
     "discord-token-generator": "^1.2.0",
