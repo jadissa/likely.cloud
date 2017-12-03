@@ -349,6 +349,14 @@ EOF
 
         location / {
             proxy_pass "http://localhost:50451/";
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+
+        location /api/discord/login {
+            proxy_pass "http://localhost:50452/";
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
         }
 
     }
@@ -378,7 +386,7 @@ EOF
 
     sudo setenforce Enforcing
 
-    setsebool -P httpd_can_network_connect true solved my issue
+    setsebool -P httpd_can_network_connect true
 
     sudo systemctl restart nginx
 
