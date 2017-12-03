@@ -3,12 +3,12 @@ $( document ).ready( function()
     //
     //  Signups
     //
-    function handleSignups( _request )
+    function handleDiscord( _request )
     {
         if (_request.form.discordLoginURL)
         {
 
-            window.location = '/signup';
+            window.location = _request.form.discordLoginURL;
 
         }
 
@@ -55,9 +55,9 @@ $( document ).ready( function()
                 try
                 {
 
-                    var _login_type = $( '[name=signup]' ).val();
+                    var _signup_type = $( '[name=type]' ).val();
 
-                    var _request = mergeObjects( request(  mergeObjects( { "login_type": _login_type }, _settings ) ) );
+                    var _request = mergeObjects( request(  mergeObjects( { "signup_type": _signup_type }, _settings ) ) );
 
                     if( _settings.server.dev )
                     {
@@ -91,17 +91,17 @@ $( document ).ready( function()
             //
             // Switch on auth type
             //
-            switch( _login_type )
+            switch( _signup_type )
             {
 
                 //
                 //  Signups
                 //
-                case '/signup':
+                case 'discord':
 
-                    _response = handleSignups( _request );
+                    _response = handleDiscord( _request );
 
-                break;
+                    break;
 
 
                 //
@@ -111,7 +111,7 @@ $( document ).ready( function()
 
                     handleFailure( '{"stat":"invalid"}' );
 
-                break;
+                    break;
 
             }
 
@@ -139,6 +139,6 @@ $( document ).ready( function()
         console.log( e );
 
     }
-    
+
 
 } );
