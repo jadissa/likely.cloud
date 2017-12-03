@@ -20,13 +20,22 @@ module.exports = {
             "watch_options": {
                 "followSymlinks": false
             },
-            "max_restarts": 3
+            "max_restarts": 3,
+            "error_file"      : "likely.log",
+            "out_file"        : "out.log",
+            "merge_logs"      : true,
+            "log_date_format" : "YYYY-MM-DD HH:mm Z"
         },
          // Second application
          {
              name      : 'discord-token-generator',
              script    : 'node_modules/discord-token-generator/server.js',
-             port      : "50452"
+             port      : "50452",
+             "max_restarts": 3,
+             "error_file"      : "discord.log",
+             "out_file"        : "out.log",
+             "merge_logs"      : true,
+             "log_date_format" : "YYYY-MM-DD HH:mm Z"
          }
     ]/*,
 

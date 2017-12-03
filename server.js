@@ -38,7 +38,7 @@ app.get('/terms', function(req, res){
 
         description: 'Realtime, instant connections',
 
-        keywords: 'likely.cloud, realtime, instant connections',
+        keywords: 'likely.cloud, realtime, instant connections'
 
     });
 
@@ -53,25 +53,35 @@ app.get('/signup', function(req, res){
 
         description: 'Realtime, instant connections',
 
-        keywords: 'likely.cloud, realtime, instant connections',
+        keywords: 'likely.cloud, realtime, instant connections'
 
     });
 
 });
 
+
 //  Handle signup routes
 app.get('/srt/:signup', function(req, res){
 
-    console.log(req.params.signup);
+    console.log(req.params.signup)
+
     switch( req.params.signup ) {
 
         case 'discord':
-            res.send('Ok, you chose Discord');
-            break;
+
+            // @todo: call server listening point for discord-token-generator
+
+            var discord = require('./node_modules/discord-token-generator/server.js')
+
+            res.end()
+
+            break
 
         default:
-            res.send('Ok, route not defined');
-            break;
+
+            res.send('Ok, route not defined')
+
+            break
 
     }
 
