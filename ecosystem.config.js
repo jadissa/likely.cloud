@@ -7,7 +7,7 @@ module.exports = {
 
         // First application
         {
-            name      : 'likely.cloud',
+            name      : 'likely',
             script    : 'server.js',
             env: {
                 COMMON_VARIABLE: 'true'
@@ -19,16 +19,15 @@ module.exports = {
             "ignore_watch" : ["node_modules", "client/img"],
             "watch_options": {
                 "followSymlinks": false
-            }
+            },
+            "max_restarts": 3
         },
-
-        /*
          // Second application
          {
-         name      : 'WEB',
-         script    : 'web.js'
+             name      : 'discord-token-generator',
+             script    : 'node_modules/discord-token-generator/server.js',
+             port      : "50452"
          }
-         */
     ]/*,
 
      // http://pm2.keymetrics.io/docs/usage/deployment/
