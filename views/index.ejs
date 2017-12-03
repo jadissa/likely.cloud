@@ -18,6 +18,8 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, shrink-to-fit=no" />
 
+    <meta property="og:image" content="images/domain.png" />
+
     <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
 
     <link rel="stylesheet" href="css/layout.css">
@@ -32,7 +34,7 @@
 
         <div class="form_bg">
 
-            <form id="loginform" class="form-horizontal" role="form">
+            <form id="loginform" class="form-horizontal" role="form" action="/signup">
 
                 <div class="row">
 
@@ -92,7 +94,7 @@
 
                         <button class="button form-control btn-default" disabled="disabled">Login</button>
 
-                        <button class="button form-control btn-default" name="signup" value="/signup">Signup with social media</button>
+                        <button class="button form-control btn-default" name="q" value="social">Signup with social media</button>
 
                     </div>
 
@@ -123,7 +125,7 @@
 
     <script type="text/javascript" src="js/lib.js"></script>
 
-    <script type="text/javascript" src="js/index.js"></script>
+    <!--<script type="text/javascript" src="js/index.js"></script>-->
 
     <!--
     @todo:  These below files commented out still need to be finished before they can be enabled
