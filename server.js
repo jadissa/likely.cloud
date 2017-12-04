@@ -5,9 +5,79 @@ app.set('views', __dirname + '/views');
 
 app.use(express.static(__dirname));
 
+var cookie = require('cookie');
+
+var util = require('util');
+
 
 //  Handle root
-app.get('/', function(req, res){
+app.get('/', function(req, res) {
+
+    // Parse the cookies on the request
+    var _cookies = cookie.parse(req.headers.cookie || '');
+
+    console.log(_cookies);
+
+    var _button_registry = {
+        'register': {
+            'policy': {
+                'label': 'policy',
+                'markup': '<button class="button form-control btn-default" name="q" value="policy">Privacy Policy</button>'
+            },
+            'signup': {
+                'label': 'Signup with Social Media',
+                'markup': '<button class="button form-control btn-default" name="q" value="social">Signup</button>'
+            }
+
+        },
+        'authenticated': {
+            'discord': {
+                'label': 'Discord',
+                'markup': '<button class="button form-control btn-default" name="media" value="discord">Discord</button>'
+            }
+
+        }
+
+    };
+
+
+    //  Initialize buttons
+    var _buttons = '';
+
+
+    // Check if user registered
+    if( _cookies.email ) {
+
+        for( i in _button_registry.authenticated ) {
+
+            if( _button_registry.authenticated[i].markup ) {
+
+                _buttons += _button_registry.authenticated[i].markup;
+
+            }
+
+
+        }
+
+    } else {
+
+        for( i in _button_registry.register ) {
+
+            if( _button_registry.register[i].markup ) {
+
+                if( _cookies.consent && _button_registry.register[i].label == 'policy' ) {
+
+                    continue;
+
+                }
+
+                _buttons += _button_registry.register[i].markup;
+
+            }
+
+        }
+
+    }
 
     res.render('index.ejs', {
 
@@ -15,11 +85,53 @@ app.get('/', function(req, res){
 
         description: 'Realtime, instant connections',
 
-        keywords: 'likely.cloud, realtime, instant connections'/*,
+        keywords: 'likely.cloud, realtime, instant connections',
+
+        buttons: _buttons
+        /*,
 
         nav: ['Home','About','Contact']*/
 
     });
+
+});
+
+
+//  Handle policy form
+app.get('/policy', function(req, res){
+
+    // Parse the cookies on the request
+    var _cookies = cookie.parse(req.headers.cookie || '');
+
+    console.log(req.query);
+
+    if( req.query.legal_constent ) {
+
+        res.setHeader('Set-Cookie', cookie.serialize('consent', '1', {
+
+            httpOnly: true,
+
+            maxAge: 60 * 60 * 24 * 7 // 1 week
+
+        }));
+
+        res.redirect( '/' );
+
+    } else {
+
+        res.render('terms.ejs', {
+
+            title: 'likely.cloud(✿◠‿◠)ﾉ゛Privacy Policy',
+
+            description: 'Realtime, instant connections',
+
+            keywords: 'likely.cloud, realtime, instant connections',
+
+        });
+
+
+
+    }
 
 });
 
@@ -43,21 +155,47 @@ app.get('/terms', function(req, res){
 //  Handle signup form
 app.get('/signup', function(req, res){
 
-    res.render('signup.ejs', {
+    // Parse the cookies on the request
+    var _cookies = cookie.parse(req.headers.cookie || '');
 
-        title: 'likely.cloud(✿◠‿◠)ﾉ゛Signup',
+    console.log( _cookies.consent );
 
-        description: 'Realtime, instant connections',
+    if( ! _cookies.consent ) {
 
-        keywords: 'likely.cloud, realtime, instant connections'
+        res.redirect( '/policy' );
 
-    });
+        res.end();
+
+    } else {
+
+        res.render('signup.ejs', {
+
+            title: 'Signup',
+
+            description: 'Realtime, instant connections',
+
+            keywords: 'likely.cloud, realtime, instant connections'
+
+        });
+
+    }
 
 });
 
 
 //  Handle social form
 app.get('/social', function(req, res){
+
+    // Parse the cookies on the request
+    var _cookies = cookie.parse(req.headers.cookie || '');
+
+    if( ! _cookies.consent ) {
+
+        res.redirect( '/' );
+
+        res.end();
+
+    }
 
     var _request_ip = require('request-ip');
 

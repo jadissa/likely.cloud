@@ -16,15 +16,16 @@ module.exports = {
                 NODE_ENV: 'production'
             },
             "watch": "./",
-            "ignore_watch" : ["node_modules", "client/img"],
+            "ignore_watch" : ["node_modules", "client/img", "likely.log", "out.log"],
             "watch_options": {
                 "followSymlinks": false
             },
-            "max_restarts": 3,
+            "max_restarts": 3/*,
             "error_file"      : "likely.log",
             "out_file"        : "out.log",
             "merge_logs"      : true,
             "log_date_format" : "YYYY-MM-DD HH:mm Z"
+            */
         },
          // Second application
          {
