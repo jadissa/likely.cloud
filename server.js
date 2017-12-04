@@ -32,8 +32,8 @@ app.get('/', function(req, res) {
         },
         'authenticated': {
             'discord': {
-                'label': 'Discord',
-                'markup': '<button class="button form-control btn-default" name="media" value="discord">Discord</button>'
+                'label': 'Login',
+                'markup': '<button class="button form-control btn-default" name="media" value="discord">Login</button>'
             }
 
         }
@@ -46,7 +46,7 @@ app.get('/', function(req, res) {
 
 
     // Check if user registered
-    if( _cookies.email ) {
+    if( _cookies.consent ) {
 
         for( i in _button_registry.authenticated ) {
 
@@ -163,6 +163,14 @@ app.get('/signup', function(req, res){
     if( ! _cookies.consent ) {
 
         res.redirect( '/policy' );
+
+        res.end();
+
+    }
+
+    if( req.query.media && req.query.media == 'discord' ) {
+
+        res.redirect('https://discordapp.com/channels/371854790440779776/371854790440779778');
 
         res.end();
 
