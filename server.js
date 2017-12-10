@@ -1,39 +1,114 @@
-var express = require('express');
+var express = require( 'express' );
+
 var app = express();
 
-app.set('views', __dirname + '/views');
+app.set( 'views', __dirname + '/views' );
 
-app.use(express.static(__dirname));
+app.set( 'models', __dirname + '/models' );
 
-var cookie = require('cookie');
+app.use( express.static( __dirname ) );
 
-var util = require('util');
+/*
+function accessible( req, res ) {
 
+    if( req.socket.remoteAddress !== '127.0.0.1' ) {
+
+        res.writeHead( 403, { "Content-Type": "text/plain" } );
+
+        res.write('403 Access Denied');
+
+        return false;
+
+    }
+
+    return true;
+
+}
+*/
+/*
+var permittedLinker = ['localhost', '127.0.0.1'];  // who can link here?
+
+app.use( function( req, res, next ) {
+
+    var _i = 0, _notFound = 1, _referer = req.get( 'Referer' );
+
+    if ( ( req.path==='/' ) || ( req.path==='' ) ) next(); // pass calls to '/' always
+
+    if ( _referer ){
+
+        while ( ( _i < permittedLinker.length ) && _notFound ){
+
+            _notFound = ( _referer.indexOf(permittedLinker[ _i ] ) === - 1 );
+
+            i++;
+
+        }
+
+    }
+
+    if ( _notFound ) {
+
+        res.redirect('/');
+
+    } else {
+
+        next(); // access is permitted, go to the next step in the ordinary routing
+
+    }
+
+} );
+*/
+
+var cookie      = require( 'cookie' );
+
+var util        = require( 'util' );
+
+var settings    = require( './settings/server' );
 
 //  Handle root
-app.get('/', function(req, res) {
+app.get( '/', function( req, res ) {
+
+    //if (! accessible( req, res) )
 
     // Parse the cookies on the request
-    var _cookies = cookie.parse(req.headers.cookie || '');
+    var _cookies = cookie.parse( req.headers.cookie || '' );
 
-    console.log(_cookies);
+    if( settings.server.dev ) {
+
+        console.log( settings );
+
+    }
 
     var _button_registry = {
+
         'register': {
-            'policy': {
-                'label': 'policy',
-                'markup': '<button class="button form-control btn-default" name="q" value="policy">Privacy Policy</button>'
+
+            'login': {
+
+                'label': 'Login',
+
+                'markup': '<button class="button form-control btn-default">Login</button>'
+
             },
+
             'signup': {
+
                 'label': 'Signup with Social Media',
-                'markup': '<button class="button form-control btn-default" name="q" value="social">Signup</button>'
+
+                'markup': '<button class="button form-control btn-default">Signup</button>'
+
             }
 
         },
+
         'authenticated': {
+
             'discord': {
+
                 'label': 'Login',
-                'markup': '<button class="button form-control btn-default" name="media" value="discord">Login</button>'
+
+                'markup': '<button class="button form-control btn-default">Login</button>'
+
             }
 
         }
@@ -50,12 +125,11 @@ app.get('/', function(req, res) {
 
         for( i in _button_registry.authenticated ) {
 
-            if( _button_registry.authenticated[i].markup ) {
+            if( _button_registry.authenticated[ i ].markup ) {
 
-                _buttons += _button_registry.authenticated[i].markup;
+                _buttons += _button_registry.authenticated[ i ].markup;
 
             }
-
 
         }
 
@@ -63,15 +137,15 @@ app.get('/', function(req, res) {
 
         for( i in _button_registry.register ) {
 
-            if( _button_registry.register[i].markup ) {
+            if( _button_registry.register[ i ].markup ) {
 
-                if( _cookies.consent && _button_registry.register[i].label == 'policy' ) {
+                if( _cookies.consent && _button_registry.register[ i ].label == 'policy' ) {
 
                     continue;
 
                 }
 
-                _buttons += _button_registry.register[i].markup;
+                _buttons += _button_registry.register[ i ].markup;
 
             }
 
@@ -79,41 +153,123 @@ app.get('/', function(req, res) {
 
     }
 
-    res.render('index.ejs', {
+    res.render( 'index.ejs', {
 
-        title: 'likely.cloud(✿◠‿◠)ﾉ゛',
+        title: settings.app.title,
 
-        description: 'Realtime, instant connections',
+        description: settings.app.description,
 
-        keywords: 'likely.cloud, realtime, instant connections',
+        keywords: settings.app.keywords,
 
         buttons: _buttons
         /*,
 
         nav: ['Home','About','Contact']*/
 
-    });
+    } );
 
-});
+} );
 
 
 //  Handle policy form
-app.get('/policy', function(req, res){
+app.get( '/policy', function( req, res ){
 
     // Parse the cookies on the request
-    var _cookies = cookie.parse(req.headers.cookie || '');
+    var _cookies = cookie.parse( req.headers.cookie || '' );
 
-    console.log(req.query);
+    var _button_registry = {
 
-    if( req.query.legal_constent ) {
+        'register': {
 
-        res.setHeader('Set-Cookie', cookie.serialize('consent', '1', {
+            'agree': {
+
+                'label': 'Legally Agree',
+
+                'markup': '<button name="legal_constent" value=1 class="button form-control btn-default">Legally Agree</button>'
+
+            },
+
+            'disagree': {
+
+                'label': 'No',
+
+                'markup': '<button name="legal_constent" value=0 class="button form-control btn-default">No</button>'
+
+            }
+
+        },
+
+        'authenticated': {
+
+            'referrer': {
+
+                'label': 'Back',
+
+                'markup': '<button name="back" class="button form-control btn-default">Back</button>'
+
+            }
+
+        }
+
+    };
+
+
+    //  Initialize buttons
+    var _buttons = '';
+
+
+    // Check if user already consented
+    if( _cookies.consent ) {
+
+        for( i in _button_registry.authenticated ) {
+
+            if( _button_registry.authenticated[ i ].markup ) {
+
+                _buttons += _button_registry.authenticated[ i ].markup;
+
+            }
+
+        }
+
+    } else {
+
+        for( i in _button_registry.register ) {
+
+            if( _button_registry.register[ i ].markup ) {
+
+                _buttons += _button_registry.register[ i ].markup;
+
+            }
+
+        }
+
+    }
+
+    if( typeof req.query.legal_constent != 'undefined' && req.query.legal_constent == 1 ) {
+
+        var _one_week = 7 * 24 * 3600 * 1000;
+
+        res.cookie( 'consent', '1', {
 
             httpOnly: true,
 
-            maxAge: 60 * 60 * 24 * 7 // 1 week
+            expires: new Date( Date.now() + _one_week ),
 
-        }));
+            maxAge: _one_week
+
+        } );
+
+        res.redirect( '/social' );
+
+        res.end();
+
+    } else if( typeof req.query.legal_constent != 'undefined' && req.query.legal_constent == 0 ) {
+
+        res.redirect('/');
+
+        res.end();
+
+    } else if ( typeof req.query.back != 'undefined' ) {
 
         res.redirect( '/' );
 
@@ -121,44 +277,26 @@ app.get('/policy', function(req, res){
 
         res.render('terms.ejs', {
 
-            title: 'likely.cloud(✿◠‿◠)ﾉ゛Privacy Policy',
+            title: settings.app.title,
 
-            description: 'Realtime, instant connections',
+            description: settings.app.description,
 
-            keywords: 'likely.cloud, realtime, instant connections',
+            keywords: settings.app.keywords,
+
+            buttons: _buttons
 
         });
 
-
-
     }
 
-});
+} );
 
 
-//  Handle terms form
-app.get('/terms', function(req, res){
-
-    res.render('terms.ejs', {
-
-        title: 'likely.cloud(✿◠‿◠)ﾉ゛Privacy Policy',
-
-        description: 'Realtime, instant connections',
-
-        keywords: 'likely.cloud, realtime, instant connections',
-
-    });
-
-});
-
-
-//  Handle signup form
-app.get('/signup', function(req, res){
+//  Handle social integrations
+app.get( '/social', function( req, res ) {
 
     // Parse the cookies on the request
     var _cookies = cookie.parse(req.headers.cookie || '');
-
-    console.log( _cookies.consent );
 
     if( ! _cookies.consent ) {
 
@@ -166,92 +304,77 @@ app.get('/signup', function(req, res){
 
         res.end();
 
-    }
+    } else {
 
-    if( req.query.media && req.query.media == 'discord' ) {
+        var _request_ip = require( 'request-ip' );
 
-        res.redirect('https://discordapp.com/channels/371854790440779776/371854790440779778');
+        var _ip = _request_ip.getClientIp( req );
+
+        console.log( _ip );
+
+        var d = new Date;
+
+        console.log( d.toDateString() );
+
+        //console.log( util.inspect( req.ip, { showHidden: false, depth: null } ) );
+
+        var _geoip = require( 'geoip-lite' );
+
+        var _geo = _geoip.lookup( _ip );
+
+        console.log( _geo );
+
+        var db = require( './models/databases/users' );
+
+        /*
+        console.log(db.models);
+        db.user.push( {
+
+            "ipaddress": _ip,
+
+            "geo": _geo,
+
+            "consent": _cookies.consent
+
+        } );
+        console.log(db.models);
+        */
+        //var user = db.model('user', db.user);
+
+        //var instance = new user();
+
+        //console.log(instance);
+
+        //db.user.path( 'ipaddress' ).set( _ip );
+
+        res.redirect( settings.api.discordLoginURL );
 
         res.end();
 
-    } else {
-
-        res.render('signup.ejs', {
-
-            title: 'Signup',
-
-            description: 'Realtime, instant connections',
-
-            keywords: 'likely.cloud, realtime, instant connections'
-
-        });
-
     }
 
-});
+} );
 
 
-//  Handle social form
-app.get('/social', function(req, res){
+// Handle authenticated social
+app.get( '/s', function( req, res ) {
 
     // Parse the cookies on the request
     var _cookies = cookie.parse(req.headers.cookie || '');
 
     if( ! _cookies.consent ) {
 
-        res.redirect( '/' );
+        res.redirect( '/policy' );
+
+        res.end();
+
+    } else {
 
         res.end();
 
     }
 
-    var _request_ip = require('request-ip');
-
-    var _ip = _request_ip.getClientIp(req);
-
-    /*
-     var util = require('util');
-
-     console.log(util.inspect(req.ip, {showHidden: false, depth: null}));
-     */
-
-    var _geoip = require('geoip-lite');
-
-    var _geo = _geoip.lookup(_ip);
-
-    console.log(_geo);
-
-    switch(req.query.type)
-    {
-
-        case 'discord':
-
-            res.redirect('http://likely.cloud:50452/')
-
-            break;
-
-        default:
-            break;
-
-    }
-
-});
+} );
 
 
-//  Handle login form
-app.get('/login', function(req, res){
-
-    res.render('login.ejs', {
-
-        title: 'likely.cloud(✿◠‿◠)ﾉ゛Login',
-
-        description: 'Realtime, instant connections',
-
-        keywords: 'likely.cloud, realtime, instant connections'
-
-    });
-
-});
-
-
-app.listen(50451);
+app.listen( 50451 );
