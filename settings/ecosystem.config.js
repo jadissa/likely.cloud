@@ -16,7 +16,7 @@ module.exports = {
                 NODE_ENV: 'production'
             },
             "watch": "./",
-            "ignore_watch" : ["node_modules", "client/img", "likely.log", "out.log", "discord.log"],
+            "ignore_watch" : ["node_modules", "client/img", "likely.log", "logs"],
             "watch_options": {
                 "followSymlinks": false
             },
