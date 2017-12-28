@@ -25,7 +25,7 @@ module.exports = {
 
             "watch"                 : "./",
 
-            "ignore_watch"          : ["node_modules", "client/img", "likely.log", "logs"],
+            "ignore_watch"          : [ "client/img", "images", "logs", "node_modules" ],
 
             "watch_options": {
 
