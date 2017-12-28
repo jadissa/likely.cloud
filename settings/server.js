@@ -1,30 +1,35 @@
+//
+//  Force good developing habits
+//
+"use strict";
+
 var settings = {
 
-    "server":       {
+    "server": {
 
-        "dev":              true,
+        "dev":      true,
 
-        "secret":           "jDDuMemyMxM35RGXZA5b498g38Az6eG3",
+        "secret":   "jDDuMemyMxM35RGXZA5b498g38Az6eG3",
 
-        "log":      {
+        "log": {
 
-            "colors":       {
+            "colors": {
 
-                "info":         "\x1b[32m",
+                "info":     "\x1b[32m",
 
-                "warn":         "\x1b[33m",
+                "warn":     "\x1b[33m",
 
-                "error":        "\x1b[31m"
+                "error":    "\x1b[31m"
 
             },
 
-            "date":         true
+            "date":     true
 
         }
 
     },
 
-    "app":          {
+    "app": {
 
         "title":            "likely.cloud(✿◠‿◠)ﾉ゛",
 
@@ -52,7 +57,7 @@ var settings = {
 
     },
 
-    "api":          {
+    "api": {
 
         "dataType":         "json",
 

@@ -65,6 +65,11 @@ sex
 ### @todo: 
 Implement
 
+Forward communications via irc. forward via discord
+
+You may use the secret URL above to login from another location, or recover your account if you delete your cookies.
+
+
 https://www.facebook.com/search/people/?q=user@email.com
 
 https://www.okcupid.com/1/apitun/interests/query?q=world+of+warcraft
@@ -85,8 +90,6 @@ https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=2&cad=rja&uact=8&v
 
 https://www.thetrackr.com/privacy-policy/?_ga=2.225942553.2036808230.1511065553-1296154569.1511065553&_gac=1.220632682.1511065554.Cj0KCQiA0b_QBRCeARIsAFntQ9oDkOy2z22RnmoW9aDIoD47KIWTXUYr_9HPtb8mIdGMjj3X2NH1KPgaAkmzEALw_wcB
 
-https://www.npmjs.com/package/trackr
-
 https://mapzen.com/products/
 
 https://www.objectrocket.com/
@@ -94,8 +97,6 @@ https://www.objectrocket.com/
 http://www.wiredtiger.com/
 
 https://codeigniter.com/
-
-https://github.com/jkutianski/meetup-api/wiki
 
 https://www.tutorialspoint.com/mongodb/mongodb_create_database.htm
 
@@ -105,18 +106,72 @@ https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-cento
 
 https://github.com/scotch-io/easy-node-authentication/tree/facebook
 
-https://medium.com/@orels1/using-discord-oauth2-a-simple-guide-and-an-example-nodejs-app-71a9e032770
-
 https://www.npmjs.com/package/monolog
 
-https://www.loggly.com/ultimate-guide/node-logging-basics/
-
-https://scotch.io/tutorials/easy-node-authentication-facebook
-
-twitter. https://blog.twitter.com/official/en_us/topics/company/2017/safetycalendar.html
+Reddit. https://www.reddit.com/dev/api/
+Reddit. https://www.npmjs.com/package/redwrap
 
 solr. https://www.tutorialspoint.com/apache_solr/apache_solr_overview.htm
 
 img42. https://img.betapage.co/logo/79450417-79450667.png?w=200&h=200&fit=crop
 
 discourse. https://en.wikipedia.org/wiki/Discourse_(software)
+
+Buy phone numbers. https://www.twilio.com/console/phone-numbers/search
+
+SMS and MMS messaging via phone number. https://www.twilio.com/docs/guides/how-to-send-sms-messages-in-node-js
+
+iOS device identification. https://www.npmjs.com/package/node-ios-device
+
+Two-Way SMS. https://www.clickatell.com/developers/platform/tutorials/
+
+Reverse People Search. https://www.fullcontact.com/developer/
+
+Registry services
+
+Logging
+https://www.loggly.com/ultimate-guide/node-logging-basics/
+https://www.npmjs.com/package/monolog
+
+---tell the user we are logging-->
+
+Social
+Discord
+https://medium.com/@orels1/using-discord-oauth2-a-simple-guide-and-an-example-nodejs-app-71a9e032770
+https://github.com/scotch-io/easy-node-authentication/tree/facebook
+Google
+Linkedin
+Slack
+Kik
+Snapchat
+iMessage
+https://github.com/jkutianski/meetup-api/wiki
+https://www.tumblr.com/docs/en/api/v2
+https://www.instagram.com/developer/
+https://api.imgur.com/endpoints/image/
+https://dev.twitter.com/web/sign-in
+http://img42.com/
+https://clyp.it/api
+
+Messaging
+Discord
+https://developer.twitter.com/#direct-message-api
+Identify cell network
+Google contact access
+Enable SMS text messaging through http://www.emailtextmessages.com/
+Kik
+iMessage
+
+Location
+geoip
+https://www.npmjs.com/package/trackr
+FB places
+
+---tell the user which are required-->
+
+Personal
+Email
+Phone
+ipaddress
+
+

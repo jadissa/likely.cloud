@@ -1,76 +1,115 @@
+//
+//  Force good developing habits
+//
 "use strict";
 
-var mongoose        = require('mongoose');
+var _settings   = require( '../../settings/server' );
 
-var hash            = require( 'string-hash' );
 
-var settings        = require( '../../settings/server' );
+//
+//  Basic hash for connection
+//
+var _hash       = require( 'string-hash' );
+
+
+//
+//  The MongoDB connection
+//
+var _mongoose   = require( 'mongoose' );
+
+
+//
+//  Database name
+//
+var _db_name    = _hash( process.env.HOSTNAME + process.env.SERVER_ID );
+
+
+//
+// Connection URL
+//
+var _url        = 'mongodb://localhost:27017/users_' + _db_name;
 
 try {
 
     //
-    //  Hash the db name from environment vars
+    //  Connect to the server URL
     //
-    var db_name     = hash( process.env.HOSTNAME + process.env.SERVER_ID );
-
-    var url         = 'mongodb://localhost/users_' + db_name;
+    _mongoose.connect( _url, { useMongoClient: true } );
 
 
     //
-    //  Define our user data model
+    //  Database instance
     //
-    var Schema = mongoose.Schema,
-        ObjectId = Schema.ObjectId;
+    var _db =               _mongoose.connection;
 
-    var _user_schema = new Schema( {
-
-        ipaddress   : String,
-
-        geo         : Object,
-
-        consent     : Number,
-
-        date        : { type: Date, default: Date.now }
-
-    });
 
     //
-    //  Connect to mongodb
+    //  Promise
     //
-    var _conn = mongoose.createConnection(url),
+    _mongoose.Promise       = global.Promise;
 
-        _model = _conn.model('user', _user_schema),
 
-        _user = new _model;
+    //
+    //  User schema
+    //
+    var _user = _mongoose.Schema( {
 
-    _user.save();
+        ipaddress: _mongoose.Schema.Types.String,
 
-    console.log( 'Connected to ' + url );
+        email: { type: _mongoose.Schema.Types.String, lowercase: true },
 
-    /*
-    // a setter
-    _user.path( 'name' ).set( function( v ) {
+        phone: _mongoose.Schema.Types.String,
 
-        return v;
+        geo: _mongoose.Schema.Types.Mixed,
+
+        consent: _mongoose.Schema.Types.Number,
+
+        status: _mongoose.Schema.Types.Number,
+
+        age: { type: _mongoose.Schema.Types.Number, min: 18, max: 150 },
+
+        datetime: _mongoose.Schema.Types.Date,
+
+        attributes: _mongoose.Schema.Types.Array,
+
+        preferences: _mongoose.Schema.Types.Array,
+
+        settings: _mongoose.Schema.Types.Array,
+
+        services: _mongoose.Schema.Types.Array,
+
+        statistics: _mongoose.Schema.Types.Array
 
     } );
 
-    // middleware
-    _user.pre( 'save', function( next ) {
 
-        notify( this.get( 'email') );
+    //
+    //  Bind errors
+    //
+    _db.on( 'error', console.error.bind( console, 'connection error:' ) );
 
-        next();
+
+    //
+    //  Bind persistence
+    //
+    _db.once( 'open', function() {
+
+        if( _settings.server.dev ) {
+
+            console.log( 'Connected to ' + _url );
+
+        }
+
     });
-    */
 
-    var user = mongoose.model('user', _user_schema );
+} catch( error ) {
 
+    if( _settings.server.dev ) {
 
-} catch ( error ) {
+        console.log( error );
 
-    console.log( error );
+    }
 
 }
 
-module.exports = mongoose;
+module.exports =    _mongoose.model( 'user', _user );

@@ -1,5 +1,36 @@
+//
+//  Force good developing habits
+//
+"use strict";
+
+
+//
+//  Express routing
+//
 var express = require( 'express' );
 
+
+//
+//  Cookie lib
+//
+var cookie      = require( 'cookie' );
+
+
+//
+//  Utility lib
+//
+var util        = require( 'util' );
+
+
+//
+//  App settings
+//
+var settings    = require( './settings/server' );
+
+
+//
+//  Initialization
+//
 var app = express();
 
 app.set( 'views', __dirname + '/views' );
@@ -8,77 +39,31 @@ app.set( 'models', __dirname + '/models' );
 
 app.use( express.static( __dirname ) );
 
-/*
-function accessible( req, res ) {
 
-    if( req.socket.remoteAddress !== '127.0.0.1' ) {
-
-        res.writeHead( 403, { "Content-Type": "text/plain" } );
-
-        res.write('403 Access Denied');
-
-        return false;
-
-    }
-
-    return true;
-
-}
-*/
-/*
-var permittedLinker = ['localhost', '127.0.0.1'];  // who can link here?
-
-app.use( function( req, res, next ) {
-
-    var _i = 0, _notFound = 1, _referer = req.get( 'Referer' );
-
-    if ( ( req.path==='/' ) || ( req.path==='' ) ) next(); // pass calls to '/' always
-
-    if ( _referer ){
-
-        while ( ( _i < permittedLinker.length ) && _notFound ){
-
-            _notFound = ( _referer.indexOf(permittedLinker[ _i ] ) === - 1 );
-
-            i++;
-
-        }
-
-    }
-
-    if ( _notFound ) {
-
-        res.redirect('/');
-
-    } else {
-
-        next(); // access is permitted, go to the next step in the ordinary routing
-
-    }
-
-} );
-*/
-
-var cookie      = require( 'cookie' );
-
-var util        = require( 'util' );
-
-var settings    = require( './settings/server' );
-
-//  Handle root
+//
+//  Handle index route
+//
 app.get( '/', function( req, res ) {
 
-    //if (! accessible( req, res) )
-
-    // Parse the cookies on the request
+    //
+    //  Initialize cookies
+    //
     var _cookies = cookie.parse( req.headers.cookie || '' );
 
+
+    //
+    //  Log for developers
+    //
     if( settings.server.dev ) {
 
         console.log( settings );
 
     }
 
+
+    //
+    //  Initialize button registry
+    //
     var _button_registry = {
 
         'register': {
@@ -116,24 +101,21 @@ app.get( '/', function( req, res ) {
     };
 
 
-    //  Initialize buttons
-    var _buttons = '';
-
-
-    // Check if user registered
+    //
+    //  Check if user registered
+    //
     if( _cookies.consent ) {
 
-        for( i in _button_registry.authenticated ) {
+        res.redirect( '/s' );
 
-            if( _button_registry.authenticated[ i ].markup ) {
+        res.end();
 
-                _buttons += _button_registry.authenticated[ i ].markup;
-
-            }
-
-        }
-
+    //
+    //  Not registered
+    //
     } else {
+
+        var _buttons = '';
 
         for( i in _button_registry.register ) {
 
@@ -153,6 +135,10 @@ app.get( '/', function( req, res ) {
 
     }
 
+
+    //
+    //  Display view
+    //
     res.render( 'index.ejs', {
 
         title: settings.app.title,
@@ -162,24 +148,39 @@ app.get( '/', function( req, res ) {
         keywords: settings.app.keywords,
 
         buttons: _buttons
-        /*,
-
-        nav: ['Home','About','Contact']*/
 
     } );
 
 } );
 
 
+//
 //  Handle policy form
+//
 app.get( '/policy', function( req, res ){
 
-    // Parse the cookies on the request
+    //
+    //  Initialize cookies
+    //
     var _cookies = cookie.parse( req.headers.cookie || '' );
 
+
+    //
+    //  Initialize button registry
+    //
     var _button_registry = {
 
         'register': {
+
+            /*
+            'age': {
+
+                'label': 'Age',
+
+                'markup': '<input id="ex6" name="age" type="text" data-slider-min="18" data-slider-max="150" data-slider-step="1" data-slider-value="18"/><span id="ex6CurrentSliderValLabel">&nbsp;<span id="ex6SliderVal">Age 18</span></span>'
+
+            },
+            */
 
             'agree': {
 
@@ -214,11 +215,11 @@ app.get( '/policy', function( req, res ){
     };
 
 
-    //  Initialize buttons
+    //
+    // Check if user already consented
+    //
     var _buttons = '';
 
-
-    // Check if user already consented
     if( _cookies.consent ) {
 
         for( i in _button_registry.authenticated ) {
@@ -231,6 +232,10 @@ app.get( '/policy', function( req, res ){
 
         }
 
+
+    //
+    //  Not registered
+    //
     } else {
 
         for( i in _button_registry.register ) {
@@ -245,6 +250,10 @@ app.get( '/policy', function( req, res ){
 
     }
 
+
+    //
+    //  Check if consent given
+    //
     if( typeof req.query.legal_constent != 'undefined' && req.query.legal_constent == 1 ) {
 
         var _one_week = 7 * 24 * 3600 * 1000;
@@ -263,16 +272,28 @@ app.get( '/policy', function( req, res ){
 
         res.end();
 
+
+    //
+    //  Not given
+    //
     } else if( typeof req.query.legal_constent != 'undefined' && req.query.legal_constent == 0 ) {
 
         res.redirect('/');
 
         res.end();
 
+
+    //
+    //  Check if navigating backward
+    //
     } else if ( typeof req.query.back != 'undefined' ) {
 
         res.redirect( '/' );
 
+
+    //
+    //  Display view
+    //
     } else {
 
         res.render('terms.ejs', {
@@ -292,60 +313,110 @@ app.get( '/policy', function( req, res ){
 } );
 
 
+//
 //  Handle social integrations
+//
 app.get( '/social', function( req, res ) {
 
-    // Parse the cookies on the request
+    //
+    //  Initialize cookies
+    //
     var _cookies = cookie.parse(req.headers.cookie || '');
 
+
+    //
+    //  Check if consent not given
+    //
     if( ! _cookies.consent ) {
 
         res.redirect( '/policy' );
 
         res.end();
 
+
+    //
+    //  Given
+    //
     } else {
 
-        var _request_ip = require( 'request-ip' );
+        var _request_ip     = require( 'request-ip' );
 
-        var _ip = _request_ip.getClientIp( req );
+        var _ip             = _request_ip.getClientIp( req );
 
-        console.log( _ip );
+        var _geoip          = require( 'geoip-lite' );
 
-        var d = new Date;
+        var _geo            = _geoip.lookup( _ip );
 
-        console.log( d.toDateString() );
+        var _d              = new Date;
 
-        //console.log( util.inspect( req.ip, { showHidden: false, depth: null } ) );
+        _d.toDateString();
 
-        var _geoip = require( 'geoip-lite' );
+        var _user = require( './models/databases/users' );
 
-        var _geo = _geoip.lookup( _ip );
+        var _row    = {
 
-        console.log( _geo );
+            "ipaddress":    _ip,
 
-        var db = require( './models/databases/users' );
+            "email":        '',
 
-        /*
-        console.log(db.models);
-        db.user.push( {
+            "phone":        '',
 
-            "ipaddress": _ip,
+            "geo":          _geo,
 
-            "geo": _geo,
+            "consent":      _cookies.consent,
 
-            "consent": _cookies.consent
+            "status":       1,
 
-        } );
-        console.log(db.models);
-        */
-        //var user = db.model('user', db.user);
+            "age":          18,
 
-        //var instance = new user();
+            "datetime":     _d,
 
-        //console.log(instance);
+            "attributes":   [],
 
-        //db.user.path( 'ipaddress' ).set( _ip );
+            "preferences":  [],
+
+            "settings":     [],
+
+            "services":     [],
+
+            "statistics":   []
+
+        };
+
+
+        //
+        //  Record user entry
+        //
+        try {
+
+            var _user_row = new _user( _row );
+
+            if( settings.server.dev ) {
+
+                console.log( util.inspect( _user_row, { showHidden: false, depth: null } ) );
+
+            }
+
+            _user_row.save( function( err ) {
+
+                if( err ) {
+
+                    console.log( 'Error on save!' );
+
+                    console.log( err );
+                }
+
+            } ).then( function( _d ) {
+
+                console.log( 'saved! ' + _d );
+
+            });
+
+        } catch( error ) {
+
+            console.log( err );
+
+        }
 
         res.redirect( settings.api.discordLoginURL );
 
@@ -356,25 +427,48 @@ app.get( '/social', function( req, res ) {
 } );
 
 
-// Handle authenticated social
+//
+//  Handle authenticated social
+//
 app.get( '/s', function( req, res ) {
 
-    // Parse the cookies on the request
+    //
+    //  Initialize cookies
+    //
     var _cookies = cookie.parse(req.headers.cookie || '');
 
+
+    //
+    //  Check if consent not given
+    //
     if( ! _cookies.consent ) {
 
         res.redirect( '/policy' );
 
         res.end();
 
+
+    //
+    //  Given
+    //
     } else {
 
-        res.end();
+        res.render('s.ejs', {
+
+            title: settings.app.title,
+
+            description: settings.app.description,
+
+            keywords: settings.app.keywords
+
+        });
 
     }
 
 } );
 
 
+//
+//  Listen on port for events
+//
 app.listen( 50451 );
