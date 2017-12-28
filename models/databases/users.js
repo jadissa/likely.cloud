@@ -102,6 +102,21 @@ try {
 
     });
 
+
+    //
+    //  Bind close
+    //
+    _db.on( 'SIGINT', function( ) {
+
+        _mongoose.connection.close( function( ) {
+
+            console.log( 'Mongoose process closed' );
+
+            _db.exit( 0 );
+
+        });
+    });
+
 } catch( error ) {
 
     if( _settings.server.dev ) {

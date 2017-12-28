@@ -448,11 +448,11 @@ app.get( '/social', function( req, res ) {
                     console.log( err );
                 }
 
-            } ).then( function( _d ) {
+            } ).then( function( _saved ) {
 
-                console.log( 'saved! ' + _d );
+                console.log( 'saved! ' + _saved );
 
-            });
+            } );
 
         } catch( error ) {
 
@@ -460,7 +460,7 @@ app.get( '/social', function( req, res ) {
 
         }
 
-        res.redirect( settings.api.discordLoginURL );
+        res.redirect( '/s' );
 
         res.end();
 

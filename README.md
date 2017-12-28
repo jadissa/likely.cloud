@@ -1,4 +1,4 @@
-&copy; dreamloud and Jadissa Griffin 2017
+&copy; likely and Jadissa Griffin 2017
 # likely.cloud(✿◠‿◠)ﾉ゛
 
 ### Description
