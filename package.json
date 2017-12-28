@@ -20,9 +20,6 @@
 
   "dependencies": {
 
-    "npm-check-updates": "^2.13.0",
-
-
     "string-hash": "^1.1.3",
 
     "body-parser": "^1.18.2",
