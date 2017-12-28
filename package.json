@@ -20,6 +20,9 @@
 
   "dependencies": {
 
+    "npm-check-updates": "^2.13.0",
+
+
     "string-hash": "^1.1.3",
 
     "body-parser": "^1.18.2",
@@ -33,8 +36,6 @@
 
     "express": "^4.16.2",
 
-
-    "bootstrap": "~3.3",
 
     "ejs": "^2.5.7",
 
@@ -87,9 +88,11 @@
 
     "likely.cloud",
 
-    "social media footprint",
+    "meetup",
 
-    "statistics"
+    "dating",
+
+    "friends"
 
   ]
 
