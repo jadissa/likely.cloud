@@ -3,27 +3,33 @@
 //
 "use strict";
 
+
+//
+//  Utility lib
+//
+var util        = require( 'util' );
+
 var settings = {
 
     "server": {
 
-        "dev":      true,
+        "dev"       : process.env.IS_DEV,
 
-        "secret":   "jDDuMemyMxM35RGXZA5b498g38Az6eG3",
+        "secret"    : process.env.SERVER_SECRET,
 
         "log": {
 
             "colors": {
 
-                "info":     "\x1b[32m",
+                "info"  : "\x1b[32m",
 
-                "warn":     "\x1b[33m",
+                "warn"  : "\x1b[33m",
 
-                "error":    "\x1b[31m"
+                "error" : "\x1b[31m"
 
             },
 
-            "date":     true
+            "date"  : true
 
         }
 
@@ -31,39 +37,23 @@ var settings = {
 
     "app": {
 
-        "title":            "likely.cloud(✿◠‿◠)ﾉ゛",
+        "title"             : "likely.cloud(✿◠‿◠)ﾉ゛",
 
-        "description":      "Realtime, instant connections",
+        "description"       : "Social media footprint connected properties",
 
-        "keywords":         "likely.cloud, realtime, instant connections, social metrics"
+        "sub_description"   : "Empowering users to control their online persona and build relevant connections",
 
-        /*
-        "fb:app_id":        "1991908197750442",
-
-        "og:url":           "http://likely.cloud",
-
-        "og:title":         "Realtime, instant connections",
-
-        "og:description":   "Next gen social metrics"
-
-        "og:image":         "http://likely.cloud/images/large-ad.png",
-
-        "og:image:type":    "image/png",
-
-        "og:image:width":   241,
-
-        "og:image:height":  118
-        */
+        "keywords"          : "likely.cloud, social media footprint, connected, properties, realtime"
 
     },
 
     "api": {
 
-        "dataType":         "json",
+        "dataType"          : "json",
 
-        "timeout":          500,
+        "timeout"           : 500,
 
-        "discordLoginURL":  "http://likely.cloud:50452/api/discord/login"
+        "discordLoginURL"   : "http://likely.cloud:50452/api/discord/login"
 
     }
 

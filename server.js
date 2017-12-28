@@ -7,7 +7,19 @@
 //
 //  Express routing
 //
-var express = require( 'express' );
+var express     = require( 'express' );
+
+
+//
+//  Header protection
+//
+var helmet      = require( 'helmet' );
+
+
+//
+//  Rate limit protection
+//
+var limit       = require( 'express-rate-limit' );
 
 
 //
@@ -31,13 +43,33 @@ var settings    = require( './settings/server' );
 //
 //  Initialization
 //
-var app = express();
+var app = express( );
 
 app.set( 'views', __dirname + '/views' );
 
 app.set( 'models', __dirname + '/models' );
 
 app.use( express.static( __dirname ) );
+
+app.use( helmet( ) );
+
+app.enable('trust proxy'); // only if you're behind a reverse proxy (Heroku, Bluemix, AWS if you use an ELB, custom Nginx setup, etc)
+
+var limiter = new limit( {
+
+    windowMs:   15 * 60 * 1000, // 15 minutes
+
+    max:        100, // limit each IP to 100 requests per windowMs
+
+    delayMs:    0 // disable delaying - full speed until the max limit is reached
+
+} );
+
+
+//
+//  Apply limiter to all requests
+//
+app.use( limiter );
 
 
 //
@@ -49,6 +81,16 @@ app.get( '/', function( req, res ) {
     //  Initialize cookies
     //
     var _cookies = cookie.parse( req.headers.cookie || '' );
+
+
+    //
+    //  Check session
+    //
+    if(!req.session || !req.session.userId) {
+
+        //return res.status( 403 ).send( { ok: false } );
+
+    }
 
 
     //
@@ -117,7 +159,7 @@ app.get( '/', function( req, res ) {
 
         var _buttons = '';
 
-        for( i in _button_registry.register ) {
+        for( var i in _button_registry.register ) {
 
             if( _button_registry.register[ i ].markup ) {
 
@@ -222,7 +264,7 @@ app.get( '/policy', function( req, res ){
 
     if( _cookies.consent ) {
 
-        for( i in _button_registry.authenticated ) {
+        for( var i in _button_registry.authenticated ) {
 
             if( _button_registry.authenticated[ i ].markup ) {
 

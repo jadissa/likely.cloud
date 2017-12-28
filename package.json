@@ -1,63 +1,66 @@
 {
 
-  "name": "likely.cloud",
+  "name"                  : "likely.cloud",
 
-  "version": "1.0.0",
+  "version"               : "1.0.0",
 
-  "minimum-stability": "1.0.*",
+  "minimum-stability"     : "1.0.*",
 
-  "description": "Realtime, instant connections",
+  "description"           : "Realtime, instant connections",
 
-  "license": "UNLICENSED",
+  "license"               : "UNLICENSED",
 
-  "main": "server.js",
+  "main"                  : "server.js",
 
   "scripts": {
 
-    "test": "npm server tests/server.js"
+    "test"                : "npm server tests/server.js"
 
   },
 
   "dependencies": {
 
-    "string-hash": "^1.1.3",
+    "string-hash"         : "^1.1.3",
 
-    "body-parser": "^1.18.2",
+    "body-parser"         : "^1.18.2",
 
-    "querystring": "^0.2.0",
+    "querystring"         : "^0.2.0",
 
-    "request": "^2.69.0",
+    "request"             : "^2.69.0",
 
-    "args": "^3.0.8",
-
-
-    "express": "^4.16.2",
+    "args"                : "^3.0.8",
 
 
-    "ejs": "^2.5.7",
+    "express"             : "^4.16.2",
+
+    "helmet"              : "^3.9.0",
+
+    "express-rate-limit"  : "^2.11.0",
+
+    "ejs"                 : "^2.5.7",
 
 
-    "uuid": "^3.1.0",
+    "uuid"                : "^3.1.0",
 
-    "request-ip": "^2.0.2",
+    "request-ip"          : "^2.0.2",
 
-    "geoip-lite": "^1.2.1",
+    "geoip-lite"          : "^1.2.1",
 
-    "mustache": "^2.2.1",
+    "mustache"            : "^2.2.1",
 
-    "kerberos": "0.0",
+    "kerberos"            : "0.0",
 
-    "mongodb": "^2.0.55",
+    "mongodb"             : "^2.0.55",
 
-    "mongoose": "^4.13.6"
+    "mongoose"            : "^4.13.6"
 
   },
 
   "repository": {
 
-    "type": "git",
+    "type"                : "git",
 
-    "url": "git+ssh://git@github.com/dreamloud/likely.cloud.git"
+    "url"                 : "git+ssh://git@github.com/dreamloud/likely.cloud.git"
 
   },
 
@@ -65,9 +68,9 @@
 
     {
 
-      "name": "dreamloud",
+      "name"              : "dreamloud",
 
-      "email": "j@dreamloud.com"
+      "email"             : "j@dreamloud.com"
 
     }
 
@@ -75,11 +78,11 @@
 
   "bugs": {
 
-    "url": "https://github.com/dreamloud/likely.cloud/issues"
+    "url"                 : "https://github.com/dreamloud/likely.cloud/issues"
 
   },
 
-  "homepage": "https://github.com/dreamloud/likely.cloud",
+  "homepage"              : "https://github.com/dreamloud/likely.cloud",
 
   "keywords": [
 

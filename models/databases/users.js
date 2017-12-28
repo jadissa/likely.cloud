@@ -40,7 +40,7 @@ try {
     //
     //  Database instance
     //
-    var _db =               _mongoose.connection;
+    var _db                 = _mongoose.connection;
 
 
     //
@@ -54,31 +54,31 @@ try {
     //
     var _user = _mongoose.Schema( {
 
-        ipaddress: _mongoose.Schema.Types.String,
+        ipaddress   : _mongoose.Schema.Types.String,
 
-        email: { type: _mongoose.Schema.Types.String, lowercase: true },
+        email       : { type: _mongoose.Schema.Types.String, lowercase: true },
 
-        phone: _mongoose.Schema.Types.String,
+        phone       : _mongoose.Schema.Types.String,
 
-        geo: _mongoose.Schema.Types.Mixed,
+        geo         : _mongoose.Schema.Types.Mixed,
 
-        consent: _mongoose.Schema.Types.Number,
+        consent     : _mongoose.Schema.Types.Number,
 
-        status: _mongoose.Schema.Types.Number,
+        status      : _mongoose.Schema.Types.Number,
 
-        age: { type: _mongoose.Schema.Types.Number, min: 18, max: 150 },
+        age         : { type: _mongoose.Schema.Types.Number, min: 18, max: 150 },
 
-        datetime: _mongoose.Schema.Types.Date,
+        datetime    : _mongoose.Schema.Types.Date,
 
-        attributes: _mongoose.Schema.Types.Array,
+        attributes  : _mongoose.Schema.Types.Array,
 
-        preferences: _mongoose.Schema.Types.Array,
+        preferences : _mongoose.Schema.Types.Array,
 
-        settings: _mongoose.Schema.Types.Array,
+        settings    : _mongoose.Schema.Types.Array,
 
-        services: _mongoose.Schema.Types.Array,
+        services    : _mongoose.Schema.Types.Array,
 
-        statistics: _mongoose.Schema.Types.Array
+        statistics  : _mongoose.Schema.Types.Array
 
     } );
 
@@ -92,7 +92,7 @@ try {
     //
     //  Bind persistence
     //
-    _db.once( 'open', function() {
+    _db.once( 'open', function( ) {
 
         if( _settings.server.dev ) {
 
