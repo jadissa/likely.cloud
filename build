@@ -7,7 +7,7 @@
 # /_______  |__|   \___  (____  |__|_|  |_______ \____/|____/\____ | 
 #         \/           \/     \/      \/        \/                \/ 
 #
-#                                                              © 2017
+#                             © likely.cloud and Jadissa Griffin 2018
 
 #https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-centos-7
 
@@ -44,43 +44,7 @@ _init() {
 
     echo 
 
-    echo '                                                         ©dreamloud 2017'
-
-    echo
-
-    echo '.__  .__ __          .__         '
-
-    echo '|  | |__|  | __ ____ |  | ___.__.'
-
-    echo '|  | |  |  |/ _/ __ \|  |<   |  |'
-
-    echo '|  |_|  |    <\  ___/|  |_\___  |'
-
-    echo '|____|__|__|_ \\___  |____/ ____|'
-
-    echo '             \/    \/     \/     '
-
-    echo
-
-    echo '                  ©dreamloud 2017'
-
-    echo
-
-    echo '.____   _________ '
-
-    echo '|    |  \_   ___ \ '
-
-    echo '|    |  /    \  \/ '
-
-    echo '|    |__\     \____'
-
-    echo '|_______ \______  /'
-
-    echo '        \/      \/ '
-
-    echo
-
-    echo '     ©dreamloud 2017'
+    echo '                                  © likely.cloud and Jadissa Griffin 2018'
 
     echo
 

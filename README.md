@@ -1,4 +1,4 @@
-&copy; likely and Jadissa Griffin 2017
+© likely.cloud and Jadissa Griffin 2018
 # likely.cloud(✿◠‿◠)ﾉ゛
 
 ### Description
