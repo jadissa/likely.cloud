@@ -17,21 +17,11 @@ var settings = {
 
         "secret"    : process.env.SERVER_SECRET,
 
-        "log": {
+        "protocol"  : "http://",
 
-            "colors": {
+        "domain"    : "likely.cloud",
 
-                "info"  : "\x1b[32m",
-
-                "warn"  : "\x1b[33m",
-
-                "error" : "\x1b[31m"
-
-            },
-
-            "date"  : true
-
-        }
+        "port"      : 50451
 
     },
 
@@ -49,11 +39,17 @@ var settings = {
 
     "api": {
 
-        "dataType"          : "json",
+        "response_type"     : "json",
 
         "timeout"           : 500,
 
-        "discordLoginURL"   : "http://likely.cloud:50452/api/discord/login"
+        "discord"           : {
+
+            "port"      : 50452,
+
+            "entry"     : "/api/discord"
+
+        }
 
     }
 

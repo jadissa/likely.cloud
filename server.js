@@ -11,6 +11,18 @@ var express     = require( 'express' );
 
 
 //
+//  Pathing
+//
+var path        = require( 'path' );
+
+
+//
+// Parsing
+//
+var parser      = require( 'body-parser' );
+
+
+//
 //  Header protection
 //
 var helmet      = require( 'helmet' );
@@ -41,20 +53,54 @@ var settings    = require( './settings/server' );
 
 
 //
-//  Initialization
+//  Initialize app
 //
 var app = express( );
 
-app.set( 'views', __dirname + '/views' );
 
-app.set( 'models', __dirname + '/models' );
+//
+//  Initialize body parsing
+//
+app.use( parser.json() );
 
-app.use( express.static( __dirname ) );
+app.use( parser.urlencoded( { extended: false } ) );
 
+
+//
+//  The app will control/have access to the following files
+//
+app.use( express.static( path.join( __dirname + '/api' ) ) );
+
+app.use( '/css', express.static( path.join( __dirname + '/css' ) ) );
+
+app.use( '/images', express.static( path.join( __dirname + '/images' ) ) );
+
+app.use( express.static( path.join( __dirname + '/logs' ) ) );
+
+app.use( express.static( path.join( __dirname + '/models' ) ) );
+
+app.use( express.static( path.join( __dirname + '/node_modules' ) ) );
+
+app.use( express.static( path.join( __dirname + '/settings' ) ) );
+
+app.use( express.static( path.join( __dirname + '/views' ) ) );
+
+
+//
+//  Use the helmet settings
+//
 app.use( helmet( ) );
 
-app.enable('trust proxy'); // only if you're behind a reverse proxy (Heroku, Bluemix, AWS if you use an ELB, custom Nginx setup, etc)
 
+//
+//  Trust our proxy
+//
+app.enable('trust proxy');
+
+
+//
+//  Set max request limits
+//
 var limiter = new limit( {
 
     windowMs:   15 * 60 * 1000, // 15 minutes
@@ -67,7 +113,7 @@ var limiter = new limit( {
 
 
 //
-//  Apply limiter to all requests
+//  Apply limits to all requests
 //
 app.use( limiter );
 
@@ -86,19 +132,9 @@ app.get( '/', function( req, res ) {
     //
     //  Check session
     //
-    if(!req.session || !req.session.userId) {
+    if( !req.session || !req.session.userId ) {
 
         //return res.status( 403 ).send( { ok: false } );
-
-    }
-
-
-    //
-    //  Log for developers
-    //
-    if( settings.server.dev ) {
-
-        console.log( settings );
 
     }
 
@@ -150,7 +186,7 @@ app.get( '/', function( req, res ) {
 
         res.redirect( '/s' );
 
-        res.end();
+        return;
 
     //
     //  Not registered
@@ -179,7 +215,7 @@ app.get( '/', function( req, res ) {
 
 
     //
-    //  Display view
+    //  Load default template
     //
     res.render( 'index.ejs', {
 
@@ -312,7 +348,7 @@ app.get( '/policy', function( req, res ){
 
         res.redirect( '/social' );
 
-        res.end();
+        return;
 
 
     //
@@ -322,7 +358,7 @@ app.get( '/policy', function( req, res ){
 
         res.redirect('/');
 
-        res.end();
+        return;
 
 
     //
@@ -332,9 +368,11 @@ app.get( '/policy', function( req, res ){
 
         res.redirect( '/' );
 
+        return;
+
 
     //
-    //  Display view
+    //  Load default template
     //
     } else {
 
@@ -373,7 +411,7 @@ app.get( '/social', function( req, res ) {
 
         res.redirect( '/policy' );
 
-        res.end();
+        return;
 
 
     //
@@ -462,7 +500,7 @@ app.get( '/social', function( req, res ) {
 
         res.redirect( '/s' );
 
-        res.end();
+        return;
 
     }
 
@@ -487,15 +525,15 @@ app.get( '/s', function( req, res ) {
 
         res.redirect( '/policy' );
 
-        res.end();
+        return;
 
 
     //
-    //  Given
+    //  Load default template
     //
     } else {
 
-        res.render('s.ejs', {
+        res.status( 200 ).set( 'Content-Type', 'text/html' ).render('s.ejs', {
 
             title: settings.app.title,
 
@@ -503,9 +541,45 @@ app.get( '/s', function( req, res ) {
 
             keywords: settings.app.keywords
 
-        });
+        } );
+
+        res.end( );
 
     }
+
+} );
+
+
+//
+//  Capture all other requests
+//
+app.all( '*', function (req, res ) {
+
+    //
+    //  For files that are found, redirect
+    //
+    if( res.statusCode == 200 ) {
+
+        res.redirect( '/' );
+
+        return;
+
+    }
+
+    //
+    //  Load default template
+    //
+    res.status( 404 ).set( 'Content-Type', 'text/html' ).render( '404.ejs', {
+
+        title: settings.app.title,
+
+        description: settings.app.description,
+
+        keywords: settings.app.keywords
+
+    } );
+
+    res.end( );
 
 } );
 
