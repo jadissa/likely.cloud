@@ -541,7 +541,7 @@ app.get( '/s', function( req, res ) {
 //
 app.all( '*', function (req, res ) {
 
-    return res.redirect( '/' ).status( 400 );
+    return res.status( 400 ).redirect( '/' );
 
     /*
     // @todo: fix below code for files that actually exist
