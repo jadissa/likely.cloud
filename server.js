@@ -225,6 +225,8 @@ app.get( '/', function( req, res ) {
 
         keywords: settings.app.keywords,
 
+        copyright: settings.app.copyright,
+
         buttons: _buttons
 
     } );
@@ -384,6 +386,8 @@ app.get( '/policy', function( req, res ){
 
             keywords: settings.app.keywords,
 
+            copyright: settings.app.copyright,
+
             buttons: _buttons
 
         });
@@ -539,7 +543,9 @@ app.get( '/s', function( req, res ) {
 
             description: settings.app.description,
 
-            keywords: settings.app.keywords
+            keywords: settings.app.keywords,
+
+            copyright: settings.app.copyright
 
         } );
 
@@ -575,7 +581,9 @@ app.all( '*', function (req, res ) {
 
         description: settings.app.description,
 
-        keywords: settings.app.keywords
+        keywords: settings.app.keywords,
+
+        copyright: settings.app.copyright
 
     } );
 

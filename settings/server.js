@@ -5,9 +5,9 @@
 
 
 //
-//  Utility lib
+//  Date object
 //
-var util        = require( 'util' );
+var d   = new Date();
 
 var settings = {
 
@@ -33,7 +33,9 @@ var settings = {
 
         "sub_description"   : "Empowering users to control their online persona and build relevant connections",
 
-        "keywords"          : "likely.cloud, social media footprint, connected, properties, realtime"
+        "keywords"          : "likely.cloud, social media footprint, connected, properties, realtime",
+
+        "copyright"         : "© likely.cloud " + d.getFullYear()
 
     },
 
