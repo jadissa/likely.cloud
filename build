@@ -88,11 +88,9 @@ _init() {
 
     echo 'Create the following:'
 
-    echo 'Project directory:    /var/www/html'
+    echo "Project directory:    $PROJECTPATH"
 
-    echo 'Group:                www'
-
-    echo 'User:                 www'
+    echo "Group:                $GROUP"
 
     USER=`whoami`
 
@@ -169,8 +167,6 @@ _update() {
 
     npm -v
 
-    sudo npm install -g forever
-
     sudo systemctl start nginx
 
     sudo systemctl enable nginx
@@ -205,15 +201,9 @@ _update() {
     #
     if [ -f ./package.json ]; then
 
-        sudo yarn install
+        npm update
 
-        sudo yarn upgrade
-
-    else 
-
-        sudo yum -y install yarn
-
-        sudo yarn install
+        npm install
 
     fi
 
@@ -236,41 +226,9 @@ _pm2() {
     #
     # Manage pm2
     #
-    PM2PROCESSLIST=`pm2 jlist`
-    
-    PROCESSNAME=`pm2 id discord-token-generator`
+    sudo chown -R $GROUP:$USER ~/.pm2
 
-    if [ "$PROCESSNAME" != "discord-token-generator" ]; then
-
-    #    mkdir -p $PROJECTPATH/.pm2/logs
-
-    #    sudo chown -R root:$USER $PROJECTPATH/.pm2/logs
-
-    #    sudo pm2 --log $PROJECTPATH/.pm2/logs --output $PROJECTPATH/.pm2/logs/output.log --error $PROJECTPATH/.pm2/logs/error.log --pid $PROJECTPATH/.pm2/p.id logrotate tart node_modules/discord-token-generator/server.js --name discord-token-generator
-
-        pm2 start
-
-        pm2 ls
-
-        pm2 save
-
-        sudo chown -R $GROUP:$USER ~/.pm2
-
-        pkill -f PM2
-
-        pm2 delete all
-
-        pm2 resurrect
-
-    else
-
-        pm2 ls 
-
-        pm2 logs --nostream
-
-        #pm2 logs
-
-    fi
+    pm2 reload settings/ecosystem.config.js
 
 }
 
