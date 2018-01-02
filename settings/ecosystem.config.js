@@ -4,16 +4,19 @@ module.exports = {
      * Application configuration section
      * http://pm2.keymetrics.io/docs/usage/application-declaration/
      *
-     * Changes to this file require a server restart
+     * Changes to this file should NOT require a pm2 restart settings/ecosystem.config.js
+     * After rebooting machine, watches may fail. If this happens, run the following commands
+     * pm2 delete settings/ecosystem.config.js
+     * pm2 start settings/ecosystem.config.js
      */
 
     apps : [
 
         // First application
         {
-            name                    : 'likely',
+            "name"                  : "likely",
 
-            script                  : 'server.js',
+            "script"                : "server.js",
 
             "env" : {
 
@@ -25,9 +28,9 @@ module.exports = {
 
             "env_production"        : {},
 
-            "watch"                 : "./",
+            "watch"                 : true,
 
-            "ignore_watch"          : [ "client/img", "images", "logs", "node_modules" ],
+            "ignore_watch"          : [ "images", "logs", "node_modules" ],
 
             "watch_options": {
 
