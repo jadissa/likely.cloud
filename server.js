@@ -184,9 +184,7 @@ app.get( '/', function( req, res ) {
     //
     if( _cookies.consent ) {
 
-        res.redirect( '/s' );
-
-        return;
+        return res.redirect( '/s' );
 
     //
     //  Not registered
@@ -217,7 +215,7 @@ app.get( '/', function( req, res ) {
     //
     //  Load default template
     //
-    res.render( 'index.ejs', {
+    return res.status( 200 ).set( 'Content-Type', 'text/html' ).render( 'index.ejs', {
 
         title: settings.app.title,
 
@@ -348,9 +346,7 @@ app.get( '/policy', function( req, res ){
 
         } );
 
-        res.redirect( '/social' );
-
-        return;
+        return res.redirect( '/social' );
 
 
     //
@@ -358,9 +354,7 @@ app.get( '/policy', function( req, res ){
     //
     } else if( typeof req.query.legal_constent != 'undefined' && req.query.legal_constent == 0 ) {
 
-        res.redirect('/');
-
-        return;
+        return res.redirect('/');
 
 
     //
@@ -368,9 +362,7 @@ app.get( '/policy', function( req, res ){
     //
     } else if ( typeof req.query.back != 'undefined' ) {
 
-        res.redirect( '/' );
-
-        return;
+        return res.redirect( '/' );
 
 
     //
@@ -378,7 +370,7 @@ app.get( '/policy', function( req, res ){
     //
     } else {
 
-        res.render('terms.ejs', {
+        return res.status( 200 ).set( 'Content-Type', 'text/html' ).render('terms.ejs', {
 
             title: settings.app.title,
 
@@ -413,9 +405,7 @@ app.get( '/social', function( req, res ) {
     //
     if( ! _cookies.consent ) {
 
-        res.redirect( '/policy' );
-
-        return;
+        return res.redirect( '/policy' );
 
 
     //
@@ -475,12 +465,6 @@ app.get( '/social', function( req, res ) {
 
             var _user_row = new _user( _row );
 
-            if( settings.server.dev ) {
-
-                console.log( util.inspect( _user_row, { showHidden: false, depth: null } ) );
-
-            }
-
             _user_row.save( function( err ) {
 
                 if( err ) {
@@ -502,9 +486,7 @@ app.get( '/social', function( req, res ) {
 
         }
 
-        res.redirect( '/s' );
-
-        return;
+        return res.redirect( '/s' );
 
     }
 
@@ -527,9 +509,7 @@ app.get( '/s', function( req, res ) {
     //
     if( ! _cookies.consent ) {
 
-        res.redirect( '/policy' );
-
-        return;
+        return res.redirect( '/policy' );
 
 
     //
@@ -549,7 +529,7 @@ app.get( '/s', function( req, res ) {
 
         } );
 
-        res.end( );
+        return res.end( );
 
     }
 
@@ -561,33 +541,27 @@ app.get( '/s', function( req, res ) {
 //
 app.all( '*', function (req, res ) {
 
-    //
-    //  For files that are found, redirect
-    //
-    if( res.statusCode == 200 ) {
+    return res.redirect( '/' ).status( 400 );
 
-        res.redirect( '/' );
+    /*
+    // @todo: fix below code for files that actually exist
+     //
+     //  Load default template
+     //
+     res.status( 404 ).set( 'Content-Type', 'text/html' ).render( '404.ejs', {
 
-        return;
+     title: settings.app.title,
 
-    }
+     description: settings.app.description,
 
-    //
-    //  Load default template
-    //
-    res.status( 404 ).set( 'Content-Type', 'text/html' ).render( '404.ejs', {
+     keywords: settings.app.keywords,
 
-        title: settings.app.title,
+     copyright: settings.app.copyright
 
-        description: settings.app.description,
+     } );
 
-        keywords: settings.app.keywords,
-
-        copyright: settings.app.copyright
-
-    } );
-
-    res.end( );
+     return res.end( );
+     */
 
 } );
 
