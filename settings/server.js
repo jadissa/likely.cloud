@@ -13,15 +13,25 @@ var settings = {
 
     "server": {
 
-        "dev"       : process.env.IS_DEV,
+        "dev"           : true,
 
-        "secret"    : process.env.SERVER_SECRET,
+        "secret"        : process.env.SERVER_SECRET,
 
-        "protocol"  : "http://",
+        "protocol"      : "http://",
 
-        "domain"    : "likely.cloud",
+        "domain"        : "likely.cloud",
 
-        "port"      : 50451
+        "port"          : 50451,
+
+        "persistence"   : {
+
+            "port"      : 27017,
+
+            "host"      : "localhost",
+
+            "prefix"    : 'likely_'
+
+        }
 
     },
 

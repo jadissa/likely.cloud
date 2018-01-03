@@ -7,37 +7,45 @@
 //
 //  Express routing
 //
-var express     = require( 'express' );
+var express         = require( 'express' );
 
 
 //
 //  Pathing
 //
-var path        = require( 'path' );
+var path            = require( 'path' );
 
 
 //
 // Parsing
 //
-var parser      = require( 'body-parser' );
+var parser          = require( 'body-parser' );
 
 
 //
 //  Header protection
 //
-var helmet      = require( 'helmet' );
+var helmet          = require( 'helmet' );
 
 
 //
 //  Rate limit protection
 //
-var limit       = require( 'express-rate-limit' );
+var limit           = require( 'express-rate-limit' );
 
 
 //
 //  Cookie lib
 //
-var cookie      = require( 'cookie' );
+var cookie          = require( 'cookie' );
+
+
+//
+//  Session libs
+//
+var session         = require('express-session');
+
+//var session_store   = require( 'connect-mongo' )(session);
 
 
 //
@@ -117,6 +125,68 @@ var limiter = new limit( {
 //
 app.use( limiter );
 
+/*
+//
+//  Initialize session
+//
+var mongoose = require('mongoose');
+var connection = mongoose.createConnection(connectionOptions);
+app.use( session( {
+
+    secret  : settings.server.secret,
+
+    store   : new session_store( { mongooseConnection: connection } )
+
+} ) );
+
+
+var store = new session_store( {
+
+    host                        : settings.server.persistence.host,
+
+    port                        : settings.server.persistence.port,
+
+    db                          : settings.server.persistence.prefix + '_sessions',
+
+    stringify                   : false,
+
+    maxAge                      : 31536000,
+
+    autoRemoveExpiredSession    : false,
+
+    collection                  : 'sessions'
+
+});
+
+store.on( 'error', function( error ) {
+
+    throw new Error( error.toString( ) );
+
+} );
+
+app.use( express.session( {
+
+    secret  : settings.server.secret,
+
+    key     : process.env.SERVER_KEY,
+
+    cookie: {
+
+        path        : '/',
+
+        domain      : settings.server.domain,
+
+        httpOnly    : true,
+
+        maxAge      : 31536000
+
+    },
+
+    store: store
+
+} ) );
+*/
+
 
 //
 //  Handle index route
@@ -128,10 +198,40 @@ app.get( '/', function( req, res ) {
     //
     var _cookies = cookie.parse( req.headers.cookie || '' );
 
+    if( !_cookies.likely ) {
+
+        var _one_week = 7 * 24 * 3600 * 1000;
+
+        res.cookie( 'likely', {
+
+            domain      : settings.server.domain,
+
+            encode      : 'encodeURIComponent',
+
+            httpOnly    : true,
+
+            secure      : false,
+
+            signed      : false,
+
+            sameSite    : true,
+
+            path        : '/',
+
+            expires     : new Date( Date.now() + _one_week ),
+
+            maxAge      : _one_week
+
+        } );
+
+    }
+
 
     //
     //  Check session
     //
+    //console.log( JSON.stringify(req.session) );
+
     if( !req.session || !req.session.userId ) {
 
         //return res.status( 403 ).send( { ok: false } );
@@ -415,76 +515,55 @@ app.get( '/social', function( req, res ) {
 
         var _request_ip     = require( 'request-ip' );
 
-        var _ip             = _request_ip.getClientIp( req );
+        var _ipaddress      = _request_ip.getClientIp( req );
 
         var _geoip          = require( 'geoip-lite' );
-
-        var _geo            = _geoip.lookup( _ip );
 
         var _d              = new Date;
 
         _d.toDateString();
 
-        var _user = require( './models/databases/users' );
+        var _user_data    = {
 
-        var _row    = {
+            _ipaddress      : _ipaddress,
 
-            "ipaddress":    _ip,
+            _email          : '',
 
-            "email":        '',
+            _phone          : '',
 
-            "phone":        '',
+            _geo            : _geoip.lookup( _ipaddress ),
 
-            "geo":          _geo,
+            _consent        : 1,
 
-            "consent":      _cookies.consent,
+            _status         : 1,
 
-            "status":       1,
+            _age            : 18,
 
-            "age":          18,
+            _datetime       : _d,
 
-            "datetime":     _d,
+            _attributes     : [],
 
-            "attributes":   [],
+            _preferences    : [],
 
-            "preferences":  [],
+            _settings       : [],
 
-            "settings":     [],
+            _services       : [],
 
-            "services":     [],
-
-            "statistics":   []
+            _statistics     : []
 
         };
 
 
         //
-        //  Record user entry
+        //  The connection
         //
-        try {
+        var _user   = require( './models/databases/users.js' );
 
-            var _user_row = new _user( _row );
 
-            _user_row.save( function( err ) {
-
-                if( err ) {
-
-                    console.log( 'Error on save!' );
-
-                    console.log( err );
-                }
-
-            } ).then( function( _saved ) {
-
-                console.log( 'saved! ' + _saved );
-
-            } );
-
-        } catch( error ) {
-
-            console.log( err );
-
-        }
+        //
+        //  Save data to persistence
+        //
+        _user.save( _user_data );
 
         return res.redirect( '/s' );
 

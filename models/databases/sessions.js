@@ -31,7 +31,7 @@ var _db_port    = _settings.server.persistence.port
 //
 // Connection URL
 //
-var _url        = 'mongodb://localhost:' + _db_port + '/' + _db_prefix + 'users';
+var _url        = 'mongodb://localhost:' + _db_port + '/' + _db_prefix + 'sessions';
 
 
 //
@@ -84,38 +84,18 @@ var connectPersistence  = function( ) {
 //
 //  Saves object to database
 //
-var save    = function( _user ) {
+var save    = function( _session ) {
 
     //
     //  Format
     //
     var _row    = {
 
-        "ipaddress"     : _user._ipaddress,
+        "ipaddress":    _session._ip,
 
-        "email"         : _user._email,
+        "email":        _session._email,
 
-        "phone"         : _user._phone,
-
-        "geo"           : _user._geo,
-
-        "consent"       : _user._consent,
-
-        "status"        : _user._status,
-
-        "age"           : _user._age,
-
-        "datetime"      : _user._datetime,
-
-        "attributes"    : _user._attributes,
-
-        "preferences"   : _user._preferences,
-
-        "settings"      : _user._settings,
-
-        "services"      : _user._services,
-
-        "statistics"    : _user._statistics
+        "phone":        _session._phone
 
     };
 
@@ -127,59 +107,39 @@ var save    = function( _user ) {
 
 
     //
-    //  Define user schema
+    //  Define session schema
     //
-    var _user_schema = _instance.Schema( {
+    var _session_schema = _instance.Schema( {
 
         ipaddress   : _instance.Schema.Types.String,
 
         email       : { type: _instance.Schema.Types.String, lowercase: true },
 
-        phone       : _instance.Schema.Types.String,
-
-        geo         : _instance.Schema.Types.Mixed,
-
-        consent     : _instance.Schema.Types.Number,
-
-        status      : _instance.Schema.Types.Number,
-
-        age         : { type: _instance.Schema.Types.Number, min: 18, max: 150 },
-
-        datetime    : _instance.Schema.Types.Date,
-
-        attributes  : _instance.Schema.Types.Array,
-
-        preferences : _instance.Schema.Types.Array,
-
-        settings    : _instance.Schema.Types.Array,
-
-        services    : _instance.Schema.Types.Array,
-
-        statistics  : _instance.Schema.Types.Array
+        phone       : _instance.Schema.Types.String
 
     } );
 
 
     //
-    //  Associate schema to connection user model
+    //  Associate schema to connection session model
     //
-    _instance.model( 'user', _user_schema );
+    _instance.model( 'session', _session_schema );
 
 
     //
     //  Create new instance of our user model with relevant properties
     //
-    var _user_row = new _instance.models.user( _row );
+    var _session_row = new _instance.models.session( _row );
 
 
     //
     //  Save our instance
     //
-    _user_row.save( function( err ) {
+    _session_row.save( function( err ) {
 
         if( err ) {
 
-            console.error( 'Error while saving user record!' );
+            console.error( 'Error while saving user session!' );
 
             console.error( err );
         }

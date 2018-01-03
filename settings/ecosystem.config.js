@@ -18,11 +18,7 @@ module.exports = {
 
             "script"                : "server.js",
 
-            "env" : {
-
-                "IS_DEV"            : true
-
-            },
+            "env"                   : {},
 
             "env_staging"           : {},
 
