@@ -27,7 +27,11 @@ var settings = {
 
             "port"      : 27017,
 
-            "host"      : "localhost",
+            "host"      : process.env.MONGO_HOST,
+
+            "user"      : process.env.MONGO_USER,
+
+            "pass"      : process.env.MONGO_PASS,
 
             "prefix"    : 'likely_'
 

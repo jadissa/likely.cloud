@@ -23,15 +23,33 @@ var _db_prefix   = _settings.server.persistence.prefix;
 
 
 //
+//  Database host
+//
+var _db_host    = _settings.server.persistence.host;
+
+
+//
 //  Database port
 //
-var _db_port    = _settings.server.persistence.port
+var _db_port    = _settings.server.persistence.port;
+
+
+//
+//  Database user
+//
+var _db_user    = _settings.server.persistence.user;
+
+
+//
+//  Database pass
+//
+var _db_pass    = _settings.server.persistence.pass;
 
 
 //
 // Connection URL
 //
-var _url        = 'mongodb://localhost:' + _db_port + '/' + _db_prefix + 'users';
+var _url        = 'mongodb://' + _db_user + ':' + _db_pass + '@' + _db_host + ':' + _db_port + '/' + _db_prefix + 'users';
 
 
 //

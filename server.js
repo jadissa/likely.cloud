@@ -11,6 +11,12 @@ var express         = require( 'express' );
 
 
 //
+//  Database
+//
+var mongoose        = require('mongoose');
+
+
+//
 //  Pathing
 //
 var path            = require( 'path' );
@@ -557,7 +563,8 @@ app.get( '/social', function( req, res ) {
         //
         //  The connection
         //
-        var _user   = require( './models/databases/users.js' );
+        //var _user   = require( './models/databases/users.js' );
+        var _user   = mongoose.model('user');
 
 
         //
