@@ -1,12 +1,76 @@
+#!/bin/bash
+#
+# ________                              .____                    .___
+# \______ \_______  ____ _____    _____ |    |    ____  __ __  __| _/
+#  |    |  \_  __ _/ __ \\__  \  /     \|    |   /  _ \|  |  \/ __ |
+#  |    `   |  | \\  ___/ / __ \|  Y Y  |    |__(  <_> |  |  / /_/ |
+# /_______  |__|   \___  (____  |__|_|  |_______ \____/|____/\____ |
+#         \/           \/     \/      \/        \/                \/
+#
+#                                                © likely.cloud 2018
+#
 # Digital Ocean Droplet Install
 
-TAG_NAME=likelycloud
-MACHINE_NAME=likely.cloud
-PUBLIC_KEY='47:b0:df:da:6d:da:b9:cc:21:e9:7e:ab:94:f4:78:31'
+echo '.__  .__ __          .__            _________ .__                   .___'
 
+echo '|  | |__|  | __ ____ |  | ___.__.   \_   ___ \|  |   ____  __ __  __| _/'
+
+echo '|  | |  |  |/ _/ __ \|  |<   |  |   /    \  \/|  |  /  _ \|  |  \/ __ | '
+
+echo '|  |_|  |    <\  ___/|  |_\___  |   \     \___|  |_(  <_> |  |  / /_/ | '
+
+echo '|____|__|__|_ \\___  |____/ ____| /\ \______  |____/\____/|____/\____ | '
+
+echo '             \/    \/     \/      \/        \/                       \/ '
+
+echo
+
+echo '                                                    © likely.cloud 2018'
+
+echo
+
+echo
+
+
+# Your droplet info
 # https://cloud.digitalocean.com/settings/api/tokens
-# Digital Ocean API TOKEN
-DOKEY=9a2b3ba43aebaa2b31f57a9f8d1f7038ead784ecbea5e2345e414c50f5e774a9
+DOKEY=
+PROJECT_NAME=
+TAG_NAME=
+
+if [ "$DOKEY" == "" ] || [ "$PROJECT_NAME" == "" ] || [ "$TAG_NAME" == "" ]; then
+
+    echo 'Edit this script by adding your Droplet info'
+
+    exit
+
+fi
+
+
+# Generate key data
+
+[ -d ~/.ssh/$PROJECT_NAME/ ] || mkdir ~/.ssh/$PROJECT_NAME/
+
+ssh-keygen -t rsa -f ~/.ssh/$PROJECT_NAME/id_rsa
+
+chmod 0700 ~/.ssh/$PROJECT_NAME/id_rsa
+
+ssh-add -K ~/.ssh/$PROJECT_NAME/id_rsa
+
+eval "$(ssh-agent -s)"
+
+KEY_RSA=`cat ~/.ssh/$MACHINE_NAME/id_rsa.pub`
+
+if [ "$KEY_RSA" == "" ]; then
+
+    echo 'Could not create private key'
+
+    exit
+
+fi
+
+echo "Created key: $KEY_RSA"
+
 
 # Check Droplet Already Created
 JSON=`curl -X GET "https://api.digitalocean.com/v2/droplets?tag_name=$TAG_NAME" -H "Authorization: Bearer $DOKEY" -H "Content-Type: application/json"`
@@ -16,11 +80,19 @@ DROPLET_ID=`echo $JSON | python -c 'import json,sys;obj=json.load(sys.stdin);pri
 sleep 1
 
 if [ "$DROPLET_ID"!="" ]; then
-    curl -X DELETE -H "Content-Type: application/json" -H "Authorization: Bearer $DOKEY" "https://api.digitalocean.com/v2/droplets?tag_name=$TAG_NAME" 
+
+    echo 'Droplet already created'
+
+    exit
+
+    #curl -X DELETE -H "Content-Type: application/json" -H "Authorization: Bearer $DOKEY" "https://api.digitalocean.com/v2/droplets?tag_name=$TAG_NAME"
+
 fi
+
 
 # List All Distribution Images
 #curl -X GET -H "Content-Type: application/json" -H "Authorization: Bearer $DOKEY" "https://api.digitalocean.com/v2/images?page=1&per_page=31&type=distribution" 
+
 
 # Create New Droplet
 curl -X POST "https://api.digitalocean.com/v2/droplets" \
@@ -28,6 +100,7 @@ curl -X POST "https://api.digitalocean.com/v2/droplets" \
     -H "Authorization: Bearer $DOKEY" \
     -H "Content-Type: application/json" 
 sleep 15
+# @todo: parse creation response becasue probably contains password
 
 # List Created Droplet
 JSON=`curl -X GET "https://api.digitalocean.com/v2/droplets?tag_name=$TAG_NAME" -H "Authorization: Bearer $DOKEY" -H "Content-Type: application/json"`
@@ -36,12 +109,13 @@ JSON=`curl -X GET "https://api.digitalocean.com/v2/droplets?tag_name=$TAG_NAME" 
 DROPLET_ID=`echo $JSON | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["droplets"][0]["id"]'`
 DROPLET_IP=`echo $JSON | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["droplets"][0]["networks"]["v4"][1]["ip_address"]'`
 
+
 # SSH Key Droplet
-curl -X POST "https://api.digitalocean.com/v2/account/keys" \
-    -d "{\"name\":\"$MACHINE_NAME\",\"public_key\":\"ssh-rsa $PUBLIC_KEY\"}" \
-    -H "Authorization: Bearer $DOKEY" \
-    -H "Content-Type: application/json" 
-sleep 1
+JSON=`curl -X POST "https://api.digitalocean.com/v2/account/keys" -H "Authorization: Bearer $DOKEY" -d "{\"name\":\"$MACHINE_NAME\",\"public_key\":\"\$KEY_RSA\"}" -H "Content-Type: application/json"`
+
+# Parse Response
+PUBLIC_KEY=`echo $JSON | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["ssh_key"]["public_key"]'`
+
 
 # Check Firewall Already Created
 JSON=`curl -X GET "https://api.digitalocean.com/v2/firewalls" -H "Authorization: Bearer $DOKEY" -H "Content-Type: application/json"`
@@ -56,6 +130,7 @@ fi
 # Create Firewall
 curl -X POST "https://api.digitalocean.com/v2/firewalls" -d "{\"name\":\"$MACHINE_NAME\",\"inbound_rules\":[{\"protocol\":\"tcp\",\"ports\":\"22\",\"sources\":{\"addresses\":[\"0.0.0.0\/0\",\"::\/0\"]}},{\"protocol\":\"tcp\",\"ports\":\"80\",\"sources\":{\"addresses\":[\"0.0.0.0\/0\",\"::\/0\"]}},{\"protocol\":\"tcp\",\"ports\":\"3306\",\"sources\":{\"addresses\":[\"0.0.0.0\/0\",\"::\/0\"]}}],\"outbound_rules\":[{\"protocol\":\"icmp\",\"destinations\":{\"addresses\":[\"0.0.0.0\/0\",\"::\/0\"]}},{\"protocol\":\"tcp\",\"ports\":\"all\",\"destinations\":{\"addresses\":[\"0.0.0.0\/0\",\"::\/0\"]}},{\"protocol\":\"udp\",\"ports\":\"all\",\"destinations\":{\"addresses\":[\"0.0.0.0\/0\",\"::\/0\"]}}],\"droplet_ids\":[$DROPLET_ID],\"tags\":\"$TAG_NAME\"}" -H "Authorization: Bearer $DOKEY" -H "Content-Type: application/json"
 sleep 1
+
 
 # Check Domain Already Created
 JSON=`curl -X GET -H "Content-Type: application/json" -H "Authorization: Bearer $DOKEY" "https://api.digitalocean.com/v2/domains/$MACHINE_NAME"`
@@ -80,6 +155,7 @@ curl -X POST "https://api.digitalocean.com/v2/domains/$MACHINE_NAME/records"  \
     -H "Authorization: Bearer $DOKEY" \
     -H "Content-Type: application/json" 
 sleep 1
+
 
 # Snapshot Droplet
 curl -X POST "https://api.digitalocean.com/v2/droplets/$DROPLET_ID/actions" \
