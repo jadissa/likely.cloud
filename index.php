@@ -38,6 +38,38 @@
 
     <!--<link rel="stylesheet" href="/css/layout.css">-->
     <style type="text/css">
+        /* portrait orientation */
+        /* ipad */
+        @media screen
+        and (min-width: 768px)
+        and (max-width: 1024px)
+        and (orientation:portrait)
+        {
+        }
+
+        /* iphone 6 */
+        @media screen
+        and (min-width: 375px)
+        and (max-width: 667px)
+        and (orientation:portrait)
+        {
+        }
+
+        /* iphone 5 & 5S */
+        @media screen
+        and (min-width:320px)
+        and (max-width:568px)
+        and (orientation:portrait)
+        {
+        }
+
+        /* iphone 2G,3G,4,4S */
+        @media screen
+        and (min-width:320px)
+        and (max-width:480px)
+        and (orientation:portrait)
+        {
+        }
 
         *
         {
@@ -58,7 +90,7 @@
 
             outline:                none;
 
-            font-size:              12px;
+            font-size:              7px;
 
         }
 
@@ -86,7 +118,7 @@
 
             background-color:       #272822;
 
-            font-size:              14px;
+            font-size:              7px;
 
             color:                  #fff;
 
@@ -96,13 +128,6 @@
         {
 
             text-align: center;
-
-        }
-
-        h1
-        {
-
-            font-size:              14px;
 
         }
 
