@@ -1,11 +1,11 @@
-#!/bin/bash
+!/bin/bash
 #
 # ________                              .____                    .___
 # \______ \_______  ____ _____    _____ |    |    ____  __ __  __| _/
-#  |    |  \_  __ _/ __ \\__  \  /     \|    |   /  _ \|  |  \/ __ | 
-#  |    `   |  | \\  ___/ / __ \|  Y Y  |    |__(  <_> |  |  / /_/ | 
-# /_______  |__|   \___  (____  |__|_|  |_______ \____/|____/\____ | 
-#         \/           \/     \/      \/        \/                \/ 
+#  |    |  \_  __ _/ __ \\__  \  /     \|    |   /  _ \|  |  \/ __ |
+#  |    `   |  | \\  ___/ / __ \|  Y Y  |    |__(  <_> |  |  / /_/ |
+# /_______  |__|   \___  (____  |__|_|  |_______ \____/|____/\____ |
+#         \/           \/     \/      \/        \/                \/
 #
 #                             © likely.cloud and Jadissa Griffin 2018
 
@@ -68,16 +68,28 @@ if [ "$ID" != "centos" ] || [ "$VER" != "7" ]; then
 
 fi
 
-sudo chmod u+x dependencies
+sudo mkdir -p $PROJECTPATH
 
-./dependencies
+echo "export PATH=$PROJECTPATH:$PATH" >>~/.bashrc
 
-cd $PROJECTPATH
+source ~/.bashrc
 
-sudo chmod u+x tests
+sudo chmod -R 0775 $PROJECTPATH
 
-./tests
+sudo chown -R $GROUP:$GROUP $PROJECTPATH
 
-sudo chmod u+x project
+echo "Installing Composer..."
 
-./project
+curl -sS https://getcomposer.org/installer | php -- --install-dir=.
+
+echo "Updating Composer..."
+
+php composer.phar selfupdate
+
+echo "Running Composer..."
+
+php composer.phar update
+
+php composer.phar dumpautoload -o
+
+php composer.phar install

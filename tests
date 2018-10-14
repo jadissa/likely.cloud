@@ -2,10 +2,10 @@
 #
 # ________                              .____                    .___
 # \______ \_______  ____ _____    _____ |    |    ____  __ __  __| _/
-#  |    |  \_  __ _/ __ \\__  \  /     \|    |   /  _ \|  |  \/ __ | 
-#  |    `   |  | \\  ___/ / __ \|  Y Y  |    |__(  <_> |  |  / /_/ | 
-# /_______  |__|   \___  (____  |__|_|  |_______ \____/|____/\____ | 
-#         \/           \/     \/      \/        \/                \/ 
+#  |    |  \_  __ _/ __ \\__  \  /     \|    |   /  _ \|  |  \/ __ |
+#  |    `   |  | \\  ___/ / __ \|  Y Y  |    |__(  <_> |  |  / /_/ |
+# /_______  |__|   \___  (____  |__|_|  |_______ \____/|____/\____ |
+#         \/           \/     \/      \/        \/                \/
 #
 #                             © likely.cloud and Jadissa Griffin 2018
 
@@ -68,16 +68,38 @@ if [ "$ID" != "centos" ] || [ "$VER" != "7" ]; then
 
 fi
 
-sudo chmod u+x dependencies
-
-./dependencies
+echo "Switching to $PROJECTPATH"
 
 cd $PROJECTPATH
 
-sudo chmod u+x tests
+echo 'Checking net statistics...'
 
-./tests
+netstat -tln
 
-sudo chmod u+x project
+echo 'Checking nginx configuration...'
 
-./project
+sudo nginx -t
+
+echo 'Attempting to curl out to public access point...'
+
+curl http://$PRIVATE_IP_ADDRESS:80
+
+echo 'Catting fpm errors...'
+
+sudo cat /var/log/php-fpm/error.log
+
+echo 'Checking nginx status...'
+
+sudo systemctl status nginx
+
+echo 'Catting nginx errors...'
+
+sudo cat /var/log/nginx/error.log
+
+echo 'Checking MySQL status...'
+
+sudo systemctl status mysql
+
+echo 'Testing PHP version...'
+
+php -v
