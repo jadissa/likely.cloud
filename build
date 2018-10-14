@@ -90,7 +90,7 @@ _init() {
 
 }
 
-_group_mod() {
+_dependencies() {
 
     GROUP_EXISTS=`cat /etc/group | grep $GROUP`
 
@@ -102,10 +102,6 @@ _group_mod() {
 
     fi
 
-}
-
-_update() {
-
     #
     # Get dependencies
     #
@@ -115,29 +111,25 @@ _update() {
 
     sudo yum -y update
 
-    sudo yum -y install nginx wget http-server libicu-dev epel-release policycoreutils-python net-tools git vim mlocate
+    sudo yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+
+    sudo yum -y install http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+
+    sudo yum-config-manager --enable remi-php72
+
+    curl 'https://setup.ius.io/' -o setup-ius.sh
+
+    sudo bash setup-ius.sh
+
+    sudo yum -y install yum-utils nginx mod_php70u php70u-cli php70u-mysqlnd php70u-fpm php70u-mcrypt mariadb-server mariadb wget http-server libicu-dev epel-release policycoreutils-python net-tools git vim mlocate
 
     sudo yum -y groupinstall 'Development Tools'
 
     sudo yum -y install gcc-c++ make
 
-    sudo curl -sL https://rpm.nodesource.com/setup_8.x | sudo -E bash -
-
-    sudo yum install -y nodejs
-
-    which node
-
-    node -v
-
-    npm -v
-
     sudo systemctl start nginx
 
     sudo systemctl enable nginx
-
-    sudo npm install -g pm2@latest -g http-server
-
-    sudo wget https://dl.yarnpkg.com/rpm/yarn.repo -O /etc/yum.repos.d/yarn.repo
 
     echo "Configuring $PROJECTPATH..."
 
@@ -149,7 +141,7 @@ _update() {
 
     sudo chmod -R 0775 $PROJECTPATH
 
-    sudo chown -R $USER:wheel $PROJECTPATH
+    sudo chown -R $GROUP:$GROUP $PROJECTPATH
 
     #
     # Checkout project
@@ -163,49 +155,38 @@ _update() {
     #
     # Install node dependencies 
     #
-    if [ -f ./package.json ]; then
-
-        npm update
-
-        npm install
-
-    fi
-
-    files=(./node_modules/geoip-lite/tmp/*)
-
-    if [ ! -e "${files[0]}" ]; then 
-        
-        cd node_modules/geoip-lite/
-
-        npm run-script updatedb
-
-        cd $PROJECTPATH
-
-    fi
-
-}
-
-_pm2() {
-
-    #
-    # Manage pm2
-    #
-    sudo chown -R $GROUP:$USER ~/.pm2
-
-    pm2 reload settings/ecosystem.config.js
-
-}
+    #if [ -f ./package.json ]; then
 
 
 
-_nginx() {
+    #fi
+
+    # Firewall stuff
+    sudo firewall-cmd
+
+    sudo firewall-cmd --permanent --zone=public --add-service=http
+
+    sudo firewall-cmd --permanent --zone=public --add-service=https
+
+    sudo firewall-cmd --zone=public --add-port=8080/tcp --permanent
+
+    sudo firewall-cmd --reload
+
+    # Configure mariadb
+    sudo systemctl start mariadb
+
+    sudo mysql_secure_installation
+
+    sudo systemctl enable mariadb
+
+    sudo chkconfig mariadb on
 
     #
     # Configure nginx
     #
     if [ ! -d /etc/nginx/conf.d/ ]; then
 
-        sudo mkdir /etc/nginx/conf.d/ 
+        sudo mkdir /etc/nginx/conf.d/
 
     fi
 
@@ -246,14 +227,14 @@ _nginx() {
         gzip on;
         gzip_disable "msie6";
 
-        include /etc/nginx/conf.d/*.conf;
+        #include /etc/nginx/conf.d/*.conf;
 
         server {
             listen 80 default_server;
             listen [::]:80 default_server;
             server_name _;
 
-            root /usr/share/nginx/html;
+            root /var/www/html;
 
             location / {
             }
@@ -271,14 +252,14 @@ EOF
 
         location / {
             proxy_pass "http://localhost:50451/";
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header Host ${host};
+            proxy_set_header X-Real-IP ${remote_addr};
         }
 
         location /api/discord/login {
             proxy_pass "http://localhost:50452/";
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header Host ${host};
+            proxy_set_header X-Real-IP ${remote_addr};
         }
 
     }
@@ -312,49 +293,43 @@ EOF
 
     sudo systemctl restart nginx
 
-}
-
-_mongodb() {
-
-    sudo cat << EOF > /etc/yum.repos.d/mongodb-org-3.6.repo
-    [mongodb-org-3.6]
-    name=MongoDB Repository
-    baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.6/x86_64/
-    gpgcheck=1
-    enabled=1
-    gpgkey=https://www.mongodb.org/static/pgp/server-3.6.asc
-EOF
-
-    sudo yum install -y mongodb-org
-
-    sudo systemctl start mongod
-
-    mongod --port 27017 --dbpath /var/lib/mongo
+    sudo systemctl enable nginx
 
 }
 
 _tests() {
 
-    #
-    # Globally install react for UI
-    #
     #cd $PROJECTPATH
-
-    #sudo npm install -g react-composer create-react-app
-
-    #create-react-app app
 
     netstat -tln
 
-    pm2 status
-
     sudo nginx -t
 
-    curl http://$PRIVATE_IP_ADDRESS:8080
+    curl http://$PRIVATE_IP_ADDRESS:80
 
     sudo systemctl status nginx
 
-    sudo systemctl status mongodb
+    php -v
+
+}
+
+_build() {
+
+    echo "Installing Composer..."
+
+    curl -sS https://getcomposer.org/installer | php -- --install-dir=.
+
+    echo "Updating Composer..."
+
+    php composer.phar selfupdate
+
+    echo "Running Composer..."
+
+    php composer.phar update
+
+    php composer.phar dumpautoload -o
+
+    php composer.phar install
 
 }
 
@@ -362,17 +337,11 @@ fun() {
 
     _init
 
-    _group_mod
-
-    _update
-
-    _pm2
-
-    _nginx
-
-    _mongodb
+    _dependencies
 
     _tests
+
+    _build
 
 }
 
