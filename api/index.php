@@ -1,4 +1,5 @@
 <?php
+
 // Headers/Session
 header('Access-Control-Allow-Origin: *');
 header('Content-type: application/json; charset=utf-8');
@@ -10,8 +11,9 @@ require '../vendor/autoload.php';
 use JadissaPHPLib\Fw;
 
 // Default configs
-$config['displayErrorDetails'] = true;
-$config['addContentLengthHeader'] = false;
+define( 'DOC_ROOT', $_SERVER['DOCUMENT_ROOT'] );
+$config['displayErrorDetails']      = true;
+$config['addContentLengthHeader']   = false;
 
 // Database configs
 $settings = json_decode(Fw::json_encode(Fw::getSettings()), true);
@@ -56,11 +58,12 @@ $container['session'] = function ($c) {
 $container['logger'] = function($c)
 {
     $logger = new \Monolog\Logger('my_logger');
-    $file_handler = new \Monolog\Handler\StreamHandler('../logs/app.log');
+    $file_handler = new \Monolog\Handler\StreamHandler(DOC_ROOT . '/logs/app.log');
     $logger->pushHandler($file_handler);
     return $logger;
 };
 
+$container['logger']->addInfo( serialize( $_REQUEST ) );
 
 $app->group('/api',function() use($app){
 

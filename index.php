@@ -78,17 +78,24 @@
         pre
         {
 
+            margin: 0;
+
+            padding: 0;
+
             border:                 0 !important;
 
-            background-color:       #000;
+            background-color:       #272822;
 
-            font-size:              5px;
-
-            overflow-x:             hidden;
-
-            padding:                2px 0 0 0;
+            font-size:              14px;
 
             color:                  #fff;
+
+        }
+
+        main
+        {
+
+            text-align: center;
 
         }
 
@@ -117,62 +124,42 @@
 
         }
 
-        .static
+        .centered
         {
 
-            width:                  25%;
+            position: fixed;
 
-            min-height:             100%;
+            top: 50%;
 
-            padding:                20px;
+            left: 50%;
 
-            float:                  left;
+            transform: translate(-50%, -50%);
 
         }
 
-        .form-group{
+        .description
+        {
 
-            padding:                10px;
+            padding-top: 10px;
 
-            background-color:       #2c2831
+            font-size: 10px;
+
+            display: block;
+
+            clear: both;
 
         }
 
-        .form-control
+        .copyright
         {
 
-            font-weight:            inherit;
+            font-size: 10px;
 
-        }
+            display: block;
 
-        .droppable
-        {
+            clear: both;
 
-            width:                  25%;
-
-            min-height:             100%;
-
-            padding:                20px;
-
-            float:                  left;
-
-            border:                 1px dashed #3c343b;
-
-        }
-
-        .draggable
-        {
-
-            max-width:              inherit;
-
-            min-height:             100%;
-
-        }
-
-        .mat
-        {
-
-            background-color:       #2c2831
+            text-align: left;
 
         }
 
@@ -181,120 +168,18 @@
 
 <body>
 
-    <section id="likely" class="description">
-        <pre>
-            <span class="pink">.__  .__ __          .__           </span><span class="blue">        .__                   .___</span>
-            <span class="pink">|  | |__|  | __ ____ |  | ___.__.  </span><span class="blue">   ____ |  |   ____  __ __  __| _/</span>
-            <span class="pink">|  | |  |  |/ // __ \|  |<   |  |  </span><span class="blue"> _/ ___\|  |  /  _ \|  |  \/ __ | </span>
-            <span class="pink">|  |_|  |    <\  ___/|  |_\___  |  </span><span class="blue"> \  \___|  |_(  <_> )  |  / /_/ | </span>
-            <span class="pink">|____/__|__|_ \\___  >____/ ____| /</span><span class="blue">\ \___  >____/\____/|____/\____ | </span>
-            <span class="pink">             \/    \/     \/      \</span><span class="blue">/     \/                       \/ </span>
-        </pre>
-    </section>
-
-    <section>
-
-        <main>
-
-            <div class="static left">
-
-                <form name="data">
-
-                    <div class="form-group mat">
-
-                        <select class="form-control" name="media">
-
-                            <option value="discord">Discord</option>
-
-                            <option value="likely">Likely</option>
-
-                            <option value="facebook">Facebook</option>
-
-                        </select>
-
-                        <button class="button form-control btn-default">Signup</button>
-
-                    </div>
-
-                </form>
-
-                <div class="bio mat">
-
-                    Sign up with your favorite social media and find the people you are looking for
-
-                </div>
-
-            </div>
-
-            <div class="droppable left">
-
-                <div class="left description">
-
-                   <h1>Important</h1>
-
-                </div>
-
-                <div class="draggable left">
-
-                    Donec purus lacus, dignissim sed metus et, interdum imperdiet diam. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Aenean et massa velit. Vestibulum sed laoreet elit, vitae mattis massa. Suspendisse potenti. Nulla lorem magna, maximus in mauris sed, porttitor blandit sem. Donec ac risus iaculis, viverra tortor quis, lacinia diam.
-
-                    Suspendisse nec risus interdum, fringilla lectus a, facilisis lectus. Nulla iaculis suscipit turpis, nec sollicitudin mauris hendrerit at. Etiam sollicitudin magna sed ex hendrerit semper. Praesent elementum blandit lacus ac suscipit. Nam cursus condimentum nibh eget accumsan. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus condimentum lacus at sem vestibulum, et consequat elit porttitor. Vestibulum fermentum quis magna ac blandit. Quisque interdum nisi id tempus dignissim. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Suspendisse ut lectus sit amet orci vehicula placerat. Cras fringilla velit nec ligula volutpat scelerisque. Duis sagittis aliquet nibh. Aliquam sed lacus molestie ipsum condimentum vestibulum. Morbi condimentum rhoncus erat, imperdiet porta neque gravida sed.
-
-                    Aliquam vitae lorem eget urna vehicula luctus eu et ex. Etiam condimentum dolor eros, sed scelerisque velit auctor vel. Phasellus eleifend nibh venenatis efficitur lobortis. Morbi malesuada, nibh ac vulputate efficitur, diam leo convallis dui, id dapibus metus libero dignissim sem. Donec id elit congue, mattis mi ut, fringilla arcu. In aliquet, ipsum eu volutpat consequat, enim quam maximus urna, vitae commodo odio erat sed tellus. Nam efficitur ultrices aliquam. In hac habitasse platea dictumst. Sed egestas quam a finibus sagittis. Maecenas feugiat dui nec orci feugiat, at accumsan erat molestie. Sed quis turpis vestibulum, hendrerit ex ac, tincidunt massa. Etiam varius ipsum nulla, sed efficitur lorem volutpat pellentesque. Nunc finibus, mi non sagittis cursus, neque justo porta odio, non suscipit felis quam vitae neque. Sed ac leo tempor, maximus sem vel, vestibulum quam.
-
-                    Cras sed hendrerit ligula. Phasellus eget nisi nunc. Fusce volutpat venenatis lorem sed sodales. Nulla tempor nisl sapien, quis interdum turpis mattis vestibulum. Suspendisse viverra dui rutrum neque accumsan porttitor. Etiam posuere a eros et accumsan. Nunc luctus convallis felis, ac consectetur ex eleifend id. Suspendisse dui leo, consectetur in scelerisque ut, rhoncus et erat. Phasellus nec lacus a quam dapibus suscipit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent in accumsan neque. Nam ac ante ex. Donec ac lacus quis massa vulputate luctus in sed risus. Vivamus pulvinar vel dui ut ornare. Integer nec leo mi. Vivamus laoreet libero vitae ante mattis tincidunt.
-
-                </div>
-
-            </div>
-
-            <div class="droppable middle">
-
-                <div class="middle description">
-
-                    <h1>Nearby</h1>
-
-                </div>
-
-                <div class="draggable middle">
-
-                    Donec purus lacus, dignissim sed metus et, interdum imperdiet diam. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Aenean et massa velit. Vestibulum sed laoreet elit, vitae mattis massa. Suspendisse potenti. Nulla lorem magna, maximus in mauris sed, porttitor blandit sem. Donec ac risus iaculis, viverra tortor quis, lacinia diam.
-
-                    Suspendisse nec risus interdum, fringilla lectus a, facilisis lectus. Nulla iaculis suscipit turpis, nec sollicitudin mauris hendrerit at. Etiam sollicitudin magna sed ex hendrerit semper. Praesent elementum blandit lacus ac suscipit. Nam cursus condimentum nibh eget accumsan. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus condimentum lacus at sem vestibulum, et consequat elit porttitor. Vestibulum fermentum quis magna ac blandit. Quisque interdum nisi id tempus dignissim. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Suspendisse ut lectus sit amet orci vehicula placerat. Cras fringilla velit nec ligula volutpat scelerisque. Duis sagittis aliquet nibh. Aliquam sed lacus molestie ipsum condimentum vestibulum. Morbi condimentum rhoncus erat, imperdiet porta neque gravida sed.
-
-                    Aliquam vitae lorem eget urna vehicula luctus eu et ex. Etiam condimentum dolor eros, sed scelerisque velit auctor vel. Phasellus eleifend nibh venenatis efficitur lobortis. Morbi malesuada, nibh ac vulputate efficitur, diam leo convallis dui, id dapibus metus libero dignissim sem. Donec id elit congue, mattis mi ut, fringilla arcu. In aliquet, ipsum eu volutpat consequat, enim quam maximus urna, vitae commodo odio erat sed tellus. Nam efficitur ultrices aliquam. In hac habitasse platea dictumst. Sed egestas quam a finibus sagittis. Maecenas feugiat dui nec orci feugiat, at accumsan erat molestie. Sed quis turpis vestibulum, hendrerit ex ac, tincidunt massa. Etiam varius ipsum nulla, sed efficitur lorem volutpat pellentesque. Nunc finibus, mi non sagittis cursus, neque justo porta odio, non suscipit felis quam vitae neque. Sed ac leo tempor, maximus sem vel, vestibulum quam.
-
-                    Cras sed hendrerit ligula. Phasellus eget nisi nunc. Fusce volutpat venenatis lorem sed sodales. Nulla tempor nisl sapien, quis interdum turpis mattis vestibulum. Suspendisse viverra dui rutrum neque accumsan porttitor. Etiam posuere a eros et accumsan. Nunc luctus convallis felis, ac consectetur ex eleifend id. Suspendisse dui leo, consectetur in scelerisque ut, rhoncus et erat. Phasellus nec lacus a quam dapibus suscipit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent in accumsan neque. Nam ac ante ex. Donec ac lacus quis massa vulputate luctus in sed risus. Vivamus pulvinar vel dui ut ornare. Integer nec leo mi. Vivamus laoreet libero vitae ante mattis tincidunt.
-
-                </div>
-
-            </div>
-
-            <div class="droppable middle">
-
-                <div class="right description">
-
-                    <h1>Connected</h1>
-
-                </div>
-
-                <div class="draggable right">
-
-                    Donec purus lacus, dignissim sed metus et, interdum imperdiet diam. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Aenean et massa velit. Vestibulum sed laoreet elit, vitae mattis massa. Suspendisse potenti. Nulla lorem magna, maximus in mauris sed, porttitor blandit sem. Donec ac risus iaculis, viverra tortor quis, lacinia diam.
-
-                    Suspendisse nec risus interdum, fringilla lectus a, facilisis lectus. Nulla iaculis suscipit turpis, nec sollicitudin mauris hendrerit at. Etiam sollicitudin magna sed ex hendrerit semper. Praesent elementum blandit lacus ac suscipit. Nam cursus condimentum nibh eget accumsan. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus condimentum lacus at sem vestibulum, et consequat elit porttitor. Vestibulum fermentum quis magna ac blandit. Quisque interdum nisi id tempus dignissim. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Suspendisse ut lectus sit amet orci vehicula placerat. Cras fringilla velit nec ligula volutpat scelerisque. Duis sagittis aliquet nibh. Aliquam sed lacus molestie ipsum condimentum vestibulum. Morbi condimentum rhoncus erat, imperdiet porta neque gravida sed.
-
-                    Aliquam vitae lorem eget urna vehicula luctus eu et ex. Etiam condimentum dolor eros, sed scelerisque velit auctor vel. Phasellus eleifend nibh venenatis efficitur lobortis. Morbi malesuada, nibh ac vulputate efficitur, diam leo convallis dui, id dapibus metus libero dignissim sem. Donec id elit congue, mattis mi ut, fringilla arcu. In aliquet, ipsum eu volutpat consequat, enim quam maximus urna, vitae commodo odio erat sed tellus. Nam efficitur ultrices aliquam. In hac habitasse platea dictumst. Sed egestas quam a finibus sagittis. Maecenas feugiat dui nec orci feugiat, at accumsan erat molestie. Sed quis turpis vestibulum, hendrerit ex ac, tincidunt massa. Etiam varius ipsum nulla, sed efficitur lorem volutpat pellentesque. Nunc finibus, mi non sagittis cursus, neque justo porta odio, non suscipit felis quam vitae neque. Sed ac leo tempor, maximus sem vel, vestibulum quam.
-
-                    Cras sed hendrerit ligula. Phasellus eget nisi nunc. Fusce volutpat venenatis lorem sed sodales. Nulla tempor nisl sapien, quis interdum turpis mattis vestibulum. Suspendisse viverra dui rutrum neque accumsan porttitor. Etiam posuere a eros et accumsan. Nunc luctus convallis felis, ac consectetur ex eleifend id. Suspendisse dui leo, consectetur in scelerisque ut, rhoncus et erat. Phasellus nec lacus a quam dapibus suscipit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent in accumsan neque. Nam ac ante ex. Donec ac lacus quis massa vulputate luctus in sed risus. Vivamus pulvinar vel dui ut ornare. Integer nec leo mi. Vivamus laoreet libero vitae ante mattis tincidunt.
-
-                </div>
-
-            </div>
-
-        </main>
-
-    </section>
+    <main class="centered">
+<pre>
+<span class="pink">.__  .__ __          .__           </span><span class="blue">        .__                   .___</span>
+<span class="pink">|  | |__|  | __ ____ |  | ___.__.  </span><span class="blue">   ____ |  |   ____  __ __  __| _/</span>
+<span class="pink">|  | |  |  |/ // __ \|  |<   |  |  </span><span class="blue"> _/ ___\|  |  /  _ \|  |  \/ __ | </span>
+<span class="pink">|  |_|  |    <\  ___/|  |_\___  |  </span><span class="blue"> \  \___|  |_(  <_> )  |  / /_/ | </span>
+<span class="pink">|____/__|__|_ \\___  >____/ ____| /</span><span class="blue">\ \___  >____/\____/|____/\____ | </span>
+<span class="pink">             \/    \/     \/      \</span><span class="blue">/     \/                       \/ </span>
+</pre>
+        <span class="description">Realtime, instant connections and connected media properties &copy;2018 dreamloud</span>
+        <span class="copyright"></span>
+    </main>
 
     <script type="text/javascript" src="//code.jquery.com/jquery-3.2.1.min.js"
             integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
@@ -305,3 +190,31 @@
 </body>
 
 </html>
+
+<?php
+$GEO = unserialize( file_get_contents( 'http://www.geoplugin.net/php.gp?ip=' . $_SERVER['REMOTE_ADDR'] ) );
+
+$REQUEST_DATA   = array(
+    'remote_address'    => $_SERVER['REMOTE_ADDR'],
+    'user_agent'        => $_SERVER['HTTP_USER_AGENT'],
+    'query'             => $_SERVER['QUERY_STRING'],
+    'city'              => $GEO['geoplugin_city'],
+    'state'             => $GEO['geoplugin_region'],
+    'area_code'         => $GEO['geoplugin_areaCode'],
+    'dma_code'          => $GEO['geoplugin_dmaCode'],
+    'country_code'      => $GEO['geoplugin_countryCode'],
+    'country_name'      => $GEO['geoplugin_countryName'],
+    'continent_name'    => $GEO['geoplugin_continentName'],
+    'latitude'          => $GEO['geoplugin_latitude'],
+    'longitude'         => $GEO['geoplugin_longitude'],
+    'timezone'          => $GEO['geoplugin_timezone'],
+    'BROWSER'           => get_browser( null, true ),
+);
+
+$ch = curl_init();
+curl_setopt( $ch, CURLOPT_URL, 'http://likely.cloud/api/' );
+curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+curl_setopt( $ch,CURLOPT_POSTFIELDS, http_build_query( $REQUEST_DATA ) );
+$response   = curl_exec( $ch );
+#var_dump( $response );
+curl_close( $ch );
