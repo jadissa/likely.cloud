@@ -124,6 +124,8 @@ sudo chmod -R 0775 $PROJECTPATH
 
 sudo chown -R $GROUP:$GROUP $PROJECTPATH
 
+sudo chmod 1733 /var/lib/php/session
+
 sudo systemctl start mariadb
 
 sudo mysql_secure_installation
