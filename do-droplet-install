@@ -100,7 +100,7 @@ curl -X POST "https://api.digitalocean.com/v2/droplets" \
     -H "Authorization: Bearer $DOKEY" \
     -H "Content-Type: application/json" 
 sleep 15
-# @todo: parse creation response becasue probably contains password
+# @todo: parse creation response because probably contains password
 
 # List Created Droplet
 JSON=`curl -X GET "https://api.digitalocean.com/v2/droplets?tag_name=$TAG_NAME" -H "Authorization: Bearer $DOKEY" -H "Content-Type: application/json"`

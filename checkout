@@ -1,11 +1,11 @@
-#!/bin/bash
+!/bin/bash
 #
 # ________                              .____                    .___
 # \______ \_______  ____ _____    _____ |    |    ____  __ __  __| _/
-#  |    |  \_  __ _/ __ \\__  \  /     \|    |   /  _ \|  |  \/ __ | 
-#  |    `   |  | \\  ___/ / __ \|  Y Y  |    |__(  <_> |  |  / /_/ | 
-# /_______  |__|   \___  (____  |__|_|  |_______ \____/|____/\____ | 
-#         \/           \/     \/      \/        \/                \/ 
+#  |    |  \_  __ _/ __ \\__  \  /     \|    |   /  _ \|  |  \/ __ |
+#  |    `   |  | \\  ___/ / __ \|  Y Y  |    |__(  <_> |  |  / /_/ |
+# /_______  |__|   \___  (____  |__|_|  |_______ \____/|____/\____ |
+#         \/           \/     \/      \/        \/                \/
 #
 #                             © likely.cloud and Jadissa Griffin 2018
 
@@ -22,7 +22,7 @@ ID=$ID
 
 VER=$VERSION_ID
 
-PROJECTPATH=/var/www/html
+PROJECTPATH=/var/www/htm
 
 PRIVATE_IP_ADDRESS=`curl -w "\n" http://169.254.169.254/metadata/v1/interfaces/private/0/ipv4/address`
 
@@ -68,20 +68,26 @@ if [ "$ID" != "centos" ] || [ "$VER" != "7" ]; then
 
 fi
 
-sudo chmod u+x dependencies
+git clone https://github.com/dreamloud/likely.cloud.git
 
-./dependencies
+sudo chmod -R 0775 $PROJECTPATH
 
-cd $PROJECTPATH
+sudo chown -R $GROUP:$GROUP $PROJECTPATH
 
-sudo chmod u+x tests
+sudo setenforce Permissive
 
-./tests
+sudo chcon -Rt httpd_sys_content_t $PROJECTPATH
 
-sudo chmod u+x project
+sudo setsebool -P httpd_sys_rw_content_t true
 
-./project
+sudo setsebool -P httpd_can_network_connect true
 
-sudo chmod u+x checkout
+sudo semanage fcontext -a -t httpd_sys_rw_content_t $PROJECTPATH
 
-./checkout
+sudo chcon --type httpd_sys_rw_content_t $PROJECTPATH/likely.cloud/api/logs/app.log
+
+sudo chcon --type httpd_sys_rw_content_t $PROJECTPATH/likely.cloud/logs/app.log
+
+sudo setenforce Enforcing
+
+sudo cat /var/log/audit/audit.log

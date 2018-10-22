@@ -122,7 +122,9 @@ source ~/.bashrc
 
 sudo chmod -R 0775 $PROJECTPATH
 
-sudo chown -R $GROUP:$GROUP $PROJECTPATH
+sudo chown -R $USER:$GROUP $PROJECTPATH
+
+sudo umask 0775 $PROJECTPATH
 
 sudo chmod 1733 /var/lib/php/session
 
@@ -206,9 +208,10 @@ EOF
 # sudo vim /etc/php-fpm.d/www.conf
 
 # change lines to:
-
-#user = nginx
-#group = nginx
+#pool
+#[www}
+#user = www
+#group = www
 #;listen = 127.0.0.1:9000
 #listen = /var/run/php-fpm/php-fpm.sock
 #listen.acl_users = nginx

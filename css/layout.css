@@ -1,7 +1,8 @@
-/***********************************************************************************************************/
-/**************************************         Layout Block          **************************************/
-*
-{
+* {
+
+    padding:                0;
+
+    margin:                 0;
 
     text-decoration:        none;
 
@@ -15,12 +16,11 @@
 
     outline:                none;
 
-    font-size:              12px;
+    font-size:              10px;
 
 }
 
-body
-{
+body {
 
     background-color:       #272822;
 
@@ -32,234 +32,156 @@ body
 
 }
 
-h1, h2, h3, h4, h5, h6
-{
+pre {
 
-    margin:                 0;
+    margin: 0;
 
-    margin-bottom:          5px;
+    padding: 0;
+
+    border:                 0 !important;
+
+    background-color:       #272822;
+
+    font-size:              7px;
+
+    color:                  #fff;
 
 }
 
-form 
-{
+main {
 
-    background:             transparent;
+    text-align: center;
 
-    width:                  320px;
+}
 
-    padding:                20px;
+.pink {
 
-    border-radius:          10px;
+    color:                  magenta;
 
-    border:                 0;
+    font-size:              inherit;
 
-    margin:                 0 auto;
+    animation:              pink-color 2s infinite;
 
-    background-image:       repeating-linear-gradient( 0deg, #f0f 50%, #00f 50% );
+    -webkit-animation:      pink-color 2s infinite;
 
-    background-image:       -o-linear-gradient( 0deg, #f0f 50%, #00f 50% );
+}
 
-    background-image:       -moz-linear-gradient( 0deg, #f0f 50%, #00f 50% );
+@-webkit-keyframes pink-color {
 
-    background-image:       -webkit-linear-gradient( 0deg, #f0f 50%, #00f 50% );
+    0%                      { color: magenta; }
 
-    background-image:       -ms-linear-gradient( 0deg, #f0f 50%, #00f 50% );
+    40%                     { color: deeppink; }
+
+    80%                     { color: #ff78d4; }
+
+    100%                    { color: #e8acff; }
+
+}
+
+@keyframes pink-color {
+
+    0%                      { color: magenta; }
+
+    40%                     { color: deeppink; }
+
+    80%                     { color: #ff78d4; }
+
+    100%                    { color: #e8acff; }
+
+}
+
+.blue {
+
+    color:                  dodgerblue;
+
+    font-size:              inherit;
+
+    animation:              blue-color 2s infinite;
+
+    -webkit-animation:      blue-color 2s infinite;
+
+}
+
+@-webkit-keyframes blue-color {
+
+    0%                      { color: dodgerblue; }
+
+    40%                     { color: #007eff}
+
+    80%                     { color: #0a88ff; }
+
+    100%                    { color: #18ccff; }
+
+}
+
+@keyframes blue-color {
+
+    0%                      { color: dodgerblue; }
+
+    40%                     { color: #007eff}
+
+    80%                     { color: #0a88ff; }
+
+    100%                    { color: #18ccff; }
+
+}
+
+.centered {
+
+    position:               fixed;
+
+    top:                    50%;
+
+    left:                   50%;
+
+    transform:              translate(-50%, -50%);
+
+}
+
+.description {
+
+    padding-top:            10px;
+
+    font-size:              10px;
 
     display:                block;
 
     clear:                  both;
 
-
 }
 
-input[type=checkbox], input[type=radio]
-{
+.copyright {
 
-    margin:                 2px 0 0;
-
-}
-
-label
-{
-
-    font-weight:            unset;
-
-}
-
-a
-{
-
-    color:                  #FFF;
-
-    background:             transparent;
-
-}
-
-a:hover
-{
-
-    color: #fff;
-
-}
-
-.header
-{
-
-    padding:                15px;
-
-    background-color:       #f0f;
-
-    font-size:              x-large;
-
-}
-
-.form-group
-{
+    font-size:              10px;
 
     display:                block;
 
     clear:                  both;
 
-    margin-left:            20px !important;
-
-    margin-right:           20px !important;
+    text-align:             left;
 
 }
 
-.form-control
-{
+.signups {
 
-    width:                  auto;
+    padding-top:            10px;
 
-    font-size:              12px;
+    font-size:              10px !important;
 
-    display:                inline;
+    display:                block;
 
-}
-
-.input-group .form-control
-{
-
-    margin-top:             10px;
+    clear:                  both;
 
 }
 
-.button
-{
+.message {
 
-    /*width:                  auto !important;*/
+    padding-top:            10px;
 
-    margin-right:           5px;
+    font-size:              10px !important;
 
-}
+    display:                block;
 
-.btn-default:hover 
-{
-
-    transition-duration:    0.4s;
-
-    background-position:    inherit;
+    clear:                  both;
 
 }
-
-.form_bg 
-{
-
-    width:                  100%;
-
-    min-height:             100vh;
-
-    display:                flex;
-
-    justify-content:        center;
-
-    align-items:            center;
-
-}
-
-.row 
-{
-
-    margin:                 0;
-
-
-}
-
-.footer
-{
-
-    display: block;
-
-    clear: both;
-
-    justify-content: center;
-
-    align-items: center;
-
-}
-
-.title, .description
-{
-    color:                  #FFF;
-
-    text-align:             center;
-
-    text-shadow:            0px 2px 4px #444444;
-
-    display:                flex;
-
-    justify-content:        center;
-
-    align-items:            center;
-
-}
-
-.scroll-select 
-{
-   max-height:              34px;
-
-   overflow:                scroll; 
-
-}
-
-.center
-{
-
-    text-align:             center;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-}
-
-.inline
-{
-
-    display:                inline;
-
-}
-
-.float-right
-{
-
-    float:                  right;
-
-}
-
-.margin-left-30
-{
-
-    margin-left:            30px;
-
-}
-
-.x-small, a.x-small
-{
-
-    font-size:              x-small !important;
-
-}
-/***********************************************************************************************************/
-/************************************         End Layout Block          ************************************/
