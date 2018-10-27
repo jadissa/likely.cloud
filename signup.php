@@ -49,6 +49,12 @@ if( empty( $SETTINGS ) ) die( 'Improperly configured ' . __FILE__ );
 
         <link rel="stylesheet" href="/css/layout.css">
 
+        <script type="text/javascript"> //<![CDATA[
+            var tlJsHost = ((window.location.protocol == "https:") ? "https://secure.comodo.com/" : "http://www.trustlogo.com/");
+            document.write(unescape("%3Cscript src='" + tlJsHost + "trustlogo/javascript/trustlogo.js' type='text/javascript'%3E%3C/script%3E"));
+            //]]>
+        </script>
+
     </head>
 
     <body>
@@ -70,9 +76,11 @@ if( empty( $SETTINGS ) ) die( 'Improperly configured ' . __FILE__ );
 
         <span class="copyright"></span>
 
-        <span class="signups">Join the conversation using <a href="<?= !empty( $SETTINGS->using_https ) ? 'https://' : 'http://' . $SETTINGS->api ?>/discord">Discord</a></span>
+        <span class="signups">Login using <a href="<?= ( !empty( $SETTINGS->using_https ) ? 'https://' : 'http://' ) . $SETTINGS->api ?>/discord">Discord</a></span>
 
         <span class="message"><?= !empty( $_REQUEST['message'] ) ? $_REQUEST['message'] : null ?></span>
+
+        <span class="policy"><a href="<?= ( !empty( $SETTINGS->using_https ) ? 'https://' : 'http://' ) . $SETTINGS->domain ?>/policy.php">Privacy Policy</a></span>
 
     </main>
 
@@ -82,13 +90,20 @@ if( empty( $SETTINGS ) ) die( 'Improperly configured ' . __FILE__ );
 
     <script type="text/javascript" src="/js/controller.js"></script>
 
+    <!--
+    <script language="JavaScript" type="text/javascript">
+        TrustLogo("http://likely.cloud/images/comodo_secure_seal_76x26_transp.png", "CL1", "none");
+    </script>
+    <a href="https://ssl.comodo.com" id="comodoTL">Comodo SSL</a>
+    -->
+
     </body>
 
     </html>
 
 <?php
 
-$API_URL = !empty( $SETTINGS->using_https ) ? 'https://' : 'http://' . $SETTINGS->api . '/ping';
+$API_URL = ( !empty( $SETTINGS->using_https ) ? 'https://' : 'http://' ) . $SETTINGS->api . '/ping';
 
 if( !empty( $SETTINGS->debug ) ) {
 

@@ -57,13 +57,19 @@ $CONTAINER['db'] = function($c)
 };
 */
 
-/*
+
 // Session initialization
 $APP->add( new \Slim\Middleware\Session( [
     'name'          => $SETTINGS->session[0]->name,
     'autorefresh'   => $SETTINGS->session[0]->autorefresh,
     'lifetime'      => $SETTINGS->session[0]->lifetime,
 ] ) );
+
+
+//
+//  Plugin container
+//
+$CONTAINER = $APP->getContainer();
 
 
 //
@@ -74,13 +80,6 @@ $CONTAINER['session'] = function () {
     return new \SlimSession\Helper;
 
 };
-*/
-
-
-//
-//  Plugin container
-//
-$CONTAINER = $APP->getContainer();
 
 
 //
@@ -159,8 +158,7 @@ $APP->post('/ping', function( ServerRequestInterface $REQUEST, ResponseInterface
 } );
 
 
-//
-//  Discord auth
+//s
 //
 $APP->get('/discord_auth', function( ServerRequestInterface $REQUEST, ResponseInterface $RESPONSE ) use( $CONTAINER ) {
 
@@ -169,6 +167,31 @@ $APP->get('/discord_auth', function( ServerRequestInterface $REQUEST, ResponseIn
     if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
 
         print'<pre>';print_r( $PARSED_REQUEST );print'</pre>';
+
+    }
+
+
+    //
+    //  check if already authed
+    //
+    $username       = $this->session->get( 'username' );
+
+    $authenticated  = $this->session->get( 'authenticated' );
+
+    if( !empty( $username) and !empty( $authenticated ) ) {
+
+        $REDIRECT_URL   = ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
+
+        $REDIRECT_DATA  = [
+            'stat'      => true,
+            'message'   => 'Yay ' . $username . '! Welcome back!',
+        ];
+
+        $REDIRECT_URL   .= http_build_query( $REDIRECT_DATA );
+
+        header( 'Location: ' . $REDIRECT_URL );
+
+        return $REDIRECT_DATA;
 
     }
 
@@ -185,12 +208,12 @@ $APP->get('/discord_auth', function( ServerRequestInterface $REQUEST, ResponseIn
             'content-type: application/x-www-form-urlencoded',
         ],
         'form_params' => [
-            'client_id'         => $CONTAINER['SETTINGS']->social[0]->discord[0]->client_id,
-            'client_secret'     => $CONTAINER['SETTINGS']->social[0]->discord[0]->client_secret,
+            'client_id'         => $CONTAINER['SETTINGS']->social[0]->discord[0]->server[0]->client_id,
+            'client_secret'     => $CONTAINER['SETTINGS']->social[0]->discord[0]->server[0]->client_secret,
             'grant_type'        => 'authorization_code',
             'code'              => $PARSED_REQUEST['code'],
-            'redirect_uri'      => !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' . $CONTAINER['SETTINGS']->domain . '/' . $CONTAINER['SETTINGS']->social[0]->discord[0]->callback,
-            'scope'             => $CONTAINER['SETTINGS']->social[0]->discord[0]->scope,
+            'redirect_uri'      => ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->domain . '/' . $CONTAINER['SETTINGS']->social[0]->discord[0]->register[0]->callback,
+            'scope'             => $CONTAINER['SETTINGS']->social[0]->discord[0]->register[0]->scope,
         ],
     ] );
 
@@ -208,7 +231,7 @@ $APP->get('/discord_auth', function( ServerRequestInterface $REQUEST, ResponseIn
 
     if( empty( $PARSED_TOKEN_RESPONSE->access_token ) ) {
 
-        $REDIRECT_URL   = !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
+        $REDIRECT_URL   = ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
 
         $REDIRECT_DATA  = [
             'stat'      => false,
@@ -218,6 +241,8 @@ $APP->get('/discord_auth', function( ServerRequestInterface $REQUEST, ResponseIn
         $REDIRECT_URL   .= http_build_query( $REDIRECT_DATA );
 
         header( 'Location: ' . $REDIRECT_URL );
+
+        return $REDIRECT_DATA;
 
     }
 
@@ -249,7 +274,7 @@ $APP->get('/discord_auth', function( ServerRequestInterface $REQUEST, ResponseIn
 
     if( empty( $PARSED_USER_RESPONSE->id ) ) {
 
-        $REDIRECT_URL   = !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
+        $REDIRECT_URL   = ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
 
         $REDIRECT_DATA  = [
             'stat'      => false,
@@ -343,6 +368,30 @@ $APP->get('/discord_auth', function( ServerRequestInterface $REQUEST, ResponseIn
 
     if( !empty( $PARSED_GUILDS_RESPONSE ) ) {
 
+        foreach( $PARSED_GUILDS_RESPONSE as $GUILD_RESPONSE ) {
+
+            if( $GUILD_RESPONSE->name == $CONTAINER['SETTINGS']->social[0]->discord[0]->server[0]->name ) {
+
+                $this->session->set( 'username',         $PARSED_USER_RESPONSE->username );
+                $this->session->set( 'authenticated',    true );
+
+                $REDIRECT_URL   = ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
+
+                $REDIRECT_DATA  = [
+                    'stat'      => true,
+                    'message'   => 'Yay ' . $PARSED_USER_RESPONSE->username . '! Welcome back!',
+                ];
+
+                $REDIRECT_URL   .= http_build_query( $REDIRECT_DATA );
+
+                header( 'Location: ' . $REDIRECT_URL );
+
+                return $REDIRECT_DATA;
+
+            }
+
+        }
+
         $CONTAINER['logger']->addInfo( serialize( json_encode( $PARSED_GUILDS_RESPONSE ) ) );
 
     }
@@ -353,7 +402,7 @@ $APP->get('/discord_auth', function( ServerRequestInterface $REQUEST, ResponseIn
     //
     $CLIENT         = new GuzzleHttp\Client();
 
-    $query_str      = 'https://discordapp.com/api/v6/invites/' . $CONTAINER['SETTINGS']->social[0]->discord[0]->invite;
+    $query_str      = 'https://discordapp.com/api/v6/invites/' . $CONTAINER['SETTINGS']->social[0]->discord[0]->register[0]->invite;
 
     $INVITE_RESPONSE = $CLIENT->request( 'GET', $query_str, [
         'headers' => [
@@ -375,7 +424,7 @@ $APP->get('/discord_auth', function( ServerRequestInterface $REQUEST, ResponseIn
 
     if( empty( $PARSED_INVITE_RESPONSE->code ) ) {
 
-        $REDIRECT_URL   = !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
+        $REDIRECT_URL   = ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
 
         $REDIRECT_DATA  = [
             'stat'      => false,
@@ -386,6 +435,8 @@ $APP->get('/discord_auth', function( ServerRequestInterface $REQUEST, ResponseIn
 
         header( 'Location: ' . $REDIRECT_URL );
 
+        return $REDIRECT_DATA;
+
     }
 
 
@@ -394,7 +445,7 @@ $APP->get('/discord_auth', function( ServerRequestInterface $REQUEST, ResponseIn
     //
     $CLIENT         = new GuzzleHttp\Client();
 
-    $query_str      = 'https://discordapp.com/api/v6/invites/' . $CONTAINER['SETTINGS']->social[0]->discord[0]->invite;
+    $query_str      = 'https://discordapp.com/api/v6/invites/' . $CONTAINER['SETTINGS']->social[0]->discord[0]->register[0]->invite;
 
     $INSERT_RESPONSE = $CLIENT->request( 'POST', $query_str, [
         'headers' => [
@@ -416,7 +467,7 @@ $APP->get('/discord_auth', function( ServerRequestInterface $REQUEST, ResponseIn
 
     if( empty( $PARSED_INSERT_RESPONSE ) ) {
 
-        $REDIRECT_URL   = !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
+        $REDIRECT_URL   = ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
 
         $REDIRECT_DATA  = [
             'stat'      => false,
@@ -427,11 +478,13 @@ $APP->get('/discord_auth', function( ServerRequestInterface $REQUEST, ResponseIn
 
         header( 'Location: ' . $REDIRECT_URL );
 
+        return $REDIRECT_DATA;
+
     }
 
     $CONTAINER['logger']->addInfo( serialize( json_encode( $PARSED_INSERT_RESPONSE ) ) );
 
-    $REDIRECT_URL   = !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
+    $REDIRECT_URL   = ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
 
     $REDIRECT_DATA  = [
         'stat'      => true,
@@ -442,12 +495,7 @@ $APP->get('/discord_auth', function( ServerRequestInterface $REQUEST, ResponseIn
 
     header( 'Location: ' . $REDIRECT_URL );
 
-} );
-
-
-$APP->get('/callback', function( ServerRequestInterface $REQUEST, ResponseInterface $RESPONSE ) use( $CONTAINER ) {
-
-    $CONTAINER['logger']->addInfo( serialize( $REQUEST ) );
+    return $REDIRECT_DATA;
 
 } );
 
@@ -458,13 +506,210 @@ $APP->get('/callback', function( ServerRequestInterface $REQUEST, ResponseInterf
 //
 $APP->get('/discord', function( ServerRequestInterface $REQUEST, ResponseInterface $RESPONSE ) use( $CONTAINER ) {
 
-    $REDIRECT_URL   = 'https://discordapp.com/api/v6/oauth2/authorize?response_type=code&client_id=' . $CONTAINER['SETTINGS']->social[0]->discord[0]->client_id
-        . '&scope=' . $CONTAINER['SETTINGS']->social[0]->discord[0]->scope
-        . '&redirect_uri=' . ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->domain . '/' . $CONTAINER['SETTINGS']->social[0]->discord[0]->callback;
+    //
+    //  check if already authed
+    //
+    $username       = $this->session->get( 'username' );
+
+    $authenticated  = $this->session->get( 'authenticated' );
+
+    if( !empty( $username) and !empty( $authenticated ) ) {
+
+        $REDIRECT_URL   = ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
+
+        $REDIRECT_DATA  = [
+            'stat'      => true,
+            'message'   => 'Yay ' . $username . '! Welcome back!',
+        ];
+
+        $REDIRECT_URL   .= http_build_query( $REDIRECT_DATA );
+
+        header( 'Location: ' . $REDIRECT_URL );
+
+        return $REDIRECT_DATA;
+
+    }
+
+    $REDIRECT_URL   = 'https://discordapp.com/api/v6/oauth2/authorize?response_type=code&client_id=' . $CONTAINER['SETTINGS']->social[0]->discord[0]->server[0]->client_id
+        . '&scope=' . $CONTAINER['SETTINGS']->social[0]->discord[0]->register[0]->scope
+        . '&redirect_uri=' . ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->domain . '/' . $CONTAINER['SETTINGS']->social[0]->discord[0]->register[0]->callback;
 
     header( 'Location: ' . $REDIRECT_URL );
 
+    return $RESPONSE;
+
 } );
 
+
+//
+//  Facebook auth
+//  https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow/
+//
+$APP->get('/facebook', function( ServerRequestInterface $REQUEST, ResponseInterface $RESPONSE ) use( $CONTAINER ) {
+
+    $REDIRECT_URL   = 'https://www.facebook.com/v3.1/dialog/oauth?client_id=' . $CONTAINER['SETTINGS']->social[0]->facebook[0]->client_id
+        . '&state=' . $CONTAINER['SETTINGS']->session[0]->name . '_' . rand( 0, time() )
+        . '&redirect_uri=' . ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->domain . '/' . $CONTAINER['SETTINGS']->social[0]->facebook[0]->callback;
+
+    header( 'Location: ' . $REDIRECT_URL );
+
+    return $RESPONSE;
+
+} );
+
+
+//
+//  Facebook auth
+//
+$APP->get('/facebook_auth', function( ServerRequestInterface $REQUEST, ResponseInterface $RESPONSE ) use( $CONTAINER ) {
+
+    $PARSED_REQUEST = $REQUEST->getQueryParams();
+
+
+    //
+    //  Attempt token fetch
+    //
+    $CLIENT         = new GuzzleHttp\Client();
+
+    $query_str      = 'https://graph.accountkit.com/' . $CONTAINER['SETTINGS']->social[0]->facebook[0]->version . '/access_token';
+
+    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
+
+        print'<pre>';print_r( [
+            'grant_type'        => 'authorization_code',
+            'code'              => $PARSED_REQUEST['code'],
+            'access_token'      => 'AA|' . $CONTAINER['SETTINGS']->social[0]->facebook[0]->client_id . '|' . $CONTAINER['SETTINGS']->social[0]->facebook[0]->client_secret,
+        ] );print'</pre>';
+
+    }
+
+    $TOKEN_RESPONSE = $CLIENT->request( 'GET', $query_str, [
+        'query' => [
+            'grant_type'        => 'authorization_code',
+            'code'              => $PARSED_REQUEST['code'],
+            'access_token'      => 'AA|' . $CONTAINER['SETTINGS']->social[0]->facebook[0]->client_id . '|' . $CONTAINER['SETTINGS']->social[0]->facebook[0]->client_secret,
+        ],
+    ] );
+
+    $CONTAINER['logger']->addInfo( serialize( $TOKEN_RESPONSE ) );
+
+    return json_encode( array( 'stat' => true, 'message' => 'Not integrated yet' ) );
+
+} );
+
+
+//
+//  IRC search
+//
+$APP->get('/ircsearch/{q}', function( ServerRequestInterface $REQUEST, ResponseInterface $RESPONSE ) use( $CONTAINER ) {
+
+    $PARSED_REQUEST = $REQUEST->getAttribute('q');
+
+    $CONTAINER['logger']->addInfo( serialize( $PARSED_REQUEST ) );
+
+    $RESPONSE  = [
+        'stat'      => false,
+        'message'   => array(
+            'SERVERS'   => array(),
+        ),
+    ];
+
+
+    //
+    //  Attempt search
+    //
+    $CLIENT         = new GuzzleHttp\Client();
+
+    $query_str      = 'https://search.mibbit.com';
+
+    $SEARCH_RESPONSE = $CLIENT->request( 'GET', $query_str, [
+        'query' => [
+            'q' => $PARSED_REQUEST,
+        ],
+    ] );
+
+
+    //
+    //  Parse the search
+    //
+    $PARSED_RESPONSE    = $SEARCH_RESPONSE->getBody()->getContents();
+
+    $DOM                = new DOMDocument;
+
+    $DOM->loadHTML( $PARSED_RESPONSE );
+
+    $XPATH              = new DOMXPath( $DOM );
+
+    $pattern            = '
+    /
+    \{              # { character
+        (?:         # non-capturing group
+            [^{}]   # anything that is not a { or }
+            |       # OR
+            (?R)    # recurses the entire pattern
+        )*          # previous group zero or more times
+    \}              # } character
+    /x
+    ';
+
+    $SEARCH_RESULTS     = $XPATH->query( '//div[@class="result"]//a[@class="connectlink"]' );
+
+    if( empty( $SEARCH_RESULTS->length ) ) {
+
+        $RESPONSE['message']    = 'Could not find any relevant hits';
+
+        return json_encode( $RESPONSE );
+
+    }
+
+    foreach( $SEARCH_RESULTS as $RESULT ) {
+
+        preg_match( $pattern, $RESULT->getAttribute( 'onclick'), $MATCHES );
+
+        if( empty( $MATCHES or empty( $MATCHES[0] ) ) ) {
+
+            $RESPONSE['message']    = 'Sorry, that is not expected';
+
+            $CONTAINER['logger']->addInfo( serialize( [ 'Bad response on ' . __LINE__ . ' in ' . __FILE__ ] ) );
+
+            return json_encode( $RESPONSE );
+
+        }
+
+        $JSON   = json_decode( $MATCHES[0] );
+
+        if( strpos( $JSON->addr, ':' ) == false ) {
+
+            $server_name = $JSON->addr . ':6667';
+
+        } else {
+
+            $server_name   = str_replace( ':+', ':', $JSON->addr );
+
+        }
+
+        $server  = 'irc://' . $server_name . '/' . str_replace( '#', '', strtolower( $JSON->channels ) );
+
+        $RESPONSE['message']['SERVERS'][]   = $server;
+
+    }
+
+    $RESPONSE['stat']   = true;
+
+    return json_encode( $RESPONSE, JSON_UNESCAPED_SLASHES );
+
+} );
+
+
+//
+//  Root requests
+//
+$APP->get('/', function( ServerRequestInterface $REQUEST, ResponseInterface $RESPONSE ) use( $CONTAINER ) {
+
+    header( 'Location: ' . ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->parent_domain );
+
+    return $RESPONSE;
+
+} );
 
 $APP->run();

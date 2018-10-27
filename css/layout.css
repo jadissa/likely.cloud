@@ -46,11 +46,19 @@ pre {
 
     color:                  #fff;
 
+    text-decoration: none;
+
 }
 
 main {
 
     text-align: center;
+
+}
+
+a, a:active, a:focus, a:hover, a:visited {
+
+    text-decoration: none;
 
 }
 

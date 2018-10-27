@@ -5,3 +5,6 @@ yarn-error.log
 node_modules
 settings.json
 logs
+STAR_likely_cloud*
+*.txt
+images/comodo*
