@@ -150,6 +150,8 @@ a, a:active, a:focus, a:hover, a:visited {
 
     padding-top:            10px;
 
+    padding-bottom:         10px;
+
     font-size:              10px;
 
     display:                block;
@@ -172,10 +174,6 @@ a, a:active, a:focus, a:hover, a:visited {
 
 .signups {
 
-    padding-top:            10px;
-
-    font-size:              10px !important;
-
     display:                block;
 
     clear:                  both;
@@ -186,10 +184,22 @@ a, a:active, a:focus, a:hover, a:visited {
 
     padding-top:            10px;
 
-    font-size:              10px !important;
+    display:                block;
+
+    clear:                  both;
+
+}
+
+.signups-description {
 
     display:                block;
 
     clear:                  both;
+
+}
+
+.clear {
+
+    padding-top:            10px;
 
 }

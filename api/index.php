@@ -1,4 +1,10 @@
 <?php
+//
+//  Session initialization
+//
+ini_set( 'session.auto_start', true );
+session_save_path('/tmp' );
+session_start();
 
 //
 //  Get initial settings
@@ -58,14 +64,6 @@ $CONTAINER['db'] = function($c)
 */
 
 
-// Session initialization
-$APP->add( new \Slim\Middleware\Session( [
-    'name'          => $SETTINGS->session[0]->name,
-    'autorefresh'   => $SETTINGS->session[0]->autorefresh,
-    'lifetime'      => $SETTINGS->session[0]->lifetime,
-] ) );
-
-
 //
 //  Plugin container
 //
@@ -73,21 +71,9 @@ $CONTAINER = $APP->getContainer();
 
 
 //
-//  Session helper plugin
-//
-$CONTAINER['session'] = function () {
-
-    return new \SlimSession\Helper;
-
-};
-
-
-//
 //  Provide container access to settings
 //
 $CONTAINER['SETTINGS']  = $SETTINGS;
-
-
 
 
 //
@@ -158,7 +144,173 @@ $APP->post('/ping', function( ServerRequestInterface $REQUEST, ResponseInterface
 } );
 
 
-//s
+//
+//  Tumblr authentication
+//
+$APP->get('/tumblr_auth', function( ServerRequestInterface $REQUEST, ResponseInterface $RESPONSE ) use( $CONTAINER ) {
+
+    $PARSED_REQUEST = $REQUEST->getQueryParams();
+
+    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
+
+        print'<pre>';print_r( $PARSED_REQUEST );print'</pre>';
+
+    }
+
+    $client = new Tumblr\API\Client(
+        $CONTAINER['SETTINGS']->social[0]->tumblr[0]->server[0]->client_id,
+        $CONTAINER['SETTINGS']->social[0]->tumblr[0]->server[0]->client_secret,
+        $PARSED_REQUEST['oauth_token'], $_SESSION['oauth_token_secret']
+    );
+
+    $requestHandler = $client->getRequestHandler();
+
+    $requestHandler->setBaseUrl( 'https://www.tumblr.com/' );
+
+    $response = $requestHandler->request('POST', 'oauth/access_token', [
+        'oauth_verifier' => $PARSED_REQUEST['oauth_verifier'],
+    ]);
+
+    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
+
+        var_dump('response_status', $response->status );
+
+    }
+
+    parse_str( (string) $response->body, $PARSED_REQUEST_TOKENS_RESPONSE );
+
+    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
+
+        print'<pre>';print_r( $PARSED_REQUEST_TOKENS_RESPONSE );print'</pre>';
+
+    }
+
+    $client = new Tumblr\API\Client(
+        $CONTAINER['SETTINGS']->social[0]->tumblr[0]->server[0]->client_id,
+        $CONTAINER['SETTINGS']->social[0]->tumblr[0]->server[0]->client_secret,
+        $PARSED_REQUEST_TOKENS_RESPONSE['oauth_token'],
+        $PARSED_REQUEST_TOKENS_RESPONSE['oauth_token_secret']
+    );
+
+    $PARSED_USER_RESPONSE  = $client->getUserInfo();
+
+
+    //
+    //  check if already authenticated
+    //
+    $username       = !empty( $_SESSION['username'] ) ? $_SESSION['username'] : null;
+
+    $authenticated  = !empty( $_SESSION['authenticated'] ) ? $_SESSION['authenticated'] : null;
+
+    if( !empty( $username) and !empty( $authenticated ) ) {
+
+        $REDIRECT_URL   = ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
+
+        $REDIRECT_DATA  = [
+            'stat'      => true,
+            'message'   => 'Yay ' . $username . '! Welcome back!',
+        ];
+
+        $REDIRECT_URL   .= http_build_query( $REDIRECT_DATA );
+
+        header( 'Location: ' . $REDIRECT_URL );
+
+        return $REDIRECT_DATA;
+
+    }
+
+
+    //
+    //  Normalize
+    //
+    $NORMALIZED_RESPONSE                    = [];
+
+    $NORMALIZED_RESPONSE['tumblr_registry'] = $PARSED_USER_RESPONSE;
+
+    $_SESSION['username']                   = $PARSED_USER_RESPONSE->user->name;
+
+    $_SESSION['authenticated']              = true;
+
+    /*
+    if( !empty( $PARSED_USER_RESPONSE->user->blogs[0]->url ) ) {
+
+        //
+        //  Attempt avatar parse
+        //
+        $SEARCH_RESPONSE    = file_get_contents( $PARSED_USER_RESPONSE->user->blogs[0]->url );
+
+        $DOM                = new DOMDocument;
+
+        $DOM->loadHTML( $SEARCH_RESPONSE );
+
+        $XPATH              = new DOMXPath( $DOM );
+
+        $SEARCH_RESULTS     = $XPATH->query( '//a[@class="user-avatar"]' );
+
+        if( !empty( $SEARCH_RESULTS->length ) ) {
+
+            foreach( $SEARCH_RESULTS as $RESULT ) {
+
+                var_dump( get_class_methods( $RESULT) );
+
+                break;
+
+            }
+
+
+        }
+
+        #$NORMALIZED_RESPONSE['discord_registry']->avatar  = 'https://discordapp.com/api/v6/users/' . $PARSED_USER_RESPONSE->id . '/avatars/' . $PARSED_USER_RESPONSE->avatar . '.jpg';
+
+    }
+    */
+
+    $CONTAINER['logger']->addInfo( serialize( $NORMALIZED_RESPONSE ) );
+
+} );
+
+
+//
+//  Tumblr redirect
+//
+$APP->get('/tumblr', function( ServerRequestInterface $REQUEST, ResponseInterface $RESPONSE ) use( $CONTAINER ) {
+
+    $client = new Tumblr\API\Client(
+        $CONTAINER['SETTINGS']->social[0]->tumblr[0]->server[0]->client_id,
+        $CONTAINER['SETTINGS']->social[0]->tumblr[0]->server[0]->client_secret
+    );
+
+    $requestHandler = $client->getRequestHandler();
+
+    $requestHandler->setBaseUrl( 'https://www.tumblr.com/' );
+
+    $resp = $requestHandler->request( 'POST', 'oauth/request_token', [
+        'oauth_callback' => ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' )
+            . $CONTAINER['SETTINGS']->domain . '/' . $CONTAINER['SETTINGS']->social[0]->tumblr[0]->register[0]->callback,
+    ] ) ;
+
+    parse_str( $resp->body, $PARSED_TOKEN_RESPONSE );
+
+    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
+
+        print'<pre>';print_r( $PARSED_TOKEN_RESPONSE );print'</pre>';
+
+    }
+
+    $_SESSION['oauth_token']    = $PARSED_TOKEN_RESPONSE['oauth_token'];
+
+    $_SESSION['oauth_token_secret'] = $PARSED_TOKEN_RESPONSE['oauth_token_secret'];
+
+    header( 'Location: ' . 'https://www.tumblr.com/oauth/authorize?oauth_token=' . $PARSED_TOKEN_RESPONSE['oauth_token'] );
+
+    return $RESPONSE;
+
+});
+
+
+
+//
+//  Discord authentication
 //
 $APP->get('/discord_auth', function( ServerRequestInterface $REQUEST, ResponseInterface $RESPONSE ) use( $CONTAINER ) {
 
@@ -172,11 +324,11 @@ $APP->get('/discord_auth', function( ServerRequestInterface $REQUEST, ResponseIn
 
 
     //
-    //  check if already authed
+    //  check if already authenticated
     //
-    $username       = $this->session->get( 'username' );
+    $username       = !empty( $_SESSION['username'] ) ? $_SESSION['username'] : null;
 
-    $authenticated  = $this->session->get( 'authenticated' );
+    $authenticated  = !empty( $_SESSION['authenticated'] ) ? $_SESSION['authenticated'] : null;
 
     if( !empty( $username) and !empty( $authenticated ) ) {
 
@@ -372,8 +524,8 @@ $APP->get('/discord_auth', function( ServerRequestInterface $REQUEST, ResponseIn
 
             if( $GUILD_RESPONSE->name == $CONTAINER['SETTINGS']->social[0]->discord[0]->server[0]->name ) {
 
-                $this->session->set( 'username',         $PARSED_USER_RESPONSE->username );
-                $this->session->set( 'authenticated',    true );
+                $_SESSION['username']       = $PARSED_USER_RESPONSE->username;
+                $_SESSION['authenticated']  = true;
 
                 $REDIRECT_URL   = ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
 
@@ -501,17 +653,16 @@ $APP->get('/discord_auth', function( ServerRequestInterface $REQUEST, ResponseIn
 
 
 //
-//  Discord auth
-//  http://api.likely.cloud/discord
+//  Discord redirect
 //
 $APP->get('/discord', function( ServerRequestInterface $REQUEST, ResponseInterface $RESPONSE ) use( $CONTAINER ) {
 
     //
     //  check if already authed
     //
-    $username       = $this->session->get( 'username' );
+    $username       = $_SESSION['username'];
 
-    $authenticated  = $this->session->get( 'authenticated' );
+    $authenticated  = $_SESSION['authenticated'];
 
     if( !empty( $username) and !empty( $authenticated ) ) {
 
