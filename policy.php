@@ -108,8 +108,8 @@ if( empty( $SETTINGS ) ) die( 'Improperly configured ' . __FILE__ );
         You give us permission, subject to removal, a non-exclusive, transferable, sub-license, royalty-free,
         worldwide license to use your properties for the purposes of understanding your data, sharing your data
         with other users and helping users grow their connections accordingly. The permission you give to us for any
-        data you share ends when you request deletion of that data. Data is expunged after a certain time
-        period, based on internal settings. Data shared publicly using our services may be collected by
+        data you share ends when you request deletion of that data and we send receipt of its removal. Data is otherwise
+        expunged after a certain time period, based on internal settings. Data shared publicly using our services may be collected by
         other entities. While using our services, your legal consent that is granted to likely.cloud that it may
         use, store and share your data, connecting you and relational users by proximity or other
         category of interest. Further legal consent on your part is that any data you have electively chosen to
@@ -121,11 +121,17 @@ if( empty( $SETTINGS ) ) die( 'Improperly configured ' . __FILE__ );
 
         <span class="copyright"></span>
 
-        <span class="signups">Login using <a href="<?= !empty( $SETTINGS->using_https ) ? 'https://' : 'http://' . $SETTINGS->api ?>/discord">Discord</a></span>
+        <span class="signups-description">Login using any of the active services</span>
+
+        <span class="signups">
+            <a href="<?= ( !empty( $SETTINGS->using_https ) ? 'https://' : 'http://' ) . $SETTINGS->api ?>/discord">Discord</a>
+            <a href="<?= ( !empty( $SETTINGS->using_https ) ? 'https://' : 'http://' ) . $SETTINGS->api ?>/tumblr">Tumblr</a>
+            <a href="<?= ( !empty( $SETTINGS->using_https ) ? 'https://' : 'http://' ) . $SETTINGS->api ?>/imgur">imgur</a>
+        </span>
 
         <span class="message"><?= !empty( $_REQUEST['message'] ) ? $_REQUEST['message'] : null ?></span>
 
-        <span class="policy"><a href="<?= !empty( $SETTINGS->using_https ) ? 'https://' : 'http://' . $SETTINGS->domain ?>/policy.php">Privacy Policy</a></span>
+        <span class="policy"><a href="<?= ( !empty( $SETTINGS->using_https ) ? 'https://' : 'http://' ) . $SETTINGS->domain ?>/policy.php">Privacy Policy</a> <?= $SETTINGS->copyright ?></span>
 
     </main>
 

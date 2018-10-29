@@ -2,8 +2,11 @@
 //
 //  Session initialization
 //
+#session_set_cookie_params( 3600, '/', 'api.likely.cloud', true );
 ini_set( 'session.auto_start', true );
-session_save_path('/tmp' );
+#session_cache_limiter( 'private' );
+#session_cache_expire( 60 );
+session_save_path( '/tmp' );
 session_start();
 
 //
@@ -12,6 +15,7 @@ session_start();
 require_once $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php';
 
 if( empty( $SETTINGS ) ) die( 'Improperly configured ' . __FILE__ );
+
 
 
 //
@@ -30,18 +34,11 @@ use Psr\Http\Message\ResponseInterface;
 
 
 //
-//  Initial configuration
+//  Additional settings
 //
 $CONFIG['displayErrorDetails']      = $SETTINGS->debug;
 $CONFIG['addContentLengthHeader']   = false;
 $CONFIG['debug']                    = $SETTINGS->debug;
-
-/*
-$CONFIG['db']['host']   = $SETTINGS['database']['mysql']['host'];
-$CONFIG['db']['user']   = $SETTINGS['database']['mysql']['username'];
-$CONFIG['db']['pass']   = $SETTINGS['database']['mysql']['password'];
-$CONFIG['db']['dbname'] = $SETTINGS['database']['mysql']['database'];
-*/
 
 
 // Slim initialization
@@ -50,24 +47,25 @@ $APP = new \Slim\App( [
 ] );
 
 
-/*
-// PDO/DB abstraction layer
-
-$CONTAINER['db'] = function($c)
-{
-    $db = $c['settings']['db'];
-    $pdo = new PDO("mysql:host=" . $db['host'] . ";dbname=" . $db['dbname'], $db['user'], $db['pass']);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-    return $pdo;
-};
-*/
-
-
 //
 //  Plugin container
 //
 $CONTAINER = $APP->getContainer();
+
+
+//
+//  Database
+//
+$CONTAINER['DATABASE'] = function() use( $CONTAINER ) {
+
+    $DATABASE = new PDO( "mysql:host=" . $CONTAINER['SETTINGS']->database[0]->mysql[0]->host . ";dbname=" . $CONTAINER['SETTINGS']->database[0]->mysql[0]->db_name, $CONTAINER['SETTINGS']->database[0]->mysql[0]->user_name, $CONTAINER['SETTINGS']->database[0]->mysql[0]->pass_word );
+
+    $DATABASE->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+    $DATABASE->setAttribute( PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC );
+
+    return $DATABASE;
+};
 
 
 //
@@ -146,6 +144,7 @@ $APP->post('/ping', function( ServerRequestInterface $REQUEST, ResponseInterface
 
 //
 //  Tumblr authentication
+//  @todo: Double-check that Tumblr isn't capable of giving a refresh_token to store in user_data
 //
 $APP->get('/tumblr_auth', function( ServerRequestInterface $REQUEST, ResponseInterface $RESPONSE ) use( $CONTAINER ) {
 
@@ -157,6 +156,62 @@ $APP->get('/tumblr_auth', function( ServerRequestInterface $REQUEST, ResponseInt
 
     }
 
+
+    //
+    //  Verify active service or quit
+    //  @todo: iterator_to_array needs to check for the possibility the service is disabled
+    //  NotORM recommends $table->where("field > ? AND field < ?", "x", "y") but that's not going to work
+    //
+    $DB         = new NotORM( $CONTAINER['DATABASE'] );
+
+    $DB->debug  = $CONTAINER['SETTINGS']->debug;
+
+    $SERVICE = iterator_to_array( $DB->services()->where( [
+        'name'      => 'tumblr',
+        'status'    => 'active',
+    ])->fetch() );
+
+    if( empty( $SERVICE ) or empty( $SERVICE['id'] ) ) {
+
+        $REDIRECT_URL   = ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
+
+        $REDIRECT_DATA  = [
+            'stat'      => false,
+            'message'   => 'Try again later',
+        ];
+
+        $REDIRECT_URL   .= http_build_query( $REDIRECT_DATA );
+
+        header( 'Location: ' . $REDIRECT_URL );
+
+        return $REDIRECT_DATA;
+
+    }
+
+
+    //
+    //  Capture geo
+    //
+    $GEO = unserialize( file_get_contents( 'http://www.geoplugin.net/php.gp?ip=' . $_SERVER['REMOTE_ADDR'] ) );
+
+    $PARSED_GEO_RESPONSE  = [
+        'REMOTE_ADDR'       => $_SERVER['REMOTE_ADDR'],
+        'city'              => $GEO['geoplugin_city'],
+        'state'             => $GEO['geoplugin_region'],
+        'area_code'         => $GEO['geoplugin_areaCode'],
+        'dma_code'          => $GEO['geoplugin_dmaCode'],
+        'country_code'      => $GEO['geoplugin_countryCode'],
+        'country_name'      => $GEO['geoplugin_countryName'],
+        'continent_name'    => $GEO['geoplugin_continentName'],
+        'latitude'          => $GEO['geoplugin_latitude'],
+        'longitude'         => $GEO['geoplugin_longitude'],
+        'timezone'          => $GEO['geoplugin_timezone'],
+    ];
+
+
+    //
+    //  Proceed with service auth
+    //
     $client = new Tumblr\API\Client(
         $CONTAINER['SETTINGS']->social[0]->tumblr[0]->server[0]->client_id,
         $CONTAINER['SETTINGS']->social[0]->tumblr[0]->server[0]->client_secret,
@@ -194,28 +249,9 @@ $APP->get('/tumblr_auth', function( ServerRequestInterface $REQUEST, ResponseInt
 
     $PARSED_USER_RESPONSE  = $client->getUserInfo();
 
+    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
 
-    //
-    //  check if already authenticated
-    //
-    $username       = !empty( $_SESSION['username'] ) ? $_SESSION['username'] : null;
-
-    $authenticated  = !empty( $_SESSION['authenticated'] ) ? $_SESSION['authenticated'] : null;
-
-    if( !empty( $username) and !empty( $authenticated ) ) {
-
-        $REDIRECT_URL   = ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
-
-        $REDIRECT_DATA  = [
-            'stat'      => true,
-            'message'   => 'Yay ' . $username . '! Welcome back!',
-        ];
-
-        $REDIRECT_URL   .= http_build_query( $REDIRECT_DATA );
-
-        header( 'Location: ' . $REDIRECT_URL );
-
-        return $REDIRECT_DATA;
+        print'<pre>';print_r( $PARSED_USER_RESPONSE );print'</pre>';
 
     }
 
@@ -231,41 +267,90 @@ $APP->get('/tumblr_auth', function( ServerRequestInterface $REQUEST, ResponseInt
 
     $_SESSION['authenticated']              = true;
 
-    /*
-    if( !empty( $PARSED_USER_RESPONSE->user->blogs[0]->url ) ) {
-
-        //
-        //  Attempt avatar parse
-        //
-        $SEARCH_RESPONSE    = file_get_contents( $PARSED_USER_RESPONSE->user->blogs[0]->url );
-
-        $DOM                = new DOMDocument;
-
-        $DOM->loadHTML( $SEARCH_RESPONSE );
-
-        $XPATH              = new DOMXPath( $DOM );
-
-        $SEARCH_RESULTS     = $XPATH->query( '//a[@class="user-avatar"]' );
-
-        if( !empty( $SEARCH_RESULTS->length ) ) {
-
-            foreach( $SEARCH_RESULTS as $RESULT ) {
-
-                var_dump( get_class_methods( $RESULT) );
-
-                break;
-
-            }
+    $CONTAINER['logger']->addInfo( serialize( $NORMALIZED_RESPONSE ) );
 
 
-        }
+    //
+    //  Fetch user
+    //
+    $EXISTING_USER = $DB->users()->where( [
+        'uname'     => $PARSED_USER_RESPONSE->user->name,
+    ] )->fetch();
 
-        #$NORMALIZED_RESPONSE['discord_registry']->avatar  = 'https://discordapp.com/api/v6/users/' . $PARSED_USER_RESPONSE->id . '/avatars/' . $PARSED_USER_RESPONSE->avatar . '.jpg';
+
+    //
+    //  Quit when found
+    //
+    if( !empty( $EXISTING_USER ) ) {
+
+        $REDIRECT_URL   = ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
+
+        $REDIRECT_DATA  = [
+            'stat'      => true,
+            'message'   => 'Yay ' . $PARSED_USER_RESPONSE->user->name . '! Welcome back!',
+        ];
+
+        $REDIRECT_URL   .= http_build_query( $REDIRECT_DATA );
+
+        header( 'Location: ' . $REDIRECT_URL );
+
+        return $REDIRECT_DATA;
 
     }
-    */
 
-    $CONTAINER['logger']->addInfo( serialize( $NORMALIZED_RESPONSE ) );
+
+    //
+    //  Append user
+    //
+    $DB->users()->insert( [
+        'uname'     => $PARSED_USER_RESPONSE->user->name,
+        'login'     => date( 'Y-m-d H:i:s' ),
+        'status'    => 'active',
+    ] );
+
+    $user_id        = $DB->users()->insert_id();
+
+    $DB->user_data()->insert_update(
+        [
+            'uid'       => $user_id,
+        ],
+        [
+            'uid'       => $user_id,
+            'geo'       => json_encode( $PARSED_GEO_RESPONSE ),
+        ]
+    );
+
+
+    //
+    //  Activate service for user
+    //
+    $DB->user_services()->insert_update(
+        [
+            'uid'       => $user_id,
+            'sid'       => $SERVICE['id'],
+        ],
+        [
+            'uid'       => $user_id,
+            'sid'       => $SERVICE['id'],
+            'activated' => date( 'Y-m-d H:i:s' ),
+            'status'    => 'active',
+            'refresh'   => $PARSED_REQUEST_TOKENS_RESPONSE['refresh_token'],
+        ]
+    );
+
+
+    $REDIRECT_URL   = ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
+
+    $REDIRECT_DATA  = [
+        'stat'      => true,
+        'message'   => 'Yay ' . $PARSED_USER_RESPONSE->user->name . '! Welcome back!',
+    ];
+
+    $REDIRECT_URL   .= http_build_query( $REDIRECT_DATA );
+
+    header( 'Location: ' . $REDIRECT_URL );
+
+    return $REDIRECT_DATA;
 
 } );
 
@@ -297,7 +382,7 @@ $APP->get('/tumblr', function( ServerRequestInterface $REQUEST, ResponseInterfac
 
     }
 
-    $_SESSION['oauth_token']    = $PARSED_TOKEN_RESPONSE['oauth_token'];
+    $_SESSION['oauth_token']        = $PARSED_TOKEN_RESPONSE['oauth_token'];
 
     $_SESSION['oauth_token_secret'] = $PARSED_TOKEN_RESPONSE['oauth_token_secret'];
 
@@ -660,9 +745,9 @@ $APP->get('/discord', function( ServerRequestInterface $REQUEST, ResponseInterfa
     //
     //  check if already authed
     //
-    $username       = $_SESSION['username'];
+    $username       = !empty( $_SESSION['username'] ) ? $_SESSION['username'] : null;
 
-    $authenticated  = $_SESSION['authenticated'];
+    $authenticated  = !empty( $_SESSION['authenticated'] ) ? $_SESSION['authenticated'] : null;
 
     if( !empty( $username) and !empty( $authenticated ) ) {
 
@@ -699,7 +784,7 @@ $APP->get('/discord', function( ServerRequestInterface $REQUEST, ResponseInterfa
 $APP->get('/facebook', function( ServerRequestInterface $REQUEST, ResponseInterface $RESPONSE ) use( $CONTAINER ) {
 
     $REDIRECT_URL   = 'https://www.facebook.com/v3.1/dialog/oauth?client_id=' . $CONTAINER['SETTINGS']->social[0]->facebook[0]->client_id
-        . '&state=' . $CONTAINER['SETTINGS']->session[0]->name . '_' . rand( 0, time() )
+        . '&state=' . md5( $CONTAINER['SETTINGS']->session[0]->name . '_' . $CONTAINER['SETTINGS']->salt )
         . '&redirect_uri=' . ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->domain . '/' . $CONTAINER['SETTINGS']->social[0]->facebook[0]->callback;
 
     header( 'Location: ' . $REDIRECT_URL );
@@ -750,6 +835,238 @@ $APP->get('/facebook_auth', function( ServerRequestInterface $REQUEST, ResponseI
 
 
 //
+//  imgur redirect
+//
+$APP->get('/imgur', function( ServerRequestInterface $REQUEST, ResponseInterface $RESPONSE ) use( $CONTAINER ) {
+
+    //
+    //  check if already authed
+    //
+    $username       = !empty( $_SESSION['username'] ) ? $_SESSION['username'] : null;
+
+    $authenticated  = !empty( $_SESSION['authenticated'] ) ? $_SESSION['authenticated'] : null;
+
+    if( !empty( $username) and !empty( $authenticated ) ) {
+
+        $REDIRECT_URL   = ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
+
+        $REDIRECT_DATA  = [
+            'stat'      => true,
+            'message'   => 'Yay ' . $username . '! Welcome back!',
+        ];
+
+        $REDIRECT_URL   .= http_build_query( $REDIRECT_DATA );
+
+        header( 'Location: ' . $REDIRECT_URL );
+
+        return $REDIRECT_DATA;
+
+    }
+
+    $REDIRECT_URL   = 'https://api.imgur.com/oauth2/authorize?response_type=code&client_id=' . $CONTAINER['SETTINGS']->social[0]->imgur[0]->server[0]->client_id
+        . '&state=' . md5( $CONTAINER['SETTINGS']->session[0]->name . '_' . $CONTAINER['SETTINGS']->salt );
+
+    header( 'Location: ' . $REDIRECT_URL );
+
+    return $RESPONSE;
+
+} );
+
+
+//
+//  imgur auth
+//
+$APP->get('/imgur_auth', function( ServerRequestInterface $REQUEST, ResponseInterface $RESPONSE ) use( $CONTAINER ) {
+
+    $PARSED_REQUEST = $REQUEST->getQueryParams();
+
+    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
+
+        print'<pre>';print_r( $PARSED_REQUEST );print'</pre>';
+
+    }
+
+
+    //
+    //  Verify the request came from us
+    //
+
+    if( $PARSED_REQUEST['state'] != md5( $CONTAINER['SETTINGS']->session[0]->name . '_' . $CONTAINER['SETTINGS']->salt ) ) {
+
+        return $RESPONSE;
+
+    }
+
+
+    //
+    //  Attempt token fetch
+    //
+    $CLIENT     = new GuzzleHttp\Client();
+
+    $query_str = 'https://api.imgur.com/oauth2/token';
+
+    $TOKEN_RESPONSE = $CLIENT->request( 'POST', $query_str, [
+        'headers' => [
+            'content-type: application/x-www-form-urlencoded',
+        ],
+        'form_params' => [
+            'client_id'         => $CONTAINER['SETTINGS']->social[0]->imgur[0]->server[0]->client_id,
+            'client_secret'     => $CONTAINER['SETTINGS']->social[0]->imgur[0]->server[0]->client_secret,
+            'grant_type'        => 'authorization_code',
+            'code'              => $PARSED_REQUEST['code'],
+        ],
+    ] );
+
+
+    //
+    //  Parse and check for failure
+    //
+    $PARSED_TOKEN_RESPONSE  = json_decode( $TOKEN_RESPONSE->getBody()->getContents() );
+
+    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
+
+        print'<pre>';print_r( $PARSED_TOKEN_RESPONSE );print'</pre>';
+
+    }
+
+    if( empty( $PARSED_TOKEN_RESPONSE->access_token ) ) {
+
+        $REDIRECT_URL   = ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
+
+        $REDIRECT_DATA  = [
+            'stat'      => false,
+            'message'   => 'Sorry about this but we are unable to get you signed up through imgur at this time',
+        ];
+
+        $REDIRECT_URL   .= http_build_query( $REDIRECT_DATA );
+
+        header( 'Location: ' . $REDIRECT_URL );
+
+        return $REDIRECT_DATA;
+
+    }
+
+
+    //
+    //  Attempt user fetch
+    //
+    $CLIENT                 = new GuzzleHttp\Client();
+
+    $query_str              = 'https://api.imgur.com/3/account/' . $PARSED_TOKEN_RESPONSE->account_username;
+
+    $USER_RESPONSE = $CLIENT->request( 'GET', $query_str, [
+        'headers' => [
+            'Authorization' => 'Bearer ' . $PARSED_TOKEN_RESPONSE->access_token,
+        ],
+    ] );
+
+
+    //
+    //  Parse and check for failure
+    //
+    $PARSED_USER_RESPONSE  = json_decode( $USER_RESPONSE->getBody()->getContents() );
+
+    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
+
+        print'<pre>';print_r( $PARSED_USER_RESPONSE );print'</pre>';
+
+    }
+
+    if( empty( $PARSED_USER_RESPONSE->data ) ) {
+
+        $REDIRECT_URL   = ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
+
+        $REDIRECT_DATA  = [
+            'stat'      => false,
+            'message'   => 'Sorry about this but we are unable to get you signed up through imgur at this time',
+        ];
+
+        $REDIRECT_URL   .= http_build_query( $REDIRECT_DATA );
+
+        header( 'Location: ' . $REDIRECT_URL );
+    }
+
+
+    //
+    //  Normalize
+    //
+    $NORMALIZED_RESPONSE                        = [];
+
+    $NORMALIZED_RESPONSE['imgur_registry']      = $PARSED_USER_RESPONSE;
+
+    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
+
+        print'<pre>';print_r( $NORMALIZED_RESPONSE );print'</pre>';
+
+    }
+
+    $CONTAINER['logger']->addInfo( serialize( json_encode( $NORMALIZED_RESPONSE ) ) );
+
+    $REDIRECT_URL   = ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
+
+    $REDIRECT_DATA  = [
+        'stat'      => true,
+        'message'   => 'Hooray ' . $PARSED_TOKEN_RESPONSE->account_username. '! You\'ve successfully signed up!',
+    ];
+
+    $REDIRECT_URL   .= http_build_query( $REDIRECT_DATA );
+
+    header( 'Location: ' . $REDIRECT_URL );
+
+    return $REDIRECT_DATA;
+
+} );
+
+
+//
+//  imgur upload
+//
+$APP->get('/imgur_upload', function( ServerRequestInterface $REQUEST, ResponseInterface $RESPONSE ) use( $CONTAINER ) {
+
+    $PARSED_REQUEST = $REQUEST->getQueryParams();
+
+    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
+
+        print'<pre>';print_r( $PARSED_REQUEST );print'</pre>';
+
+    }
+
+} );
+
+
+//
+//  imgur edit
+//
+$APP->get('/imgur_edit', function( ServerRequestInterface $REQUEST, ResponseInterface $RESPONSE ) use( $CONTAINER ) {
+
+    $PARSED_REQUEST = $REQUEST->getQueryParams();
+
+    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
+
+        print'<pre>';print_r( $PARSED_REQUEST );print'</pre>';
+
+    }
+
+} );
+
+
+//
+//  imgur delete
+//
+$APP->get('/imgur_delete', function( ServerRequestInterface $REQUEST, ResponseInterface $RESPONSE ) use( $CONTAINER ) {
+
+    $PARSED_REQUEST = $REQUEST->getQueryParams();
+
+    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
+
+        print'<pre>';print_r( $PARSED_REQUEST );print'</pre>';
+
+    }
+
+} );
+
+
+//
 //  IRC search
 //
 $APP->get('/ircsearch/{q}', function( ServerRequestInterface $REQUEST, ResponseInterface $RESPONSE ) use( $CONTAINER ) {
@@ -787,7 +1104,7 @@ $APP->get('/ircsearch/{q}', function( ServerRequestInterface $REQUEST, ResponseI
 
     $DOM                = new DOMDocument;
 
-    $DOM->loadHTML( $PARSED_RESPONSE );
+    @$DOM->loadHTML( $PARSED_RESPONSE );
 
     $XPATH              = new DOMXPath( $DOM );
 
