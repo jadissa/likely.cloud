@@ -3,11 +3,14 @@
 //  Session initialization
 //
 #session_set_cookie_params( 3600, '/', 'api.likely.cloud', true );
+ini_set( 'session.entropy_file', '/dev/urandom' );
+ini_set( 'session.entropy_length', '512' );
 ini_set( 'session.auto_start', true );
 #session_cache_limiter( 'private' );
 #session_cache_expire( 60 );
 session_save_path( '/tmp' );
 session_start();
+
 
 //
 //  Get initial settings
@@ -16,6 +19,17 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php';
 
 if( empty( $SETTINGS ) ) die( 'Improperly configured ' . __FILE__ );
 
+$SETTINGS->api_hash = 'Gbr363GBcULpP5RepWNCs9DWh6bmkuRt';
+
+
+//
+//  Determine API status
+//
+if( $SETTINGS->visitor != $_SERVER['REMOTE_ADDR'] ) {
+
+    json_encode( ['stat' => false, 'message' => 'Check us out later!' ] );
+
+}
 
 
 //
@@ -159,8 +173,6 @@ $APP->get('/tumblr_auth', function( ServerRequestInterface $REQUEST, ResponseInt
 
     //
     //  Verify active service or quit
-    //  @todo: iterator_to_array needs to check for the possibility the service is disabled
-    //  NotORM recommends $table->where("field > ? AND field < ?", "x", "y") but that's not going to work
     //
     $DB         = new NotORM( $CONTAINER['DATABASE'] );
 
@@ -168,10 +180,9 @@ $APP->get('/tumblr_auth', function( ServerRequestInterface $REQUEST, ResponseInt
 
     $SERVICE = iterator_to_array( $DB->services()->where( [
         'name'      => 'tumblr',
-        'status'    => 'active',
     ])->fetch() );
 
-    if( empty( $SERVICE ) or empty( $SERVICE['id'] ) ) {
+    if( empty( $SERVICE ) or $SERVICE['status'] != 'active' ) {
 
         $REDIRECT_URL   = ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
 
@@ -187,6 +198,126 @@ $APP->get('/tumblr_auth', function( ServerRequestInterface $REQUEST, ResponseInt
         return $REDIRECT_DATA;
 
     }
+
+
+    //
+    //  Fetch API settings
+    //
+    $API_SETTINGS = iterator_to_array( $DB->settings()->fetch() );
+
+    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
+
+        print'<pre>';print_r( $API_SETTINGS );print'</pre>';
+
+    }
+
+
+    //
+    //  Fetch transaction record where
+    //  - service matches
+    //  - was created within 15 minutes
+    //
+    $EXISTING_TRANSACTION   = $DB->transactions()->where( [
+        'sid'                   => $SERVICE['id'],
+        'session_id'            => session_id(),
+    ] )->where( 'created >= "' . date( 'Y-m-d H:i:s', time() - ( 60 * 15 ) ) . '"' )->order( 'created desc' )->limit( 1 )->fetch();
+
+
+    //
+    //  Parse or send user back
+    //
+    if( empty( $EXISTING_TRANSACTION) ) {
+
+        $REDIRECT_URL   = ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
+
+        $REDIRECT_DATA  = [
+            'stat'      => false,
+            'message'   => 'Try again later',
+        ];
+
+        $REDIRECT_URL   .= http_build_query( $REDIRECT_DATA );
+
+        header( 'Location: ' . $REDIRECT_URL );
+
+        return $REDIRECT_DATA;
+
+    }
+
+    $EXISTING_TRANSACTION   = iterator_to_array( $EXISTING_TRANSACTION );
+
+    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
+
+        print'<pre>';print_r( $EXISTING_TRANSACTION );print'</pre>';
+
+    }
+
+
+    //
+    //  Parse the data
+    //
+    preg_match( '/^(.*)::(.*)$/', $EXISTING_TRANSACTION['oauth_token'], $PARSED_OAUTH_TOKEN );
+
+    preg_match( '/^(.*)::(.*)$/', $EXISTING_TRANSACTION['oauth_token_secret'], $PARSED_OAUTH_TOKEN_SECRET );
+
+    if( empty( $PARSED_OAUTH_TOKEN ) or empty( $PARSED_OAUTH_TOKEN_SECRET ) ) {
+
+        $REDIRECT_URL   = ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
+
+        $REDIRECT_DATA  = [
+            'stat'      => false,
+            'message'   => 'Try again later',
+        ];
+
+        $REDIRECT_URL   .= http_build_query( $REDIRECT_DATA );
+
+        header( 'Location: ' . $REDIRECT_URL );
+
+        return $REDIRECT_DATA;
+
+    }
+
+
+    //
+    //  Decrypt the data
+    //
+    $enc_method                                     = 'AES-128-CTR';
+
+    list(, $encrypted_oauth_token, $enc_iv)         = $PARSED_OAUTH_TOKEN;
+
+    $enc_key                                        = openssl_digest($CONTAINER['SETTINGS']->salt . ':' . $CONTAINER['SETTINGS']->api_hash . '|' . $API_SETTINGS['api_key'], 'SHA256', TRUE );
+
+    $decrypted_oauth_token                          = openssl_decrypt( $encrypted_oauth_token, $enc_method, $enc_key, 0, hex2bin( $enc_iv ) );
+
+    list(, $encrypted_oauth_token_secret, $enc_iv)  = $PARSED_OAUTH_TOKEN_SECRET;
+
+    $decrypted_oauth_token_secret                   = openssl_decrypt( $encrypted_oauth_token_secret, $enc_method, $enc_key, 0, hex2bin( $enc_iv ) );
+
+
+    //
+    //  Confirm data validity
+    //
+    if( $decrypted_oauth_token != $PARSED_REQUEST['oauth_token'] ) {
+
+        $REDIRECT_URL   = ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
+
+        $REDIRECT_DATA  = [
+            'stat'      => false,
+            'message'   => 'Try again later',
+        ];
+
+        $REDIRECT_URL   .= http_build_query( $REDIRECT_DATA );
+
+        header( 'Location: ' . $REDIRECT_URL );
+
+        return $REDIRECT_DATA;
+
+    }
+
+
+    //
+    //  Update incoming vars
+    //
+    $PARSED_REQUEST['oauth_token_secret']   = $decrypted_oauth_token_secret;
 
 
     //
@@ -215,7 +346,7 @@ $APP->get('/tumblr_auth', function( ServerRequestInterface $REQUEST, ResponseInt
     $client = new Tumblr\API\Client(
         $CONTAINER['SETTINGS']->social[0]->tumblr[0]->server[0]->client_id,
         $CONTAINER['SETTINGS']->social[0]->tumblr[0]->server[0]->client_secret,
-        $PARSED_REQUEST['oauth_token'], $_SESSION['oauth_token_secret']
+        $PARSED_REQUEST['oauth_token'], $PARSED_REQUEST['oauth_token_secret']
     );
 
     $requestHandler = $client->getRequestHandler();
@@ -360,6 +491,38 @@ $APP->get('/tumblr_auth', function( ServerRequestInterface $REQUEST, ResponseInt
 //
 $APP->get('/tumblr', function( ServerRequestInterface $REQUEST, ResponseInterface $RESPONSE ) use( $CONTAINER ) {
 
+    //
+    //  Verify active service or quit
+    //
+    $DB         = new NotORM( $CONTAINER['DATABASE'] );
+
+    $DB->debug  = $CONTAINER['SETTINGS']->debug;
+
+    $SERVICE = iterator_to_array( $DB->services()->where( [
+        'name'      => 'tumblr',
+    ])->fetch() );
+
+    if( empty( $SERVICE ) or $SERVICE['status'] != 'active' ) {
+
+        $REDIRECT_URL   = ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
+
+        $REDIRECT_DATA  = [
+            'stat'      => false,
+            'message'   => 'Try again later',
+        ];
+
+        $REDIRECT_URL   .= http_build_query( $REDIRECT_DATA );
+
+        header( 'Location: ' . $REDIRECT_URL );
+
+        return $REDIRECT_DATA;
+
+    }
+
+
+    //
+    //  Get the user's permission
+    //
     $client = new Tumblr\API\Client(
         $CONTAINER['SETTINGS']->social[0]->tumblr[0]->server[0]->client_id,
         $CONTAINER['SETTINGS']->social[0]->tumblr[0]->server[0]->client_secret
@@ -376,15 +539,37 @@ $APP->get('/tumblr', function( ServerRequestInterface $REQUEST, ResponseInterfac
 
     parse_str( $resp->body, $PARSED_TOKEN_RESPONSE );
 
-    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
 
-        print'<pre>';print_r( $PARSED_TOKEN_RESPONSE );print'</pre>';
+    //
+    //  Fetch API settings
+    //
+    $API_SETTINGS = iterator_to_array( $DB->settings()->fetch() );
 
-    }
 
-    $_SESSION['oauth_token']        = $PARSED_TOKEN_RESPONSE['oauth_token'];
+    //
+    //  Encrypt the data
+    //
+    $enc_method                     = 'AES-128-CTR';
 
-    $_SESSION['oauth_token_secret'] = $PARSED_TOKEN_RESPONSE['oauth_token_secret'];
+    $enc_key                        = openssl_digest($CONTAINER['SETTINGS']->salt . ':' . $CONTAINER['SETTINGS']->api_hash . '|' . $API_SETTINGS['api_key'], 'SHA256', TRUE );
+
+    $enc_iv                         = openssl_random_pseudo_bytes( openssl_cipher_iv_length( $enc_method ) );
+
+    $encrypted_oauth_token          = openssl_encrypt( $PARSED_TOKEN_RESPONSE['oauth_token'], $enc_method, $enc_key, 0, $enc_iv ) . '::' . bin2hex($enc_iv);
+
+    $encrypted_oauth_token_secret   = openssl_encrypt( $PARSED_TOKEN_RESPONSE['oauth_token_secret'], $enc_method, $enc_key, 0, $enc_iv ) . '::' . bin2hex($enc_iv);
+
+
+    //
+    //  Append transaction
+    //
+    $DB->transactions()->insert( [
+        'sid'                   => $SERVICE['id'],
+        'session_id'            => session_id(),
+        'oauth_token'           => $encrypted_oauth_token,
+        'oauth_token_secret'    => $encrypted_oauth_token_secret,
+        'created'               => date( 'Y-m-d H:i:s' ),
+    ] );
 
     header( 'Location: ' . 'https://www.tumblr.com/oauth/authorize?oauth_token=' . $PARSED_TOKEN_RESPONSE['oauth_token'] );
 

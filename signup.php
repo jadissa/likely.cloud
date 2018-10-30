@@ -4,6 +4,16 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php';
 
 if( empty( $SETTINGS ) ) die( 'Improperly configured ' . __FILE__ );
 
+
+//
+//  Determine app status
+//
+if( $SETTINGS->visitor != $_SERVER['REMOTE_ADDR'] ) {
+
+    exit( json_encode( ['stat' => false, 'message' => 'Check us out later!' ] ) );
+
+}
+
 ?>
     <!DOCTYPE html>
 

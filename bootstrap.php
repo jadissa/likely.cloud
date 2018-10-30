@@ -1,6 +1,6 @@
 <?php
 
-$settings_file  = $_SERVER['DOCUMENT_ROOT'] . '/settings.json';
+$settings_file  = dirname(__FILE__) . '/settings.json';
 
 if( !is_file( $settings_file ) ) {
 
