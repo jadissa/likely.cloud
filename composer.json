@@ -5,11 +5,17 @@
   "minimum-stability": "dev",
 
   "require": {
-    "monolog/monolog": "1.21.0",
-    "phpseclib/phpseclib": "2.0",
+    "monolog/monolog": "1.23.*",
+    "phpseclib/phpseclib": "2.0.*",
     "jadissa/phplib": "dev-wild",
     "slim/slim": "3.x",
     "bryanjhv/slim-session": "~3.0",
-    "vrana/notorm": "dev-master"
+    "clancats/hydrahon":"1.1.*"
+  },
+
+  "autoload": {
+    "psr-4": {
+      "service\\api\\": "controlers/service"
+    }
   }
 }

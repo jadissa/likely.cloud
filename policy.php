@@ -59,17 +59,13 @@ if( $SETTINGS->visitor != $_SERVER['REMOTE_ADDR'] ) {
 
     <link rel="stylesheet" href="/css/layout.css">
 
-    <script type="text/javascript"> //<![CDATA[
-        var tlJsHost = ((window.location.protocol == "https:") ? "https://secure.comodo.com/" : "http://www.trustlogo.com/");
-        document.write(unescape("%3Cscript src='" + tlJsHost + "trustlogo/javascript/trustlogo.js' type='text/javascript'%3E%3C/script%3E"));
-        //]]>
-    </script>
-
 </head>
 
-<body>
+<body style="overflow-y: scroll;">
 
     <main class="centered">
+
+<a href="/">
 
 <pre>
 
@@ -81,6 +77,8 @@ if( $SETTINGS->visitor != $_SERVER['REMOTE_ADDR'] ) {
 <span class="pink">             \/    \/     \/      \</span><span class="blue">/     \/                       \/ </span>
 
 </pre>
+
+</a>
 
         <span class="description"><?= $SETTINGS->description ?></span>
 
@@ -131,6 +129,7 @@ if( $SETTINGS->visitor != $_SERVER['REMOTE_ADDR'] ) {
 
         <span class="copyright"></span>
 
+        <!--
         <span class="signups-description">Login using any of the active services</span>
 
         <span class="signups">
@@ -138,6 +137,7 @@ if( $SETTINGS->visitor != $_SERVER['REMOTE_ADDR'] ) {
             <a href="<?= ( !empty( $SETTINGS->using_https ) ? 'https://' : 'http://' ) . $SETTINGS->api ?>/tumblr">Tumblr</a>
             <a href="<?= ( !empty( $SETTINGS->using_https ) ? 'https://' : 'http://' ) . $SETTINGS->api ?>/imgur">imgur</a>
         </span>
+        -->
 
         <span class="message"><?= !empty( $_REQUEST['message'] ) ? $_REQUEST['message'] : null ?></span>
 
@@ -161,35 +161,3 @@ if( $SETTINGS->visitor != $_SERVER['REMOTE_ADDR'] ) {
 </body>
 
 </html>
-
-<?php
-
-$API_URL = !empty( $SETTINGS->using_https ) ? 'https://' : 'http://' . $SETTINGS->api . '/ping';
-
-if( !empty( $SETTINGS->debug ) ) {
-
-   var_dump($API_URL);
-
-}
-
-$ch = curl_init();
-
-curl_setopt( $ch, CURLOPT_URL, $API_URL );
-
-curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-
-curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query( [
-    '_SERVER' => $_SERVER,
-    '_HEADERS' => getallheaders(),
-    '_REQUEST' => $_REQUEST,
-] ) );
-
-$response   = curl_exec( $ch );
-
-if( !empty( $SETTINGS->debug ) ) {
-
-    var_dump( curl_getinfo( $ch, CURLINFO_HTTP_CODE ), $response );
-
-}
-
-curl_close( $ch );

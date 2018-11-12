@@ -15,3 +15,5 @@ if( empty( $SETTINGS ) || json_last_error() != JSON_ERROR_NONE ) {
     die( 'Improperly configured ' . __FILE__  );
 
 }
+
+require_once dirname(__FILE__) . '/vendor/autoload.php';

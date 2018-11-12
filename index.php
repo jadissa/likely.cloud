@@ -71,6 +71,8 @@ if( $SETTINGS->visitor != $_SERVER['REMOTE_ADDR'] ) {
 
     <main class="centered">
 
+<a href="/">
+
 <pre>
 
 <span class="pink">.__  .__ __          .__           </span><span class="blue">        .__                   .___</span>
@@ -82,10 +84,13 @@ if( $SETTINGS->visitor != $_SERVER['REMOTE_ADDR'] ) {
 
 </pre>
 
+</a>
+
         <span class="description"><?= $SETTINGS->description ?></span>
 
         <span class="copyright"></span>
 
+        <!--
         <span class="signups-description">Login using any of the active services</span>
 
         <span class="signups">
@@ -93,6 +98,7 @@ if( $SETTINGS->visitor != $_SERVER['REMOTE_ADDR'] ) {
             <a href="<?= ( !empty( $SETTINGS->using_https ) ? 'https://' : 'http://' ) . $SETTINGS->api ?>/tumblr">Tumblr</a>
             <a href="<?= ( !empty( $SETTINGS->using_https ) ? 'https://' : 'http://' ) . $SETTINGS->api ?>/imgur">imgur</a>
         </span>
+        -->
 
         <span class="message"><?= !empty( $_REQUEST['message'] ) ? $_REQUEST['message'] : null ?></span>
 
@@ -116,35 +122,3 @@ if( $SETTINGS->visitor != $_SERVER['REMOTE_ADDR'] ) {
 </body>
 
 </html>
-
-<?php
-
-$API_URL = ( !empty( $SETTINGS->using_https ) ? 'https://' : 'http://' ) . $SETTINGS->api . '/ping';
-
-if( !empty( $SETTINGS->debug ) ) {
-
-   var_dump($API_URL);
-
-}
-
-$ch = curl_init();
-
-curl_setopt( $ch, CURLOPT_URL, $API_URL );
-
-curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-
-curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query( [
-    '_SERVER' => $_SERVER,
-    '_HEADERS' => getallheaders(),
-    '_REQUEST' => $_REQUEST,
-] ) );
-
-$response   = curl_exec( $ch );
-
-if( !empty( $SETTINGS->debug ) ) {
-
-    var_dump( curl_getinfo( $ch, CURLINFO_HTTP_CODE ), $response );
-
-}
-
-curl_close( $ch );

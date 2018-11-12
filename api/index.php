@@ -1,18 +1,5 @@
 <?php
 //
-//  Session initialization
-//
-#session_set_cookie_params( 3600, '/', 'api.likely.cloud', true );
-ini_set( 'session.entropy_file', '/dev/urandom' );
-ini_set( 'session.entropy_length', '512' );
-ini_set( 'session.auto_start', true );
-#session_cache_limiter( 'private' );
-#session_cache_expire( 60 );
-session_save_path( '/tmp' );
-session_start();
-
-
-//
 //  Get initial settings
 //
 require_once $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php';
@@ -33,9 +20,9 @@ if( $SETTINGS->visitor != $_SERVER['REMOTE_ADDR'] ) {
 
 
 //
-//  Headers/Session
+//  Headers
 //
-header( 'Access-Control-Allow-Origin: *' );
+#header( 'Access-Control-Allow-Origin: *' );
 header( 'Content-type: application/json; charset=utf-8' );
 
 
@@ -55,10 +42,34 @@ $CONFIG['addContentLengthHeader']   = false;
 $CONFIG['debug']                    = $SETTINGS->debug;
 
 
-// Slim initialization
+//  Slim initialization
 $APP = new \Slim\App( [
     'settings' => $CONFIG
 ] );
+
+
+//
+//  Session start
+//  @todo: session keeps creating files on disk
+//  - the helper is only getters and setters
+//  - the session is created via new \Slim\Middleware\Session
+//  - why does it keep creating new files?
+//  - Try moving the middleware and the helper instantiation into a loadable class and then call it in each route/verify session persists
+//  - or try moving the middleware and helper into each route/verify session persists
+//
+if( session_status() === PHP_SESSION_NONE ) {
+
+    $APP->add( new \Slim\Middleware\Session( [
+      'name'            => $SETTINGS->session[0]->name,
+      'path'            => $SETTINGS->session[0]->path,
+      'lifetime'        => $SETTINGS->session[0]->lifetime,
+      'autorefresh'     => $SETTINGS->session[0]->autorefresh,
+      'domain'          => $SETTINGS->session[0]->domain,
+      'secure'          => $SETTINGS->session[0]->secure,
+      'ini_settings'    => $SETTINGS->session[0]->ini_settings,
+    ] ) );
+
+}
 
 
 //
@@ -68,28 +79,13 @@ $CONTAINER = $APP->getContainer();
 
 
 //
-//  Database
-//
-$CONTAINER['DATABASE'] = function() use( $CONTAINER ) {
-
-    $DATABASE = new PDO( "mysql:host=" . $CONTAINER['SETTINGS']->database[0]->mysql[0]->host . ";dbname=" . $CONTAINER['SETTINGS']->database[0]->mysql[0]->db_name, $CONTAINER['SETTINGS']->database[0]->mysql[0]->user_name, $CONTAINER['SETTINGS']->database[0]->mysql[0]->pass_word );
-
-    $DATABASE->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-    $DATABASE->setAttribute( PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC );
-
-    return $DATABASE;
-};
-
-
-//
-//  Provide container access to settings
+//  Append container settings
 //
 $CONTAINER['SETTINGS']  = $SETTINGS;
 
 
 //
-//  Logging plugin
+//  Append container logging
 //
 $CONTAINER['logger'] = function() use( $CONTAINER ) {
 
@@ -100,6 +96,58 @@ $CONTAINER['logger'] = function() use( $CONTAINER ) {
     $LOGGER->pushHandler( $FH );
 
     return $LOGGER;
+
+};
+
+
+//
+//  Append container db
+//  https://clancats.io/hydrahon/master/sql-query-builder/select/basics
+//
+$CONTAINER['DB'] = function() use( $CONTAINER ) {
+
+    $CONNECTION = new PDO( 
+        'mysql:host=' . $CONTAINER['SETTINGS']->database[0]->mysql[0]->host . ";dbname=" . $CONTAINER['SETTINGS']->database[0]->mysql[0]->db_name, 
+        $CONTAINER['SETTINGS']->database[0]->mysql[0]->user_name, 
+        $CONTAINER['SETTINGS']->database[0]->mysql[0]->pass_word, 
+        [
+            PDO::ATTR_PERSISTENT    => $CONTAINER['SETTINGS']->database[0]->persist,
+            PDO::ATTR_ERRMODE       => !empty( $CONTAINER['SETTINGS']->debug ) ? PDO::ERRMODE_WARNING : PDO::ERRMODE_EXCEPTION,
+        ] 
+    );
+
+    $DATABASE = new \ClanCats\Hydrahon\Builder( 'mysql', function( $query, $queryString, $queryParameters ) use( $CONNECTION ) {
+
+        if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
+
+            $CONTAINER['logger']->addInfo( serialize( $queryString ) );
+
+        }
+
+        $statement = $CONNECTION->prepare( $queryString );
+
+        $statement->execute( $queryParameters );
+
+        if ( $query instanceof \ClanCats\Hydrahon\Query\Sql\FetchableInterface ) {
+
+            return $statement->fetchAll( \PDO::FETCH_BOTH );
+
+        }
+
+    } );
+
+    $DATABASE->c    = $CONNECTION;
+
+    return $DATABASE;
+};
+
+
+//
+//  Append container session
+//
+$CONTAINER['session'] = function() {
+
+  return new \SlimSession\Helper;
 
 };
 
@@ -116,57 +164,340 @@ $APP->post('/ping', function( ServerRequestInterface $REQUEST, ResponseInterface
     $REQUEST_DATA   = array(
 
         'HEADERS'           => $PARSED_REQUEST['_HEADERS'],
-
         'REMOTE_ADDR'       => $PARSED_REQUEST['_SERVER']['REMOTE_ADDR'],
-
         'QUERY_STRING'      => $PARSED_REQUEST['_SERVER']['QUERY_STRING'],
-
         'city'              => $GEO['geoplugin_city'],
-
         'state'             => $GEO['geoplugin_region'],
-
         'area_code'         => $GEO['geoplugin_areaCode'],
-
         'dma_code'          => $GEO['geoplugin_dmaCode'],
-
         'country_code'      => $GEO['geoplugin_countryCode'],
-
         'country_name'      => $GEO['geoplugin_countryName'],
-
         'continent_name'    => $GEO['geoplugin_continentName'],
-
         'latitude'          => $GEO['geoplugin_latitude'],
-
         'longitude'         => $GEO['geoplugin_longitude'],
-
         'timezone'          => $GEO['geoplugin_timezone'],
 
     );
 
-    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
+    if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
 
-        print'<pre>';print_r( $PARSED_REQUEST );print'</pre>';
+        $CONTAINER['logger']->addInfo( serialize( $PARSED_REQUEST ) );
 
     }
 
-    $CONTAINER['logger']->addInfo( serialize( $REQUEST_DATA ) );
+} );
 
-    return $RESPONSE;
+
+$APP->get('/feed', function( ServerRequestInterface $REQUEST, ResponseInterface $RESPONSE ) use( $CONTAINER ) {
+
+    $PARSED_REQUEST = $REQUEST->getQueryParams();
+
+    if( !empty( $CONTAINER['SETTINGS']->debug ) and !empty( $PARSED_REQUEST ) ) {
+
+        $CONTAINER['logger']->addInfo( serialize( $PARSED_REQUEST ) );
+
+    }
+
+    $CONTAINER['logger']->addInfo( serialize( $_SESSION ) );
+
+    $CONTAINER['session']->set( 'test', 'something' );
+
+    $CONTAINER['logger']->addInfo( serialize( $CONTAINER['session']->get( 'test' ) ) );
+
+    $FEED_DATA  = [
+        'USER_REGISTRIES'   => [],
+    ];
+
+
+    //
+    //  Fetch user feed
+    //
+    $EXISTING_USERS  = $CONTAINER['DB']->table( 'users as u' )
+    ->select( [
+        'u.id', 
+        'u.uname', 
+        'u.created', 
+        'ud.geo', 
+        'ud.status', 
+        'us.sname',
+    ] )->join( 'user_data as ud', 'u.id', '=', 'ud.uid' )
+        ->join( 'user_services as us', 'ud.uid', '=', 'us.uid' )
+        ->join( 'services as s', 'us.sid', '=', 's.id' )
+    ->where( 'ud.status', 'active' )
+    ->orderBy( 'u.created', 'desc' )
+    ->limit( 200 )
+    ->get();
+
+    foreach( $EXISTING_USERS as $USER_FEED ) {
+
+        $FEED_DATA['USER_REGISTRIES'][ $USER_FEED['id'] ]['string_data'] = $USER_FEED['uname'] . ' signed up from ';
+
+        $GEO = json_decode($USER_FEED['geo']);
+
+        if ( !empty( $GEO->state ) ) {
+
+            $FEED_DATA['USER_REGISTRIES'][ $USER_FEED['id'] ]['string_data'] .= $GEO->state . ', all the way out in  ';
+
+        } else {
+
+            $FEED_DATA['USER_REGISTRIES'][ $USER_FEED['id'] ]['string_data'] .= 'undisclosed location, all the way out in ';
+
+        }
+
+        if( !empty( $GEO->country_name ) ) {
+
+            $FEED_DATA['USER_REGISTRIES'][ $USER_FEED['id'] ]['string_data'] .= $GEO->country_name . '! ';
+
+        } else {
+
+            $FEED_DATA['USER_REGISTRIES'][ $USER_FEED['id'] ]['string_data'] .= 'Nowhere\'sville! ';
+
+        }
+
+        $FEED_DATA['USER_REGISTRIES'][ $USER_FEED['id'] ]['string_data'] .= 'Decidedly using <' . $USER_FEED['sname'] . '> in ';
+
+        $FEED_DATA['USER_REGISTRIES'][ $USER_FEED['id'] ]['string_data'] .= date( 'F', strtotime( $USER_FEED['created'] ) );
+
+    }
+
+    $DUMMY_FEED = [
+        'Syn2k signed up from undisclosed location, all the way out in Nowhere\'sville! Decidedly using Discord <Syn2k@23453>',
+        'jamison signed up from Nevada, all the way out in United States! Decidedly using imgur <@jamison>',
+        'fahad signed up from California, all the way out in United States! Decidedly using email <withheld',
+    ];
+
+    $i = 999999999999;
+
+    foreach( $DUMMY_FEED as $dummy ) {
+
+        $FEED_DATA['USER_REGISTRIES'][ $i ]['string_data']  = $dummy;
+
+        $i++;
+    }
+
+    return json_encode( ['stat' => true, 'message' => $FEED_DATA['USER_REGISTRIES'] ] );
 
 } );
 
 
 //
-//  Tumblr authentication
-//  @todo: Double-check that Tumblr isn't capable of giving a refresh_token to store in user_data
+//  Register redirect
 //
-$APP->get('/tumblr_auth', function( ServerRequestInterface $REQUEST, ResponseInterface $RESPONSE ) use( $CONTAINER ) {
+$APP->post('/register', function( ServerRequestInterface $REQUEST, ResponseInterface $RESPONSE ) use( $APP, $CONTAINER ) {
+
+    $PARSED_REQUEST = $REQUEST->getParsedBody();
+
+
+    //
+    //  Verify active service or quit
+    //
+    $SERVICE  = $CONTAINER['DB']->table( 'services' )
+    ->select()
+    ->where( 'status', 'active' )
+    ->where( 'name', 'register' )->one();
+
+    if( empty( $SERVICE ) or $SERVICE['status'] != 'active' ) {
+
+        if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
+
+            $CONTAINER['logger']->addInfo( serialize( [ 'access disabled service', __FILE__, __LINE__ ] ) );
+
+        }
+
+        return json_encode( [ 'stat' => false, 'redirect' => '/', 'message' => 'Try again later' ] );
+
+    }
+
+
+    //
+    //  Fetch API settings or quit
+    //
+    $API_SETTINGS  = $CONTAINER['DB']->table( 'settings' )
+    ->select()
+    ->where( 'name', 'api_key' )->one();
+
+    if( empty( $API_SETTINGS ) ) {
+
+        if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
+
+            $CONTAINER['logger']->addInfo( serialize( [ 'something is broken', __FILE__, __LINE__ ] ) );
+
+        }
+
+        return json_encode( [ 'stat' => false, 'redirect' => '/', 'message' => 'Try again later' ] );
+
+    }
+
+
+    //
+    //  Fetch user
+    //
+    $EXISTING_USER  = $CONTAINER['DB']->table( 'users' )
+    ->select( ['id'] )
+    ->where( 'uname', $PARSED_REQUEST['uname'] )
+    ->orderBy( 'created', 'desc' )
+    ->limit( 1 )->one();
+
+    if( empty( $EXISTING_USER ) ) {
+
+        //
+        //  Encrypt the data
+        //
+        $enc_method         = 'AES-128-CTR';
+
+        $enc_key            = openssl_digest( $CONTAINER['SETTINGS']->salt . ':' . $CONTAINER['SETTINGS']->api_hash . '|' . $API_SETTINGS['value'], 'SHA256', TRUE );
+
+        $enc_iv             = openssl_random_pseudo_bytes( openssl_cipher_iv_length( $enc_method ) );
+
+        $encrypted_password = openssl_encrypt( $PARSED_REQUEST['pwd'], $enc_method, $enc_key, 0, $enc_iv ) . '::' . bin2hex($enc_iv);
+
+
+        //
+        //  Capture geo
+        //
+        $GEO = unserialize( file_get_contents( 'http://www.geoplugin.net/php.gp?ip=' . $PARSED_REQUEST['REMOTE_ADDR'] ) );
+
+
+        //
+        //  Append user
+        //
+        $user_date_created  = date( 'Y-m-d H:i:s' );
+
+        $CONTAINER['DB']->table('users')->insert( [
+            'created'   => $user_date_created, 
+            'uname'     => $PARSED_REQUEST['uname'],
+        ] )->execute();
+
+        
+        //
+        //  Fetch user_id
+        //
+        $EXISTING_USER  = $CONTAINER['DB']->table( 'users' )
+        ->select( ['id'] )
+        ->where( 'uname', $PARSED_REQUEST['uname'] )
+        ->where( 'created', $user_date_created )
+        ->orderBy( 'created', 'desc' )
+        ->limit( 1 )->one();
+
+        $user_id    = $EXISTING_USER['id'];
+
+        if( empty( $user_id ) ) {
+
+            if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
+
+                $CONTAINER['logger']->addInfo( serialize( [ 'something is broken!', __FILE__, __LINE__ ] ) );
+
+            }
+
+            return json_encode( [ 'stat' => false, 'redirect' => '/', 'message' => 'Try again later' ] );
+
+        }
+
+
+        //
+        //  Append data
+        //
+        $CONTAINER['DB']->table('user_data')->insert( [
+            'uid'   => $user_id, 
+            'geo'   => json_encode( [
+                            'REMOTE_ADDR'       => $PARSED_REQUEST['REMOTE_ADDR'],
+                            'city'              => $GEO['geoplugin_city'],
+                            'state'             => $GEO['geoplugin_region'],
+                            'area_code'         => $GEO['geoplugin_areaCode'],
+                            'dma_code'          => $GEO['geoplugin_dmaCode'],
+                            'country_code'      => $GEO['geoplugin_countryCode'],
+                            'country_name'      => $GEO['geoplugin_countryName'],
+                            'continent_name'    => $GEO['geoplugin_continentName'],
+                            'latitude'          => $GEO['geoplugin_latitude'],
+                            'longitude'         => $GEO['geoplugin_longitude'],
+                            'timezone'          => $GEO['geoplugin_timezone'],
+                        ] ),
+            'sessid'    => session_id(),
+            'password'  => $encrypted_password,
+            'status'    => 'active',
+        ] )->execute();
+
+
+        //
+        //  Fetch user_data_id
+        //
+        $EXISTING_USER_DATA  = $CONTAINER['DB']->table( 'user_data' )
+        ->select( ['id'] )
+        ->where( 'uid', $user_id )
+        ->limit( 1 )->one();
+
+        $data_id    = $EXISTING_USER_DATA['id'];
+
+        if( empty( $data_id ) ) {
+
+            if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
+
+                $CONTAINER['logger']->addInfo( serialize( [ 'something is broken!', __FILE__, __LINE__ ] ) );
+
+            }
+
+            return json_encode( [ 'stat' => false, 'redirect' => '/', 'message' => 'Try again later' ] );
+
+        }
+
+
+        //
+        //  Append service
+        //
+        $USER_STATUSES  = [
+            false   => 'invisible',
+            true    => 'active',
+        ];
+        
+        $CONTAINER['DB']->table('user_services')->insert( [
+            'uid'       => $user_id, 
+            'sid'       => $SERVICE['id'],
+            'sname'     => $PARSED_REQUEST['uname'], 
+            'created'   => date( 'Y-m-d H:i:s' ), 
+            'login'     => date( 'Y-m-d H:i:s' ), 
+            'status'    => $USER_STATUSES[ !empty( $PARSED_REQUEST['status'] ) ? $PARSED_REQUEST['status'] : 'active' ], 
+        ] )->execute();
+
+
+        //
+        //  Fetch user_services_id
+        //
+        $EXISTING_USER_SERVICE  = $CONTAINER['DB']->table( 'user_services' )
+        ->select( ['id'] )
+        ->where( 'uid', $user_id )
+        ->limit( 1 )->one();
+
+        $service_id = $EXISTING_USER_SERVICE['id'];
+
+        if( empty( $service_id ) ) {
+
+            if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
+
+                $CONTAINER['logger']->addInfo( serialize( [ 'something is broken!', __FILE__, __LINE__ ] ) );
+
+            }
+
+            return json_encode( [ 'stat' => false, 'redirect' => '/', 'message' => 'Try again later' ] );
+
+        }
+
+    }
+
+    return json_encode( [ 'stat' => true, 'redirect' => '/', 'message' => 'Already registered' ] );
+
+} );
+
+
+//
+//  User auth
+//
+$APP->post('/auth', function( ServerRequestInterface $REQUEST, ResponseInterface $RESPONSE ) use( $CONTAINER ) {
 
     $PARSED_REQUEST = $REQUEST->getQueryParams();
 
-    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
+    if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
 
-        print'<pre>';print_r( $PARSED_REQUEST );print'</pre>';
+        $CONTAINER['logger']->addInfo( serialize( $PARSED_REQUEST ) );
 
     }
 
@@ -175,8 +506,6 @@ $APP->get('/tumblr_auth', function( ServerRequestInterface $REQUEST, ResponseInt
     //  Verify active service or quit
     //
     $DB         = new NotORM( $CONTAINER['DATABASE'] );
-
-    $DB->debug  = $CONTAINER['SETTINGS']->debug;
 
     $SERVICE = iterator_to_array( $DB->services()->where( [
         'name'      => 'tumblr',
@@ -203,11 +532,148 @@ $APP->get('/tumblr_auth', function( ServerRequestInterface $REQUEST, ResponseInt
     //
     //  Fetch API settings
     //
-    $API_SETTINGS = iterator_to_array( $DB->settings()->fetch() );
+    $API_SETTINGS = iterator_to_array( $DB->settings()->where( [
+        'name'  => 'api_key',
+    ] )->fetch() );
 
     if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
 
-        print'<pre>';print_r( $API_SETTINGS );print'</pre>';
+        $CONTAINER['logger']->addInfo( serialize( $API_SETTINGS ) );
+
+    }
+
+
+    /*
+    $DB->user_services()->insert_update(
+        [
+            'uid'       => $user_id,
+            'sid'       => $SERVICE['id'],
+        ],
+    */
+
+} );
+
+
+$APP->get('/services', function( ServerRequestInterface $REQUEST, ResponseInterface $RESPONSE ) use( $CONTAINER ) {
+
+    $PARSED_REQUEST = $REQUEST->getQueryParams();
+
+    if( !empty( $CONTAINER['SETTINGS']->debug ) and !empty( $PARSED_REQUEST ) ) {
+
+        $CONTAINER['logger']->addInfo( serialize( $PARSED_REQUEST ) );
+
+    }
+
+
+    //
+    //  Verify access to services or quit
+    //
+    $SERVICES  = $CONTAINER['DB']->table( 'services' )
+    ->select()
+    ->where( 'status', 'active' )->get();
+
+    if( empty( $SERVICES ) ) {
+
+        return json_encode( [ 'stat' => false, 'message' => 'Try again later' ] );
+
+    }
+
+    return json_encode( ['stat' => true, 'message' => $SERVICES ] );
+
+} );
+
+
+//
+//  Test tumblr secret
+//
+$APP->get('/tumblr_fetch', function( ServerRequestInterface $REQUEST, ResponseInterface $RESPONSE ) use( $CONTAINER ) {
+
+    $PARSED_REQUEST = $REQUEST->getQueryParams();
+
+    if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
+
+        $CONTAINER['logger']->addInfo( serialize( $PARSED_REQUEST ) );
+
+    }
+
+
+    //
+    //  Verify active service or quit
+    //
+    $SERVICE  = $CONTAINER['DB']->table( 'services' )
+    ->select()
+    ->where( 'status', 'active' )
+    ->where( 'name', $PARSED_REQUEST['route'] )->one();
+
+    if( empty( $SERVICE ) or $SERVICE['status'] != 'active' ) {
+
+        return json_encode( [ 'stat' => false, 'message' => 'Try again later' ] );
+
+    }
+
+} );
+
+
+//
+//  Tumblr authentication
+//  @todo: Double-check that Tumblr isn't capable of giving a refresh_token to store in user_data
+//  I think I got this sorted using oauth_token_secret, which we will store in the db
+//
+$APP->get('/tumblr_auth', function( ServerRequestInterface $REQUEST, ResponseInterface $RESPONSE ) use( $CONTAINER ) {
+
+    $PARSED_REQUEST = $REQUEST->getQueryParams();
+
+    if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
+
+        $CONTAINER['logger']->addInfo( serialize( $PARSED_REQUEST ) );
+
+    }
+
+
+    //
+    //  Verify referer
+    //  @todo: Need to add logic here to ensure that the reuest came from api.likely.cloud/tumblr
+    //
+    $CONTAINER['logger']->addInfo( serialize( $REQUEST->getHeader( 'Referer') ) );
+
+
+    //
+    //  Verify active service or redirect
+    //
+    $SERVICE  = $CONTAINER['DB']->table( 'services' )
+    ->select()
+    ->where( 'status', 'active' )
+    ->where( 'name', 'tumblr' )->one();
+
+    if( empty( $SERVICE ) or $SERVICE['status'] != 'active' ) {
+
+        if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
+
+            $CONTAINER['logger']->addInfo( serialize( [ 'access disabled service', __FILE__, __LINE__ ] ) );
+
+        }
+
+        return json_encode( [ 'stat' => false, 'message' => 'Try again later' ] );
+
+    }
+
+
+    //
+    //  Fetch API settings
+    //
+    $API_SETTINGS  = $CONTAINER['DB']->table( 'settings' )
+    ->select()
+    ->where( 'name', 'api_key' )->one();
+
+    if( empty( $API_SETTINGS ) ) {
+
+        if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
+
+            $CONTAINER['logger']->addInfo( serialize( [ 'something is broken', __FILE__, __LINE__ ] ) );
+
+        }
+
+        return json_encode( [ 'stat' => false, 'message' => 'Try again later' ] );
 
     }
 
@@ -215,39 +681,26 @@ $APP->get('/tumblr_auth', function( ServerRequestInterface $REQUEST, ResponseInt
     //
     //  Fetch transaction record where
     //  - service matches
+    //  - session matches
     //  - was created within 15 minutes
+    //  - is the most recent
     //
-    $EXISTING_TRANSACTION   = $DB->transactions()->where( [
-        'sid'                   => $SERVICE['id'],
-        'session_id'            => session_id(),
-    ] )->where( 'created >= "' . date( 'Y-m-d H:i:s', time() - ( 60 * 15 ) ) . '"' )->order( 'created desc' )->limit( 1 )->fetch();
+    $EXISTING_TRANSACTION  = $CONTAINER['DB']->table( 'transactions' )
+    ->select()
+    ->where( 'sid', $SERVICE['id'] )
+    ->where( 'session_id', session_id() )
+    ->where( 'created >=', date( 'Y-m-d H:i:s', time() - ( 60 * 15 ) ) )
+    ->order( 'created', 'desc' )->one();
 
+    if( empty( $EXISTING_TRANSACTION ) ) {
 
-    //
-    //  Parse or send user back
-    //
-    if( empty( $EXISTING_TRANSACTION) ) {
+        if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
 
-        $REDIRECT_URL   = ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
+            $CONTAINER['logger']->addInfo( serialize( [ 'something is broken', __FILE__, __LINE__ ] ) );
 
-        $REDIRECT_DATA  = [
-            'stat'      => false,
-            'message'   => 'Try again later',
-        ];
+        }
 
-        $REDIRECT_URL   .= http_build_query( $REDIRECT_DATA );
-
-        header( 'Location: ' . $REDIRECT_URL );
-
-        return $REDIRECT_DATA;
-
-    }
-
-    $EXISTING_TRANSACTION   = iterator_to_array( $EXISTING_TRANSACTION );
-
-    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
-
-        print'<pre>';print_r( $EXISTING_TRANSACTION );print'</pre>';
+        return json_encode( [ 'stat' => false, 'message' => 'Try again later' ] );
 
     }
 
@@ -261,18 +714,13 @@ $APP->get('/tumblr_auth', function( ServerRequestInterface $REQUEST, ResponseInt
 
     if( empty( $PARSED_OAUTH_TOKEN ) or empty( $PARSED_OAUTH_TOKEN_SECRET ) ) {
 
-        $REDIRECT_URL   = ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
+        if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
 
-        $REDIRECT_DATA  = [
-            'stat'      => false,
-            'message'   => 'Try again later',
-        ];
+            $CONTAINER['logger']->addInfo( serialize( [ 'something is broken', __FILE__, __LINE__ ] ) );
 
-        $REDIRECT_URL   .= http_build_query( $REDIRECT_DATA );
+        }
 
-        header( 'Location: ' . $REDIRECT_URL );
-
-        return $REDIRECT_DATA;
+        return json_encode( [ 'stat' => false, 'message' => 'Try again later' ] );
 
     }
 
@@ -284,7 +732,7 @@ $APP->get('/tumblr_auth', function( ServerRequestInterface $REQUEST, ResponseInt
 
     list(, $encrypted_oauth_token, $enc_iv)         = $PARSED_OAUTH_TOKEN;
 
-    $enc_key                                        = openssl_digest($CONTAINER['SETTINGS']->salt . ':' . $CONTAINER['SETTINGS']->api_hash . '|' . $API_SETTINGS['api_key'], 'SHA256', TRUE );
+    $enc_key                                        = openssl_digest($CONTAINER['SETTINGS']->salt . ':' . $CONTAINER['SETTINGS']->api_hash . '|' . $API_SETTINGS['value'], 'SHA256', TRUE );
 
     $decrypted_oauth_token                          = openssl_decrypt( $encrypted_oauth_token, $enc_method, $enc_key, 0, hex2bin( $enc_iv ) );
 
@@ -298,18 +746,13 @@ $APP->get('/tumblr_auth', function( ServerRequestInterface $REQUEST, ResponseInt
     //
     if( $decrypted_oauth_token != $PARSED_REQUEST['oauth_token'] ) {
 
-        $REDIRECT_URL   = ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
+        if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
 
-        $REDIRECT_DATA  = [
-            'stat'      => false,
-            'message'   => 'Try again later',
-        ];
+            $CONTAINER['logger']->addInfo( serialize( [ 'something is broken', __FILE__, __LINE__ ] ) );
 
-        $REDIRECT_URL   .= http_build_query( $REDIRECT_DATA );
+        }
 
-        header( 'Location: ' . $REDIRECT_URL );
-
-        return $REDIRECT_DATA;
+        return json_encode( [ 'stat' => false, 'message' => 'Try again later' ] );
 
     }
 
@@ -318,26 +761,6 @@ $APP->get('/tumblr_auth', function( ServerRequestInterface $REQUEST, ResponseInt
     //  Update incoming vars
     //
     $PARSED_REQUEST['oauth_token_secret']   = $decrypted_oauth_token_secret;
-
-
-    //
-    //  Capture geo
-    //
-    $GEO = unserialize( file_get_contents( 'http://www.geoplugin.net/php.gp?ip=' . $_SERVER['REMOTE_ADDR'] ) );
-
-    $PARSED_GEO_RESPONSE  = [
-        'REMOTE_ADDR'       => $_SERVER['REMOTE_ADDR'],
-        'city'              => $GEO['geoplugin_city'],
-        'state'             => $GEO['geoplugin_region'],
-        'area_code'         => $GEO['geoplugin_areaCode'],
-        'dma_code'          => $GEO['geoplugin_dmaCode'],
-        'country_code'      => $GEO['geoplugin_countryCode'],
-        'country_name'      => $GEO['geoplugin_countryName'],
-        'continent_name'    => $GEO['geoplugin_continentName'],
-        'latitude'          => $GEO['geoplugin_latitude'],
-        'longitude'         => $GEO['geoplugin_longitude'],
-        'timezone'          => $GEO['geoplugin_timezone'],
-    ];
 
 
     //
@@ -357,19 +780,7 @@ $APP->get('/tumblr_auth', function( ServerRequestInterface $REQUEST, ResponseInt
         'oauth_verifier' => $PARSED_REQUEST['oauth_verifier'],
     ]);
 
-    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
-
-        var_dump('response_status', $response->status );
-
-    }
-
     parse_str( (string) $response->body, $PARSED_REQUEST_TOKENS_RESPONSE );
-
-    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
-
-        print'<pre>';print_r( $PARSED_REQUEST_TOKENS_RESPONSE );print'</pre>';
-
-    }
 
     $client = new Tumblr\API\Client(
         $CONTAINER['SETTINGS']->social[0]->tumblr[0]->server[0]->client_id,
@@ -380,97 +791,52 @@ $APP->get('/tumblr_auth', function( ServerRequestInterface $REQUEST, ResponseInt
 
     $PARSED_USER_RESPONSE  = $client->getUserInfo();
 
-    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
 
-        print'<pre>';print_r( $PARSED_USER_RESPONSE );print'</pre>';
+    //
+    //  Confirm info
+    //
+    if( empty( $PARSED_USER_RESPONSE ) ) {
+
+        if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
+
+            $CONTAINER['logger']->addInfo( serialize( [ 'something is broken', __FILE__, __LINE__ ] ) );
+
+        }
+
+        return json_encode( [ 'stat' => false, 'message' => 'Try again later' ] );
 
     }
 
+    if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
 
-    //
-    //  Normalize
-    //
-    $NORMALIZED_RESPONSE                    = [];
-
-    $NORMALIZED_RESPONSE['tumblr_registry'] = $PARSED_USER_RESPONSE;
-
-    $_SESSION['username']                   = $PARSED_USER_RESPONSE->user->name;
-
-    $_SESSION['authenticated']              = true;
-
-    $CONTAINER['logger']->addInfo( serialize( $NORMALIZED_RESPONSE ) );
-
-
-    //
-    //  Fetch user
-    //
-    $EXISTING_USER = $DB->users()->where( [
-        'uname'     => $PARSED_USER_RESPONSE->user->name,
-    ] )->fetch();
-
-
-    //
-    //  Quit when found
-    //
-    if( !empty( $EXISTING_USER ) ) {
-
-        $REDIRECT_URL   = ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
-
-        $REDIRECT_DATA  = [
-            'stat'      => true,
-            'message'   => 'Yay ' . $PARSED_USER_RESPONSE->user->name . '! Welcome back!',
-        ];
-
-        $REDIRECT_URL   .= http_build_query( $REDIRECT_DATA );
-
-        header( 'Location: ' . $REDIRECT_URL );
-
-        return $REDIRECT_DATA;
+        $CONTAINER['logger']->addInfo( serialize( $PARSED_USER_RESPONSE ) );
 
     }
 
-
-    //
-    //  Append user
-    //
-    $DB->users()->insert( [
-        'uname'     => $PARSED_USER_RESPONSE->user->name,
-        'login'     => date( 'Y-m-d H:i:s' ),
-        'status'    => 'active',
-    ] );
-
-    $user_id        = $DB->users()->insert_id();
-
-    $DB->user_data()->insert_update(
-        [
-            'uid'       => $user_id,
-        ],
-        [
-            'uid'       => $user_id,
-            'geo'       => json_encode( $PARSED_GEO_RESPONSE ),
-        ]
-    );
+    $USER_STATUSES  = [
+        false   => 'invisible',
+        true    => 'active',
+    ];
 
 
     //
-    //  Activate service for user
+    //  Append service
     //
-    $DB->user_services()->insert_update(
-        [
-            'uid'       => $user_id,
-            'sid'       => $SERVICE['id'],
-        ],
-        [
-            'uid'       => $user_id,
-            'sid'       => $SERVICE['id'],
-            'activated' => date( 'Y-m-d H:i:s' ),
-            'status'    => 'active',
-            'refresh'   => $PARSED_REQUEST_TOKENS_RESPONSE['refresh_token'],
-        ]
-    );
+    $TRANSACTION_DATA   = !empty( $EXISTING_TRANSACTION['data'] ) ? json_decode( $EXISTING_TRANSACTION['data'] ) : null;
+
+    $CONTAINER['DB']->table('user_services')->insert( [
+        'uid'           => $EXISTING_TRANSACTION['uid'], 
+        'sid'           => $SERVICE['id'],
+        'sname'         => $PARSED_REQUEST['uname'], 
+        'created'       => date( 'Y-m-d H:i:s' ), 
+        'login'         => date( 'Y-m-d H:i:s' ), 
+        'status'        => $USER_STATUSES[ !empty( $TRANSACTION_DATA->status ) ? $TRANSACTION_DATA->status : 'active' ],  
+        'token'         => $EXISTING_TRANSACTION['oauth_token'],
+        'refresh'       => $EXISTING_TRANSACTION['oauth_token_secret'],
+    ] )->execute();
 
 
-    $REDIRECT_URL   = ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
+    $REDIRECT_URL   = ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->parent_domain . '/home?';
 
     $REDIRECT_DATA  = [
         'stat'      => true,
@@ -491,31 +857,79 @@ $APP->get('/tumblr_auth', function( ServerRequestInterface $REQUEST, ResponseInt
 //
 $APP->get('/tumblr', function( ServerRequestInterface $REQUEST, ResponseInterface $RESPONSE ) use( $CONTAINER ) {
 
+    $PARSED_REQUEST = $REQUEST->getParsedBody();
+
+    if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
+
+        $CONTAINER['logger']->addInfo( serialize( $PARSED_REQUEST ) );
+
+    }
+
+    if( empty( $PARSED_REQUEST['user_id'] ) ) {
+
+        if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
+
+            $CONTAINER['logger']->addInfo( serialize( [ 'something is broken', __FILE__, __LINE__ ] ) );
+
+        }
+
+        return json_encode( [ 'stat' => false, 'message' => 'Try again later' ] );
+
+    }
+
     //
     //  Verify active service or quit
     //
-    $DB         = new NotORM( $CONTAINER['DATABASE'] );
-
-    $DB->debug  = $CONTAINER['SETTINGS']->debug;
-
-    $SERVICE = iterator_to_array( $DB->services()->where( [
-        'name'      => 'tumblr',
-    ])->fetch() );
+    $SERVICE  = $CONTAINER['DB']->table( 'services' )
+    ->select()
+    ->where( 'status', 'active' )
+    ->where( 'name', 'tumblr' )->one();
 
     if( empty( $SERVICE ) or $SERVICE['status'] != 'active' ) {
 
-        $REDIRECT_URL   = ( !empty( $CONTAINER['SETTINGS']->using_https ) ? 'https://' : 'http://' ) . $CONTAINER['SETTINGS']->parent_domain . '/signup.php?';
+        if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
 
-        $REDIRECT_DATA  = [
-            'stat'      => false,
-            'message'   => 'Try again later',
-        ];
+            $CONTAINER['logger']->addInfo( serialize( [ 'access disabled service', __FILE__, __LINE__ ] ) );
 
-        $REDIRECT_URL   .= http_build_query( $REDIRECT_DATA );
+        }
 
-        header( 'Location: ' . $REDIRECT_URL );
+        return json_encode( [ 'stat' => false, 'message' => 'Try again later' ] );
 
-        return $REDIRECT_DATA;
+    }
+
+
+    //
+    //  Fetch API settings
+    //
+    $API_SETTINGS  = $CONTAINER['DB']->table( 'settings' )
+    ->select()
+    ->where( 'name', 'api_key' )->one();
+
+    if( empty( $API_SETTINGS ) ) {
+
+        if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
+
+            $CONTAINER['logger']->addInfo( serialize( [ 'something is broken', __FILE__, __LINE__ ] ) );
+
+        }
+
+        return json_encode( [ 'stat' => false, 'message' => 'Try again later' ] );
+
+    }
+
+
+    //
+    //  Prevent duplicate service
+    //
+    $EXISTING_USER_SERVICE  = $CONTAINER['DB']->table( 'user_services' )
+    ->select( ['id'] )
+    ->where( 'uid', $PARSED_REQUEST['user_id'] )
+    ->orderBy( 'created', 'desc' )
+    ->limit( 1 )->one();
+
+    if( !empty( $EXISTING_USER_SERVICE ) ) {
+
+        return json_encode( [ 'stat' => true, 'redirect' => '/', 'message' => 'Already registered' ] );
 
     }
 
@@ -537,13 +951,7 @@ $APP->get('/tumblr', function( ServerRequestInterface $REQUEST, ResponseInterfac
             . $CONTAINER['SETTINGS']->domain . '/' . $CONTAINER['SETTINGS']->social[0]->tumblr[0]->register[0]->callback,
     ] ) ;
 
-    parse_str( $resp->body, $PARSED_TOKEN_RESPONSE );
-
-
-    //
-    //  Fetch API settings
-    //
-    $API_SETTINGS = iterator_to_array( $DB->settings()->fetch() );
+    parse_str( $resp->body, $PARSED_TOKEN_RESPONSE );;
 
 
     //
@@ -551,7 +959,7 @@ $APP->get('/tumblr', function( ServerRequestInterface $REQUEST, ResponseInterfac
     //
     $enc_method                     = 'AES-128-CTR';
 
-    $enc_key                        = openssl_digest($CONTAINER['SETTINGS']->salt . ':' . $CONTAINER['SETTINGS']->api_hash . '|' . $API_SETTINGS['api_key'], 'SHA256', TRUE );
+    $enc_key                        = openssl_digest($CONTAINER['SETTINGS']->salt . ':' . $CONTAINER['SETTINGS']->api_hash . '|' . $API_SETTINGS['value'], 'SHA256', TRUE );
 
     $enc_iv                         = openssl_random_pseudo_bytes( openssl_cipher_iv_length( $enc_method ) );
 
@@ -563,13 +971,47 @@ $APP->get('/tumblr', function( ServerRequestInterface $REQUEST, ResponseInterfac
     //
     //  Append transaction
     //
-    $DB->transactions()->insert( [
-        'sid'                   => $SERVICE['id'],
-        'session_id'            => session_id(),
-        'oauth_token'           => $encrypted_oauth_token,
-        'oauth_token_secret'    => $encrypted_oauth_token_secret,
-        'created'               => date( 'Y-m-d H:i:s' ),
+    $transaction_date_created       = date( 'Y-m-d H:i:s' );
+
+    $transaction_data               = json_encode( [
+        'status'                    => $PARSED_REQUEST['status'],
     ] );
+
+    $CONTAINER['DB']->table('transactions')->insert( [
+        'uid'                       => $PARSED_REQUEST['user_id'],
+        'sid'                       => $SERVICE['id'],
+        'session_id'                => session_id(), 
+        'oauth_token'               => $encrypted_oauth_token, 
+        'oauth_token_secret'        => $encrypted_oauth_token_secret,
+        'created'                   => $transaction_date_created,
+        'data'                      => $transaction_data,
+    ] )->execute();
+
+
+    //
+    //  Fetch transaction_id
+    //
+    $EXISTING_TRANSACTION  = $CONTAINER['DB']->table( 'transactions' )
+        ->select( ['id'] )
+        ->where( 'created', $transaction_date_created )
+        ->where( 'uid', $PARSED_REQUEST['user_id'] )
+        ->where( 'sid', $SERVICE['id'] )
+        ->where( 'session_id', session_id() )
+        ->limit( 1 )->one();
+
+    $transaction_id = $EXISTING_TRANSACTION['id'];
+
+    if( empty( $transaction_id ) ) {
+
+        if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
+
+            $CONTAINER['logger']->addInfo( serialize( [ 'something is broken!', __FILE__, __LINE__ ] ) );
+
+        }
+
+        return json_encode( [ 'stat' => false, 'message' => 'Try again later' ] );
+
+    }
 
     header( 'Location: ' . 'https://www.tumblr.com/oauth/authorize?oauth_token=' . $PARSED_TOKEN_RESPONSE['oauth_token'] );
 
@@ -586,9 +1028,9 @@ $APP->get('/discord_auth', function( ServerRequestInterface $REQUEST, ResponseIn
 
     $PARSED_REQUEST = $REQUEST->getQueryParams();
 
-    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
+    if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
 
-        print'<pre>';print_r( $PARSED_REQUEST );print'</pre>';
+        $CONTAINER['logger']->addInfo( serialize( $PARSED_REQUEST ) );
 
     }
 
@@ -645,9 +1087,9 @@ $APP->get('/discord_auth', function( ServerRequestInterface $REQUEST, ResponseIn
     //
     $PARSED_TOKEN_RESPONSE  = json_decode( $TOKEN_RESPONSE->getBody()->getContents() );
 
-    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
+    if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
 
-        print'<pre>';print_r( $PARSED_TOKEN_RESPONSE );print'</pre>';
+        $CONTAINER['logger']->addInfo( serialize( $PARSED_TOKEN_RESPONSE ) );
 
     }
 
@@ -688,9 +1130,9 @@ $APP->get('/discord_auth', function( ServerRequestInterface $REQUEST, ResponseIn
     //
     $PARSED_USER_RESPONSE  = json_decode( $USER_RESPONSE->getBody()->getContents() );
 
-    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
+    if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
 
-        print'<pre>';print_r( $PARSED_USER_RESPONSE );print'</pre>';
+        $CONTAINER['logger']->addInfo( serialize( $PARSED_USER_RESPONSE ) );
 
     }
 
@@ -724,9 +1166,9 @@ $APP->get('/discord_auth', function( ServerRequestInterface $REQUEST, ResponseIn
 
     }
 
-    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
+    if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
 
-        print'<pre>';print_r( $NORMALIZED_RESPONSE );print'</pre>';
+        $CONTAINER['logger']->addInfo( serialize( $NORMALIZED_RESPONSE ) );
 
     }
 
@@ -750,9 +1192,9 @@ $APP->get('/discord_auth', function( ServerRequestInterface $REQUEST, ResponseIn
     //
     $PARSED_CONNECTIONS_RESPONSE  = json_decode( $CONNECTIONS_RESPONSE->getBody()->getContents() );
 
-    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
+    if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
 
-        print'<pre>';print_r( $PARSED_CONNECTIONS_RESPONSE );print'</pre>';
+        $CONTAINER['logger']->addInfo( serialize( $PARSED_CONNECTIONS_RESPONSE ) );
 
     }
 
@@ -782,9 +1224,9 @@ $APP->get('/discord_auth', function( ServerRequestInterface $REQUEST, ResponseIn
     //
     $PARSED_GUILDS_RESPONSE  = json_decode( $GUILDS_RESPONSE->getBody()->getContents() );
 
-    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
+    if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
 
-        print'<pre>';print_r( $PARSED_GUILDS_RESPONSE );print'</pre>';
+        $CONTAINER['logger']->addInfo( serialize( $PARSED_GUILDS_RESPONSE ) );
 
     }
 
@@ -838,9 +1280,9 @@ $APP->get('/discord_auth', function( ServerRequestInterface $REQUEST, ResponseIn
     //
     $PARSED_INVITE_RESPONSE  = json_decode( $INVITE_RESPONSE->getBody()->getContents() );
 
-    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
+    if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
 
-        print'<pre>';print_r($PARSED_INVITE_RESPONSE);print'</pre>';
+        $CONTAINER['logger']->addInfo( serialize( $PARSED_INVITE_RESPONSE ) );
 
     }
 
@@ -883,7 +1325,7 @@ $APP->get('/discord_auth', function( ServerRequestInterface $REQUEST, ResponseIn
 
     if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
 
-        print'<pre>';print_r($PARSED_INSERT_RESPONSE);print'</pre>';
+        $CONTAINER['logger']->addInfo( serialize( $PARSED_INSERT_RESPONSE ) );
 
     }
 
@@ -986,6 +1428,7 @@ $APP->get('/facebook_auth', function( ServerRequestInterface $REQUEST, ResponseI
 
     $PARSED_REQUEST = $REQUEST->getQueryParams();
 
+    return json_encode( array( 'stat' => true, 'message' => 'Not integrated yet' ) );
 
     //
     //  Attempt token fetch
@@ -994,7 +1437,7 @@ $APP->get('/facebook_auth', function( ServerRequestInterface $REQUEST, ResponseI
 
     $query_str      = 'https://graph.accountkit.com/' . $CONTAINER['SETTINGS']->social[0]->facebook[0]->version . '/access_token';
 
-    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
+    if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
 
         print'<pre>';print_r( [
             'grant_type'        => 'authorization_code',
@@ -1013,8 +1456,6 @@ $APP->get('/facebook_auth', function( ServerRequestInterface $REQUEST, ResponseI
     ] );
 
     $CONTAINER['logger']->addInfo( serialize( $TOKEN_RESPONSE ) );
-
-    return json_encode( array( 'stat' => true, 'message' => 'Not integrated yet' ) );
 
 } );
 
@@ -1065,9 +1506,9 @@ $APP->get('/imgur_auth', function( ServerRequestInterface $REQUEST, ResponseInte
 
     $PARSED_REQUEST = $REQUEST->getQueryParams();
 
-    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
+    if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
 
-        print'<pre>';print_r( $PARSED_REQUEST );print'</pre>';
+        $CONTAINER['logger']->addInfo( serialize( $PARSED_REQUEST ) );
 
     }
 
@@ -1108,9 +1549,9 @@ $APP->get('/imgur_auth', function( ServerRequestInterface $REQUEST, ResponseInte
     //
     $PARSED_TOKEN_RESPONSE  = json_decode( $TOKEN_RESPONSE->getBody()->getContents() );
 
-    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
+    if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
 
-        print'<pre>';print_r( $PARSED_TOKEN_RESPONSE );print'</pre>';
+        $CONTAINER['logger']->addInfo( serialize( $PARSED_TOKEN_RESPONSE ) );
 
     }
 
@@ -1151,9 +1592,9 @@ $APP->get('/imgur_auth', function( ServerRequestInterface $REQUEST, ResponseInte
     //
     $PARSED_USER_RESPONSE  = json_decode( $USER_RESPONSE->getBody()->getContents() );
 
-    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
+    if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
 
-        print'<pre>';print_r( $PARSED_USER_RESPONSE );print'</pre>';
+        $CONTAINER['logger']->addInfo( serialize( $PARSED_USER_RESPONSE ) );
 
     }
 
@@ -1179,9 +1620,9 @@ $APP->get('/imgur_auth', function( ServerRequestInterface $REQUEST, ResponseInte
 
     $NORMALIZED_RESPONSE['imgur_registry']      = $PARSED_USER_RESPONSE;
 
-    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
+    if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
 
-        print'<pre>';print_r( $NORMALIZED_RESPONSE );print'</pre>';
+        $CONTAINER['logger']->addInfo( serialize( $NORMALIZED_RESPONSE ) );
 
     }
 
@@ -1210,9 +1651,9 @@ $APP->get('/imgur_upload', function( ServerRequestInterface $REQUEST, ResponseIn
 
     $PARSED_REQUEST = $REQUEST->getQueryParams();
 
-    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
+    if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
 
-        print'<pre>';print_r( $PARSED_REQUEST );print'</pre>';
+        $CONTAINER['logger']->addInfo( serialize( $PARSED_REQUEST ) );
 
     }
 
@@ -1226,9 +1667,9 @@ $APP->get('/imgur_edit', function( ServerRequestInterface $REQUEST, ResponseInte
 
     $PARSED_REQUEST = $REQUEST->getQueryParams();
 
-    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
+    if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
 
-        print'<pre>';print_r( $PARSED_REQUEST );print'</pre>';
+        $CONTAINER['logger']->addInfo( serialize( $PARSED_REQUEST ) );
 
     }
 
@@ -1242,9 +1683,9 @@ $APP->get('/imgur_delete', function( ServerRequestInterface $REQUEST, ResponseIn
 
     $PARSED_REQUEST = $REQUEST->getQueryParams();
 
-    if( !empty( $CONTAINER['SETTINGS']->debug ) && $CONTAINER['SETTINGS']->visitor == $_SERVER['REMOTE_ADDR'] ) {
+    if( !empty( $CONTAINER['SETTINGS']->debug ) ) {
 
-        print'<pre>';print_r( $PARSED_REQUEST );print'</pre>';
+        $CONTAINER['logger']->addInfo( serialize( $PARSED_REQUEST ) );
 
     }
 

@@ -2,11 +2,22 @@ $( document ).ready( function() {
 
     ( function run() {
 
-        console.log( this );
-
         $('form').submit(function(e) {
 
-            e.preventDefault();
+            var submit_ok   = true;
+
+            $.each( $('input[type=text], input[type=password]'), function() {
+
+                console.log( $(this).val() );
+
+                if( $(this).val() == '' || $(this).val() == 'undefined' ) {
+
+                    submit_ok   = false;
+                }
+
+            });
+
+            if( !submit_ok ) e.preventDefault();
 
         } );
 
