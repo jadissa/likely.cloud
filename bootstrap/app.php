@@ -11,7 +11,7 @@ $settings_file  = $_SERVER['DOCUMENT_ROOT'] . '/../app/settings.json';
 
 if( !is_file( $settings_file ) ) {
 
-    die( 'Not configured ' . __FILE__ );
+    die( 'Not configured ' . $settings_file );
 
 }
 
@@ -169,8 +169,14 @@ $CONTAINER['db']        = function( $CONTAINER ) use( $SETTINGS ) {
 
 
 //
-//  Regiser middleware
+//  Regiser validation
 //
 $APP->add( new \App\middleware\validation( $CONTAINER ) );
+
+
+//
+//  Register input
+//
+$APP->add( new \App\middleware\input( $CONTAINER ) );
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/../app/routes.php';

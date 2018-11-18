@@ -8,7 +8,7 @@ $APP->get( '/services', 'services:getActive' );
 
 $APP->get( '/services/tumblr', 'services:getTumblr' )->setName( 'service.tumblr' );
 
-$APP->get( 'https://app.likely.cloud/services/tumblr_auth', 'services:authTumblr' )->setName( 'service.tumblr_auth');
+$APP->get( '/services/tumblr_auth', 'services:authTumblr' )->setName( 'service.tumblr_auth');
 
 $APP->get( '/auth/signup', 'auth:getSignup' )->setName( 'auth.signup' );
 
