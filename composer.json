@@ -13,7 +13,8 @@
     "tumblr/tumblr":"0.4.*",
     "clancats/hydrahon":"1.1.*",
     "respect/validation":"1.1.*",
-    "slim/twig-view":"2.4.*"
+    "slim/twig-view":"2.4.*",
+    "slim/csrf": "dev-master"
   },
 
   "autoload": {

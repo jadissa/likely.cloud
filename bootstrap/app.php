@@ -6,6 +6,7 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/../vendor/autoload.php';
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Respect\Validation\Validator as v;
 
 $settings_file  = $_SERVER['DOCUMENT_ROOT'] . '/../app/settings.json';
 
@@ -90,9 +91,15 @@ $CONTAINER['auth']      = function( $CONTAINER ) {
 
 };
 
-$CONTAINER['validator']      = function( $CONTAINER ) {
+$CONTAINER['validator'] = function( $CONTAINER ) {
 
     return new \App\validation\validator;
+
+};
+
+$CONTAINER['csrf']      = function( $c ) {
+
+    return new \Slim\Csrf\Guard;
 
 };
 
@@ -169,6 +176,13 @@ $CONTAINER['db']        = function( $CONTAINER ) use( $SETTINGS ) {
 
 
 //
+//  Register CSRF
+//
+$APP->add( new \App\middleware\csrf( $CONTAINER ) );
+$APP->add( $CONTAINER->get( 'csrf' ) );
+
+
+//
 //  Regiser validation
 //
 $APP->add( new \App\middleware\validation( $CONTAINER ) );
@@ -178,5 +192,11 @@ $APP->add( new \App\middleware\validation( $CONTAINER ) );
 //  Register input
 //
 $APP->add( new \App\middleware\input( $CONTAINER ) );
+
+
+//
+//  Register rules
+//
+v::with( 'App\\validation\\rules\\' );
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/../app/routes.php';

@@ -171,10 +171,12 @@ class auth extends controler {
 	    //
 	    //  Fetch user
 	    //
-	    $EXISTING_USER  = $this->db->table( 'users' )
-	    ->select( ['id'] )
-	    ->where( 'uname', $PARSED_REQUEST['uname'] )
-	    ->orderBy( 'created', 'desc' )
+	    $EXISTING_USER  = $this->db->table( 'users as u' )
+	    ->select( ['u.id'] )
+	    ->join( 'user_data as ud', 'u.id', '=', 'ud.uid' )
+	    ->where( 'u.uname', $PARSED_REQUEST['uname'] )
+	    ->orWhere( 'ud.email', $PARSED_REQUEST['email'] )
+	    ->orderBy( 'u.created', 'desc' )
 	    ->limit( 1 )->one();
 
 	    if( !empty( $EXISTING_USER ) ) {

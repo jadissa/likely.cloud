@@ -84,6 +84,8 @@
 
 <button class="btn btn btn-primary btn-block" type="submit"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}>Sign up</button>
 
+{{ csrf.field | raw }}
+
 </div>
 
 </form>
