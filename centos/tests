@@ -1,0 +1,105 @@
+#!/bin/bash
+#
+# ________                              .____                    .___
+# \______ \_______  ____ _____    _____ |    |    ____  __ __  __| _/
+#  |    |  \_  __ _/ __ \\__  \  /     \|    |   /  _ \|  |  \/ __ |
+#  |    `   |  | \\  ___/ / __ \|  Y Y  |    |__(  <_> |  |  / /_/ |
+# /_______  |__|   \___  (____  |__|_|  |_______ \____/|____/\____ |
+#         \/           \/     \/      \/        \/                \/
+#
+#                             © likely.cloud and Jadissa Griffin 2018
+
+#https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-centos-7
+
+#
+# Load
+#
+. /etc/os-release
+
+stat -c "Rights: %A Perms: %a Username:Owner: %U:%G File: %n Type: %F Bytes: %s" $PROJECTPATH
+
+ID=$ID
+
+VER=$VERSION_ID
+
+PROJECTPATH=/var/www/html
+
+PRIVATE_IP_ADDRESS=`curl -w "\n" http://169.254.169.254/metadata/v1/interfaces/private/0/ipv4/address`
+
+WORKER_PROCESS=`sudo grep -c 'model name' /proc/cpuinfo`
+
+GROUP_EXISTS=`cat /etc/group | grep $GROUP`
+
+GROUP=www
+
+USER=www
+
+echo '.__  .__ __          .__            _________ .__                   .___'
+
+echo '|  | |__|  | __ ____ |  | ___.__.   \_   ___ \|  |   ____  __ __  __| _/'
+
+echo '|  | |  |  |/ _/ __ \|  |<   |  |   /    \  \/|  |  /  _ \|  |  \/ __ | '
+
+echo '|  |_|  |    <\  ___/|  |_\___  |   \     \___|  |_(  <_> |  |  / /_/ | '
+
+echo '|____|__|__|_ \\___  |____/ ____| /\ \______  |____/\____/|____/\____ | '
+
+echo '             \/    \/     \/      \/        \/                       \/ '
+
+echo
+
+echo '                                  © likely.cloud and Jadissa Griffin 2018'
+
+echo
+
+echo "Project directory:    $PROJECTPATH"
+
+echo "Group:                $GROUP"
+
+USER=`whoami`
+
+echo
+
+if [ "$ID" != "centos" ] || [ "$VER" != "7" ]; then
+
+    echo 'CentOS 7 required, exiting...'
+
+    exit 1
+
+fi
+
+echo "Switching to $PROJECTPATH"
+
+cd $PROJECTPATH
+
+echo 'Checking net statistics...'
+
+netstat -tln
+
+echo 'Checking nginx configuration...'
+
+sudo nginx -t
+
+echo 'Attempting to curl out to public access point...'
+
+curl http://$PRIVATE_IP_ADDRESS:80
+
+echo 'Catting fpm errors...'
+
+sudo cat /var/log/php-fpm/error.log
+
+echo 'Checking nginx status...'
+
+sudo systemctl status nginx
+
+echo 'Catting nginx errors...'
+
+sudo cat /var/log/nginx/error.log
+
+echo 'Checking MySQL status...'
+
+sudo systemctl status mysql
+
+echo 'Testing PHP version...'
+
+php -v

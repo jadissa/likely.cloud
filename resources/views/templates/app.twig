@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+
+    <title>{{ theme.title }}</title>
+
+    <meta name="description" content="{{ theme.description }}" />
+
+    <meta name="keywords" content="{{ theme.keywords }}" />
+
+    <meta http-equiv="Access-Control-Allow-Origin" content="*" />
+
+    <meta name="format-detection" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, shrink-to-fit=no" />
+
+    <link rel="shortcut icon" href="/images/favicon.ico" />
+
+    <link rel="icon" sizes="16x16 32x32" href="/images/favicon.ico">
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" 
+        integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" 
+        crossorigin="anonymous">
+
+    <link rel="stylesheet" href="{{ base_url() }}/css/layout.css">
+
+</head>
+
+<body>
+    {% include 'templates/partials/navigation.twig' %}
+    <!--https://stackoverflow.com/questions/14518083/how-to-change-which-is-the-active-menu-without-js-in-twig-->
+	<div class="container rounded">
+
+        {% include 'templates/partials/header.twig' %}
+
+        <div class="content row rounded">
+
+           {% if current_path() == '/policy' %}
+
+                {% block policy %}{% endblock %}
+
+            {% else %}
+
+                <div class="column-content col-sm-6">
+
+                {% if current_path() == '/' %}
+
+        	       {% block home %}{% endblock %}
+
+                {% elseif current_path() == '/auth/signup' %}
+
+                    {% block login %}{% endblock %}
+
+                {% endif %}
+
+                </div>
+
+                <div class="column-content col-sm-6">
+
+                    {% include 'feed.twig' %}
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+        {% include 'templates/partials/footer.twig' %}
+
+	</div>
+    
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" 
+	    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" 
+	    crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" 
+		integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" 
+		crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" 
+		integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" 
+		crossorigin="anonymous"></script>
+    <script src="/js/controler.js"></script>
+
+</body>

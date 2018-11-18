@@ -1,0 +1,776 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"back",
+				"background-color\tproperty"
+			],
+			[
+				"_SE",
+				"_SESSION"
+			],
+			[
+				"CON",
+				"CONTAINER"
+			],
+			[
+				"red",
+				"redirect_url"
+			],
+			[
+				"regi",
+				"registered"
+			],
+			[
+				"REQ",
+				"REQUEST_VARS"
+			],
+			[
+				"json",
+				"json_encode"
+			],
+			[
+				"PAR",
+				"PARSED_RESPONSE"
+			],
+			[
+				"EX",
+				"EXISTING_USER"
+			],
+			[
+				"P",
+				"PARSED_RESPONSE"
+			],
+			[
+				"coo",
+				"cookies"
+			],
+			[
+				"secre",
+				"secret_key"
+			],
+			[
+				"__",
+				"__LINE__"
+			],
+			[
+				"user",
+				"user_id"
+			],
+			[
+				"PARSED",
+				"PARSED_TOKEN_RESPONSE"
+			],
+			[
+				"API",
+				"API_SETTINGS"
+			],
+			[
+				"var",
+				"var_dump"
+			],
+			[
+				"IN",
+				"INACTIVE_UPDATE"
+			],
+			[
+				"aler",
+				"alert_level"
+			],
+			[
+				"to",
+				"token_json"
+			],
+			[
+				"token",
+				"token_response"
+			],
+			[
+				"login",
+				"login_type"
+			],
+			[
+				"handle",
+				"handleEmail"
+			],
+			[
+				"__set",
+				"__setDetails"
+			],
+			[
+				"load",
+				"loadDetails"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "resources/views/templates/partials/navigation.twig",
+			"settings":
+			{
+				"buffer_size": 1929,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "resources/views/templates/app.twig",
+			"settings":
+			{
+				"buffer_size": 1979,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "app/controlers/auth/auth.php",
+			"settings":
+			{
+				"buffer_size": 480,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "resources/views/templates/partials/footer.twig",
+			"settings":
+			{
+				"buffer_size": 870,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "public/css/layout.css",
+			"settings":
+			{
+				"buffer_size": 2929,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "css/layout.css",
+			"settings":
+			{
+				"buffer_size": 4091,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "app/controlers/home.php",
+			"settings":
+			{
+				"buffer_size": 271,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "<section id=\"likely\" class=\"description\">\n        <pre>\n            <span class=\"pink\">.__  .__ __          .__           </span><span class=\"blue\">        .__                   .___</span>\n            <span class=\"pink\">|  | |__|  | __ ____ |  | ___.__.  </span><span class=\"blue\">   ____ |  |   ____  __ __  __| _/</span>\n            <span class=\"pink\">|  | |  |  |/ // __ \\|  |<   |  |  </span><span class=\"blue\"> _/ ___\\|  |  /  _ \\|  |  \\/ __ | </span>\n            <span class=\"pink\">|  |_|  |    <\\  ___/|  |_\\___  |  </span><span class=\"blue\"> \\  \\___|  |_(  <_> )  |  / /_/ | </span>\n            <span class=\"pink\">|____/__|__|_ \\\\___  >____/ ____| /</span><span class=\"blue\">\\ \\___  >____/\\____/|____/\\____ | </span>\n            <span class=\"pink\">             \\/    \\/     \\/      \\</span><span class=\"blue\">/     \\/                       \\/ </span>\n        </pre>\n    </section>\n\n    <section>\n\n        <main>\n\n            <div class=\"static left zone\">\n\n\t\t\t\t{% include 'templates/partials/navigation.twig' %}\n\n                <div class=\"tab-content\" id=\"v-pills-tabContent\">\n\n\t\t\t\t\t<div class=\"tab-pane fade show active\" id=\"v-pills-home\" role=\"tabpanel\" aria-labelledby=\"v-pills-home-tab\">...</div>\n\n\t\t\t\t\t\n\n\t\t\t\t</div>\n\n            </div>\n\n            <div class=\"right zone\">\n\n                <div class=\"left description\">\n\n                   <h1>Feed</h1>\n\n                </div>\n\n                <div class=\"left tab-pane fade show active\" id=\"v-pills-home\" role=\"tabpanel\" aria-labelledby=\"v-pills-home-tab\">\n\n                    Donec purus lacus, dignissim sed metus et, interdum imperdiet diam. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Aenean et massa velit. Vestibulum sed laoreet elit, vitae mattis massa. Suspendisse potenti. Nulla lorem magna, maximus in mauris sed, porttitor blandit sem. Donec ac risus iaculis, viverra tortor quis, lacinia diam.\n\n                    Suspendisse nec risus interdum, fringilla lectus a, facilisis lectus. Nulla iaculis suscipit turpis, nec sollicitudin mauris hendrerit at. Etiam sollicitudin magna sed ex hendrerit semper. Praesent elementum blandit lacus ac suscipit. Nam cursus condimentum nibh eget accumsan. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus condimentum lacus at sem vestibulum, et consequat elit porttitor. Vestibulum fermentum quis magna ac blandit. Quisque interdum nisi id tempus dignissim. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Suspendisse ut lectus sit amet orci vehicula placerat. Cras fringilla velit nec ligula volutpat scelerisque. Duis sagittis aliquet nibh. Aliquam sed lacus molestie ipsum condimentum vestibulum. Morbi condimentum rhoncus erat, imperdiet porta neque gravida sed.\n\n                    Aliquam vitae lorem eget urna vehicula luctus eu et ex. Etiam condimentum dolor eros, sed scelerisque velit auctor vel. Phasellus eleifend nibh venenatis efficitur lobortis. Morbi malesuada, nibh ac vulputate efficitur, diam leo convallis dui, id dapibus metus libero dignissim sem. Donec id elit congue, mattis mi ut, fringilla arcu. In aliquet, ipsum eu volutpat consequat, enim quam maximus urna, vitae commodo odio erat sed tellus. Nam efficitur ultrices aliquam. In hac habitasse platea dictumst. Sed egestas quam a finibus sagittis. Maecenas feugiat dui nec orci feugiat, at accumsan erat molestie. Sed quis turpis vestibulum, hendrerit ex ac, tincidunt massa. Etiam varius ipsum nulla, sed efficitur lorem volutpat pellentesque. Nunc finibus, mi non sagittis cursus, neque justo porta odio, non suscipit felis quam vitae neque. Sed ac leo tempor, maximus sem vel, vestibulum quam.\n\n                    Cras sed hendrerit ligula. Phasellus eget nisi nunc. Fusce volutpat venenatis lorem sed sodales. Nulla tempor nisl sapien, quis interdum turpis mattis vestibulum. Suspendisse viverra dui rutrum neque accumsan porttitor. Etiam posuere a eros et accumsan. Nunc luctus convallis felis, ac consectetur ex eleifend id. Suspendisse dui leo, consectetur in scelerisque ut, rhoncus et erat. Phasellus nec lacus a quam dapibus suscipit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent in accumsan neque. Nam ac ante ex. Donec ac lacus quis massa vulputate luctus in sed risus. Vivamus pulvinar vel dui ut ornare. Integer nec leo mi. Vivamus laoreet libero vitae ante mattis tincidunt.\n\n                </div>\n\n                <div class=\"left tab-pane fade show active\" id=\"v-pills-signup\" role=\"tabpanel\" aria-labelledby=\"v-pills-signup-tab\">...</div>\n\n                <div class=\"left tab-pane fade show active\" id=\"v-pills-login\" role=\"tabpanel\" aria-labelledby=\"v-pills-login-tab\">...</div>\n\n                <div class=\"left tab-pane fade show active\" id=\"v-pills-logout\" role=\"tabpanel\" aria-labelledby=\"v-pills-logout-tab\">...</div>\n\n                <div class=\"left tab-pane fade show active\" id=\"v-pills-preferences\" role=\"tabpanel\" aria-labelledby=\"v-pills-preferences-tab\">...</div>\n\n                <div class=\"left tab-pane fade show active\" id=\"v-pills-assets\" role=\"tabpanel\" aria-labelledby=\"v-pills-assets-tab\">...</div>\n\n                <div class=\"left tab-pane fade show active\" id=\"v-pills-exports\" role=\"tabpanel\" aria-labelledby=\"v-pills-exports-tab\">...</div>\n\n                <div class=\"left tab-pane fade show active\" id=\"v-pills-relations\" role=\"tabpanel\" aria-labelledby=\"v-pills-relations-tab\">...</div>\n\n                <div class=\"left tab-pane fade show active\" id=\"v-pills-queries\" role=\"tabpanel\" aria-labelledby=\"v-pills-queries-tab\">...</div>\n\n                <div class=\"left tab-pane fade show active\" id=\"v-pills-policy\" role=\"tabpanel\" aria-labelledby=\"v-pills-policy-tab\">...</div>\n\n            </div>\n\n        </main>\n\n    </section>",
+			"settings":
+			{
+				"buffer_size": 5840,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 29.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"install them",
+				"Colorsublime: Install Theme"
+			],
+			[
+				"",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: ",
+				"Package Control: Install Package"
+			],
+			[
+				"sftp",
+				"Package Control: Satisfy Dependencies"
+			],
+			[
+				"pack",
+				"Preferences: Browse Packages"
+			],
+			[
+				"SFTP",
+				"Package Control: Satisfy Dependencies"
+			]
+		],
+		"width": 392.0
+	},
+	"console":
+	{
+		"height": 126.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '6f4c264a24d933ce70df5dedcf1dcaee' + 'ebe013ee18cced0ef93d5f746d80ef60'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)",
+			"sftp",
+			"import urllib.request,os,hashlib; h = '6f4c264a24d933ce70df5dedcf1dcaee' + 'ebe013ee18cced0ef93d5f746d80ef60'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)",
+			"import urllib.request,os,hashlib; h = '2915d1851351e5ee549c20394736b442' + '8bc59f460fa1548d1514676163dafc88'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/private/var/www/html/dreamloud/likely.cloud",
+		"/private/var/www/html/dreamloud/likely.cloud/app",
+		"/private/var/www/html/dreamloud/likely.cloud/app/controlers",
+		"/private/var/www/html/dreamloud/likely.cloud/app/controlers/auth",
+		"/private/var/www/html/dreamloud/likely.cloud/bootstrap",
+		"/private/var/www/html/dreamloud/likely.cloud/css",
+		"/private/var/www/html/dreamloud/likely.cloud/public",
+		"/private/var/www/html/dreamloud/likely.cloud/public/css",
+		"/private/var/www/html/dreamloud/likely.cloud/resources",
+		"/private/var/www/html/dreamloud/likely.cloud/resources/views",
+		"/private/var/www/html/dreamloud/likely.cloud/resources/views/templates",
+		"/private/var/www/html/dreamloud/likely.cloud/resources/views/templates/partials",
+		"/private/var/www/html/dreamloud/likely.cloud/views"
+	],
+	"file_history":
+	[
+		"/private/var/www/html/dreamloud/likely.cloud/app/settings.json",
+		"/private/var/www/html/dreamloud/likely.cloud/bootstrap/app.php",
+		"/private/var/www/html/dreamloud/likely.cloud/settings.json",
+		"/private/var/www/html/dreamloud/likely.cloud/index.php",
+		"/private/var/www/html/dreamloud/likely.cloud/app/controlers/auth/auth.php",
+		"/private/var/www/html/dreamloud/likely.cloud/app/routes.php",
+		"/private/var/www/html/dreamloud/likely.cloud/resources/views/auth/signup.twig",
+		"/private/var/www/html/dreamloud/likely.cloud/app/controlers/services.php",
+		"/private/var/www/html/dreamloud/likely.cloud/resources/views/home.twig",
+		"/private/var/www/html/dreamloud/likely.cloud/resources/views/templates/app.twig",
+		"/private/var/www/html/dreamloud/likely.cloud/public/index.php",
+		"/private/var/www/html/dreamloud/likely.cloud/resources/views/templates/partials/navigation.twig",
+		"/private/var/www/html/dreamloud/likely.cloud/app/controlers/home.php",
+		"/private/var/www/html/dreamloud/likely.cloud/app/models/services.php",
+		"/private/var/www/html/dreamloud/likely.cloud/public/css/layout.css",
+		"/private/var/www/html/dreamloud/likely.cloud/app/controlers/service.php",
+		"/private/var/www/html/dreamloud/likely.cloud/app/controlers/controler.php",
+		"/private/var/www/html/dreamloud/likely.cloud/app/models/user.php",
+		"/private/var/www/html/dreamloud/likely.cloud/api/index.php",
+		"/private/var/www/html/dreamloud/likely.cloud/composer.json",
+		"/private/var/www/html/dreamloud/likely.cloud/api/app/routes.php",
+		"/private/var/www/html/dreamloud/likely.cloud/views/index.php",
+		"/private/var/www/html/dreamloud/likely.cloud/api/bootstrap.php",
+		"/private/var/www/html/dreamloud/likely.cloud/request.php",
+		"/private/var/www/html/dreamloud/likely.cloud/api/settings.json",
+		"/private/var/www/html/dreamloud/likely.cloud/controlers/service/request.php",
+		"/Users/jadissa/html/dreamloud/likely.cloud/controlers/service/request.php",
+		"/Users/jadissa/html/dreamloud/likely.cloud/api/bootstrap.php",
+		"/Users/jadissa/html/mobile-update/vendor/slimphp/Slim/Slim.php",
+		"/Users/jadissa/html/dreamloud/likely.cloud/bootstrap.php",
+		"/Users/jadissa/html/dreamloud/likely.cloud/composer.json",
+		"/Users/jadissa/html/dreamloud/likely.cloud/controlers/producer/request.php",
+		"/Users/jadissa/html/dreamloud/likely.cloud/policy.php",
+		"/Users/jadissa/html/dreamloud/likely.cloud/css/layout.css",
+		"/Users/jadissa/html/dreamloud/likely.cloud/jobs/purge-transactions.php",
+		"/Users/jadissa/html/dreamloud/likely.cloud/index.php",
+		"/Users/jadissa/html/dreamloud/likely.cloud/proxy.php",
+		"/Users/jadissa/html/dreamloud/likely.cloud/views/login.php",
+		"/Users/jadissa/html/dreamloud/likely.cloud/project",
+		"/Users/jadissa/html/dreamloud/likely.cloud/jobs/parse-signups.php",
+		"/Users/jadissa/Library/Application Support/LimeChat/Themes/untitled",
+		"/Users/jadissa/html/dreamloud/likely.cloud/sftp-config.json",
+		"/Users/jadissa/html/dreamloud/likely.cloud/signup.php",
+		"/Users/jadissa/Library/Application Support/Sublime Text 3/Packages/Package Control/Package Control.sublime-settings",
+		"/Volumes/web/_software/local/process-euro-sale-registries.php",
+		"/Volumes/web/_software/manual/jadissa-tests/dbquery.php",
+		"/Volumes/web/_software/local/check-throughput.php",
+		"/Volumes/web/_includes/lib_php/billing/Argus.php",
+		"/Users/jadissa/Library/Application Support/LimeChat/Themes/mine.yaml",
+		"/Users/jadissa/Library/Application Support/LimeChat/Themes/mine.css",
+		"/private/var/www/html/rocketgate-php-sdk/src/GatewayService.php",
+		"/Volumes/web/_includes/lib_php/billing/CGate.php",
+		"/Users/jadissa/Dropbox/work/useful_queries.sql",
+		"/Volumes/web/billing/www/postbacks/ccbill.php",
+		"/Volumes/web/_software/local/ccbill-verification.php",
+		"/Volumes/web/_software/local/process-play-and-pay-pending.php",
+		"/Volumes/web/_includes/lib_php/billing/Transact.php",
+		"/Volumes/web/billing/www/postbacks/argus.php",
+		"/Volumes/web/_includes/lib_php/billing/Product.php",
+		"/Volumes/web/_includes/lib_php/billing/Customer.php",
+		"/Volumes/web/_includes/lib_php/data/Databases.cl",
+		"/Volumes/web/billing/www/api/oneclick.php",
+		"/Volumes/web/_includes/lib_php/billing/Distribution.cl",
+		"/Volumes/web/_includes/lib_php/billing/RocketGate.php",
+		"/Volumes/web/_includes/lib_php/billing/GatewayRequest.php",
+		"/Volumes/web/_includes/lib_php/billing/GatewayChecksum.php",
+		"/Volumes/web/_includes/lib_php/billing/GatewayService.php",
+		"/Volumes/web/_includes/lib_php/billing/RocketGate/GatewayService.php",
+		"/Volumes/web/_includes/config/billing.inc",
+		"/Volumes/web/_includes/config/support/databases.inc",
+		"/Volumes/web/billing/www/api/add-cc.php",
+		"/Volumes/web/_includes/lib_php/billing/Logger.php",
+		"/Volumes/web/_includes/lib_php/billing/RocketGate/GatewayParameterList.php",
+		"/Volumes/web/_includes/lib_php/billing/GatewayParameterList.php",
+		"/Volumes/web/_includes/lib_php/billing/RocketGate/GatewayRequest.php",
+		"/Volumes/web/_software/manual/fix-aebn-transactions.php",
+		"/Volumes/web/_includes/lib_php/billing/Postback.php",
+		"/Volumes/web/_includes/lib_php/billing/UserPayment.php",
+		"/private/var/www/html/dreamloud/likely.cloud/README.md",
+		"/private/var/www/html/dreamloud/likely.cloud/build",
+		"/private/var/www/html/dreamloud/likely.cloud/js/lib.js",
+		"/private/var/www/html/dreamloud/likely.cloud/js/terms.js",
+		"/private/var/www/html/dreamloud/likely.cloud/app/routes.js",
+		"/private/var/www/html/dreamloud/likely.cloud/package.json",
+		"/private/var/www/html/dreamloud/likely.cloud/tests/geoip-lite.js",
+		"/private/var/www/html/dreamloud/likely.cloud/app/server.js",
+		"/private/var/www/html/dreamloud/likely.cloud/terms.html",
+		"/private/var/www/html/dreamloud/likely.cloud/index.html",
+		"/private/var/www/html/dreamloud/likely.cloud/css/layout.css",
+		"/private/var/www/html/jadissa/deployment-scripts/do-droplet-install",
+		"/private/var/www/html/dreamloud/likely.cloud/js/index.js",
+		"/private/var/www/html/dreamloud/likely.cloud/.gitignore",
+		"/private/var/www/html/dreamloud/likely.cloud/app/public/index.html",
+		"/private/var/www/html/dreamloud/likely.cloud/tests/server.js",
+		"/private/var/www/html/dreamloud/likely.cloud/LICENSE.txt",
+		"/private/var/www/html/jadissa/deployment-scripts/centos-install-lamp",
+		"/private/var/www/html/dreamloud/likely.cloud/api/discord.js",
+		"/Users/jadissa/Downloads/user.js",
+		"/private/var/www/html/dreamloud/likely.cloud/tests/create_mongodb.js",
+		"/private/var/www/html/dreamloud/likely.cloud/vendor/twitter/bootstrap/package.json",
+		"/private/var/www/html/dreamloud/discord-token-generator/server.js",
+		"/private/var/www/html/dreamloud/likely.cloud/server.js",
+		"/private/var/www/html/dreamloud/discord-token-generator/package.json",
+		"/private/var/www/html/dreamloud/discord-token-generator/api/discord.js",
+		"/private/var/www/html/dreamloud/passport-discord/example/server.js",
+		"/private/var/www/html/dreamloud/likely.cloud/node_modules/btoa/index.js",
+		"/private/var/www/html/dreamloud/passport-discord/node_modules/oauth/lib/oauth2.js",
+		"/private/var/www/html/dreamloud/passport-discord/lib/strategy.js",
+		"/private/var/www/html/dreamloud/passport-discord/node_modules/oauth/index.js",
+		"/private/var/www/html/dreamloud/passport-discord/node_modules/oauth/lib/oauth.js",
+		"/private/var/www/html/dreamloud/passport-discord/node_modules/oauth/lib/_utils.js",
+		"/private/var/www/html/dreamloud/node_modules/oauth/lib/oauth2.js",
+		"/private/var/www/html/dreamloud/likely.cloud/node-authentication-guide/server.js",
+		"/private/var/www/html/dreamloud/oauth2-discord/vendor/league/oauth2-client/src/Provider/AbstractProvider.php",
+		"/private/var/www/html/dreamloud/oauth2-discord/index.php",
+		"/private/var/www/html/jadissa/js/lib.js",
+		"/private/var/www/html/likely.cloud/js/lib.js",
+		"/private/var/www/html/likely.cloud/js/index.js",
+		"/private/var/www/html/likely.cloud/README.md",
+		"/private/var/www/html/likely.cloud/server.js",
+		"/private/var/www/html/likely.cloud/api/discord.js",
+		"/private/var/www/html/likely.cloud/index.html",
+		"/private/var/www/html/discord-token-generator/index.html",
+		"/private/var/www/html/discord-token-generator/composer.json",
+		"/private/var/www/html/MusicBot/config/options.ini",
+		"/private/var/www/html/likely.cloud/build",
+		"/private/var/www/html/deployment-scripts/centos-install-lamp",
+		"/private/var/www/html/discord-token-generator/server.js"
+	],
+	"find":
+	{
+		"height": 23.0
+	},
+	"find_in_files":
+	{
+		"height": 101.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"SERVICES",
+			"session",
+			"$CONTAINER['session']",
+			"$PARSED_REQUEST['service']",
+			"http_build"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"$PARSED_REQUEST['route']"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "resources/views/templates/partials/navigation.twig",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1929,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1929,
+								1929
+							]
+						],
+						"settings":
+						{
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/Twig/Syntaxes/HTML (Twig).tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "resources/views/templates/app.twig",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1979,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1225,
+								1180
+							]
+						],
+						"settings":
+						{
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/Twig/Syntaxes/HTML (Twig).tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "app/controlers/auth/auth.php",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 480,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								480,
+								480
+							]
+						],
+						"settings":
+						{
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/PHP/PHP.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "resources/views/templates/partials/footer.twig",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 870,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								46,
+								34
+							]
+						],
+						"settings":
+						{
+							"incomplete_sync": null,
+							"syntax": "Packages/Twig/Syntaxes/HTML (Twig).tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "public/css/layout.css",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2929,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2894,
+								2894
+							]
+						],
+						"settings":
+						{
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/CSS/CSS.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 542.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "css/layout.css",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4091,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2129,
+								824
+							]
+						],
+						"settings":
+						{
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/CSS/CSS.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 348.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "app/controlers/home.php",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 271,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								207,
+								126
+							]
+						],
+						"settings":
+						{
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/PHP/PHP.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5840,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5627,
+								5627
+							]
+						],
+						"settings":
+						{
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/Twig/Syntaxes/HTML (Twig).tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 23.0
+	},
+	"input":
+	{
+		"height": 61.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.sftp":
+	{
+		"height": 90.0
+	},
+	"pinned_build_system": "",
+	"project": "likely.sublime-project",
+	"replace":
+	{
+		"height": 42.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 392.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 780.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 278.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

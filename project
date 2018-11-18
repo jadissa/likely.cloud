@@ -1,0 +1,95 @@
+!/bin/bash
+#
+# ________                              .____                    .___
+# \______ \_______  ____ _____    _____ |    |    ____  __ __  __| _/
+#  |    |  \_  __ _/ __ \\__  \  /     \|    |   /  _ \|  |  \/ __ |
+#  |    `   |  | \\  ___/ / __ \|  Y Y  |    |__(  <_> |  |  / /_/ |
+# /_______  |__|   \___  (____  |__|_|  |_______ \____/|____/\____ |
+#         \/           \/     \/      \/        \/                \/
+#
+#                             © likely.cloud and Jadissa Griffin 2018
+
+#https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-centos-7
+
+#
+# Load
+#
+. /etc/os-release
+
+stat -c "Rights: %A Perms: %a Username:Owner: %U:%G File: %n Type: %F Bytes: %s" $PROJECTPATH
+
+ID=$ID
+
+VER=$VERSION_ID
+
+PROJECTPATH=/var/www/html
+
+PRIVATE_IP_ADDRESS=`curl -w "\n" http://169.254.169.254/metadata/v1/interfaces/private/0/ipv4/address`
+
+WORKER_PROCESS=`sudo grep -c 'model name' /proc/cpuinfo`
+
+GROUP_EXISTS=`cat /etc/group | grep $GROUP`
+
+GROUP=www
+
+USER=www
+
+echo '.__  .__ __          .__            _________ .__                   .___'
+
+echo '|  | |__|  | __ ____ |  | ___.__.   \_   ___ \|  |   ____  __ __  __| _/'
+
+echo '|  | |  |  |/ _/ __ \|  |<   |  |   /    \  \/|  |  /  _ \|  |  \/ __ | '
+
+echo '|  |_|  |    <\  ___/|  |_\___  |   \     \___|  |_(  <_> |  |  / /_/ | '
+
+echo '|____|__|__|_ \\___  |____/ ____| /\ \______  |____/\____/|____/\____ | '
+
+echo '             \/    \/     \/      \/        \/                       \/ '
+
+echo
+
+echo '                                  © likely.cloud and Jadissa Griffin 2018'
+
+echo
+
+echo "Project directory:    $PROJECTPATH"
+
+echo "Group:                $GROUP"
+
+USER=`whoami`
+
+echo
+
+if [ "$ID" != "centos" ] || [ "$VER" != "7" ]; then
+
+    echo 'CentOS 7 required, exiting...'
+
+    exit 1
+
+fi
+
+sudo mkdir -p $PROJECTPATH
+
+echo "export PATH=$PROJECTPATH:$PATH" >>~/.bashrc
+
+source ~/.bashrc
+
+sudo chmod -R 0775 $PROJECTPATH
+
+sudo chown -R $GROUP:$GROUP $PROJECTPATH
+
+echo "Installing Composer..."
+
+curl -sS https://getcomposer.org/installer | php -- --install-dir=.
+
+echo "Updating Composer..."
+
+php composer.phar selfupdate
+
+echo "Running Composer..."
+
+php composer.phar update
+
+php composer.phar dumpautoload -o
+
+php composer.phar install

@@ -1,0 +1,245 @@
+#!/bin/bash
+#
+# ________                              .____                    .___
+# \______ \_______  ____ _____    _____ |    |    ____  __ __  __| _/
+#  |    |  \_  __ _/ __ \\__  \  /     \|    |   /  _ \|  |  \/ __ |
+#  |    `   |  | \\  ___/ / __ \|  Y Y  |    |__(  <_> |  |  / /_/ |
+# /_______  |__|   \___  (____  |__|_|  |_______ \____/|____/\____ |
+#         \/           \/     \/      \/        \/                \/
+#
+#                             © likely.cloud and Jadissa Griffin 2018
+
+#https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-centos-7
+
+#
+# Load
+#
+. /etc/os-release
+
+stat -c "Rights: %A Perms: %a Username:Owner: %U:%G File: %n Type: %F Bytes: %s" $PROJECTPATH
+
+ID=$ID
+
+VER=$VERSION_ID
+
+PROJECTPATH=/var/www/html
+
+PRIVATE_IP_ADDRESS=`curl -w "\n" http://169.254.169.254/metadata/v1/interfaces/private/0/ipv4/address`
+
+PUBLIC_IP_ADDRESS=`curl http://ipinfo.io/ip`
+
+WORKER_PROCESS=`sudo grep -c 'model name' /proc/cpuinfo`
+
+GROUP_EXISTS=`cat /etc/group | grep $GROUP`
+
+GROUP=www
+
+USER=www
+
+echo '.__  .__ __          .__            _________ .__                   .___'
+
+echo '|  | |__|  | __ ____ |  | ___.__.   \_   ___ \|  |   ____  __ __  __| _/'
+
+echo '|  | |  |  |/ _/ __ \|  |<   |  |   /    \  \/|  |  /  _ \|  |  \/ __ | '
+
+echo '|  |_|  |    <\  ___/|  |_\___  |   \     \___|  |_(  <_> |  |  / /_/ | '
+
+echo '|____|__|__|_ \\___  |____/ ____| /\ \______  |____/\____/|____/\____ | '
+
+echo '             \/    \/     \/      \/        \/                       \/ '
+
+echo
+
+echo '                                  © likely.cloud and Jadissa Griffin 2018'
+
+echo
+
+echo "Project directory:    $PROJECTPATH"
+
+echo "Group:                $GROUP"
+
+USER=`whoami`
+
+echo
+
+if [ "$ID" != "centos" ] || [ "$VER" != "7" ]; then
+
+    echo 'CentOS 7 required, exiting...'
+
+    exit 1
+
+fi
+
+if [ "$GROUP_EXISTS" == "" ]; then
+
+    sudo groupadd $GROUP
+
+    sudo useradd $GROUP -g wheel
+
+fi
+
+
+#
+# Get dependencies
+#
+echo 'Installing preliminary updates...'
+
+cd /tmp
+
+sudo yum -y update
+
+sudo yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+
+sudo yum -y install http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+
+sudo yum-config-manager --enable remi-php72
+
+curl 'https://setup.ius.io/' -o setup-ius.sh
+
+sudo bash setup-ius.sh
+
+sudo yum -y install php71u php71u-cli php71u-common php71u-fpm php71u-gd php71u-mbstring php71u-mysqlnd php71u-opcache php71u-pdo php71u-pear php71u-pecl-igbinary php71u-pecl-memcache php71u-pecl-memcached php71u-process php71u-xml php71u-json wget http-server libicu-dev epel-release policycoreutils-python net-tools git vim mlocate
+
+sudo systemctl enable php-fpm
+
+systemctl is-enabled php-fpm
+
+sudo yum -y groupinstall 'Development Tools'
+
+sudo yum -y install gcc-c++ make
+
+sudo systemctl start nginx
+
+sudo systemctl enable nginx
+
+echo "Configuring $PROJECTPATH..."
+
+sudo mkdir -p $PROJECTPATH
+
+echo "export PATH=$PROJECTPATH:$PATH" >>~/.bashrc
+
+source ~/.bashrc
+
+sudo chmod -R 0775 $PROJECTPATH
+
+sudo chown -R $USER:$GROUP $PROJECTPATH
+
+sudo umask 0775 $PROJECTPATH
+
+sudo chmod 1733 /var/lib/php/session
+
+sudo systemctl start mariadb
+
+sudo mysql_secure_installation
+
+sudo systemctl enable mariadb
+
+sudo chkconfig mariadb on
+
+sudo cat << EOF > /etc/nginx/nginx.conf
+worker_processes  ${WORKER_PROCESS};
+
+pid        /run/nginx.pid;
+
+events {
+    worker_connections  1024;
+}
+
+http {
+
+    ##
+    # Basic Settings
+    ##
+    sendfile on;
+    tcp_nopush on;
+    tcp_nodelay on;
+    keepalive_timeout 65;
+    types_hash_max_size 2048;
+
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+
+    ##
+    # Logging Settings
+    ##
+    access_log /var/log/nginx/access.log;
+    error_log /var/log/nginx/error.log;
+
+    ##
+    # Gzip Settings
+    ##
+    gzip on;
+    gzip_disable "msie6";
+
+    #include /etc/nginx/conf.d/*.conf;
+
+    server {
+
+    }
+
+    listen   80;
+    server_name ${PUBLIC_IP_ADDRESS};
+
+    root   /var/www/html/likely.cloud;
+    index index.php index.html index.htm;
+
+    location / {
+
+        try_files $uri $uri/ $uri.php =404;
+
+    }
+
+    location ~ \.php$ {
+
+        try_files $uri $uri/ $uri.php =404;
+        fastcgi_pass unix:/var/run/php-fpm/php-fpm.sock;
+        #fastcgi_pass php-fpm:9000;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+
+    }
+
+}
+EOF
+
+# The following must be done
+# https://www.youtube.com/watch?v=ewaHng-6kNU
+# sudo vim /etc/php-fpm.d/www.conf
+
+# change lines to:
+#pool
+#[www}
+#user = www
+#group = www
+#;listen = 127.0.0.1:9000
+#listen = /var/run/php-fpm/php-fpm.sock
+#listen.acl_users = nginx
+
+sudo nginx -t
+
+sudo chmod -R 0766 /var/log/nginx
+
+sudo chown -R nginx:nginx /var/log/nginx
+
+sudo touch /run/nginx.pid
+
+sudo chown nginx:nginx /run/nginx.pid
+
+sudo systemctl restart nginx
+
+sudo cat /etc/nginx/nginx.conf
+
+sudo cat /var/log/nginx/error.log
+
+sudo setenforce Permissive
+
+sudo chcon -Rt httpd_sys_content_t $PROJECTPATH
+
+sudo setenforce Enforcing
+
+setsebool -P httpd_can_network_connect true
+
+sudo systemctl restart nginx
+
+sudo systemctl enable nginx

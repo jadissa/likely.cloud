@@ -1,0 +1,6 @@
+sudo su
+sudo echo "ZONE=\"America/Los_Angeles\"" >/etc/sysconfig/clock
+sudo echo "UTC=true" >>/etc/sysconfig/clock
+sudo ln -sf /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
+ls -l /etc/localtime
+date
