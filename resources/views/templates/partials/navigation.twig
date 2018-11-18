@@ -1,0 +1,37 @@
+<nav class="navigation-content container navbar navbar-toggleable-md navbar-inverse bg-inverse">
+
+<button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#likely-navigation" aria-controls="likely-navigation" aria-expanded="false" aria-label="Toggle navigation">
+
+<span class="navbar-toggler-icon"></span>
+
+</button>
+
+<div class="collapse navbar-collapse" id="likely-navigation">
+
+<ul class="navbar-nav mr-auto">
+
+<li class="nav-item {{ current_path() == '/policy' ? 'active' : '' }}">
+
+<a href="{{ path_for( 'policy' ) }}" class="nav-link">Policy{{ current_path() == '/policy' ? '<span class="sr-only">(current)</span>' : '' }}</a>
+
+</li>
+
+{#
+<li class="nav-item {{ current_path() == '/auth/preferences' ? 'active' : '' }}">
+
+<a href="{{ path_for( 'auth.preferences' ) }}" class="nav-link">Preferences{{ current_path() == '/auth/preferences' ? '<span class="sr-only">(current)</span>' : '' }}</a>
+
+</li>
+
+<li class="nav-item {{ current_path() == '/auth/assets' ? 'active' : '' }}">
+
+<a href="{{ path_for( 'auth.assets' ) }}" class="nav-link">Assets{{ current_path() == '/auth/assets' ? '<span class="sr-only">(current)</span>' : '' }}</a>
+
+</li>
+#}
+
+</ul>
+
+</div>
+
+</nav>

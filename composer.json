@@ -1,21 +1,24 @@
 {
-  "name": "dreamloud/likely.cloud",
-  "description": "Likely Cloud connected media",
+  "name":"jadissa/likely.cloud",
+  "description":"Likely Cloud connected media",
 
-  "minimum-stability": "dev",
+  "minimum-stability":"dev",
 
   "require": {
-    "monolog/monolog": "1.23.*",
-    "phpseclib/phpseclib": "2.0.*",
-    "jadissa/phplib": "dev-wild",
-    "slim/slim": "3.x",
-    "bryanjhv/slim-session": "~3.0",
-    "clancats/hydrahon":"1.1.*"
+    "monolog/monolog":"1.23.*",
+    "phpseclib/phpseclib":"2.0.*",
+    "jadissa/phplib":"dev-wild",
+    "slim/slim":"3.x",
+    "bryanjhv/slim-session":"~3.0",
+    "tumblr/tumblr":"0.4.*",
+    "clancats/hydrahon":"1.1.*",
+    "respect/validation":"1.1.*",
+    "slim/twig-view":"2.4.*"
   },
 
   "autoload": {
     "psr-4": {
-      "service\\api\\": "controlers/service"
+      "App\\": "app"
     }
   }
 }

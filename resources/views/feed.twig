@@ -1,0 +1,11 @@
+<strong class="block">Public Feed</strong>
+
+{% for SERVICE_REGISTRY in SERVICE_REGISTRIES %}
+
+	{% for string_data in SERVICE_REGISTRY %}
+
+		<div class="service-registry">{{ string_data }}</div>
+
+	{% endfor %}
+	
+{% endfor %}
