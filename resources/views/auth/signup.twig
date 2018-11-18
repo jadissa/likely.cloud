@@ -34,7 +34,7 @@
 
 <div class="form-group{{ ERRORS.uname ? ' has-danger' : '' }}">
 
-<input type="text" name="uname" id="uname" placeholder="Username" autocomplete="username" class="form-control {{ ERRORS.uname ? 'form-control-danger' : '' }}"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}>
+<input type="text" name="uname" id="uname" placeholder="Username" autocomplete="username" class="form-control {{ ERRORS.uname ? 'form-control-danger' : '' }}"{{ theme_disabled == true ? ' disabled="disabled"' : ''}} value="{{ old_input.uname }}">
 
 {% if ERRORS.uname %}
 
@@ -46,7 +46,7 @@
 
 <div class="form-group{{ ERRORS.email ? ' has-danger' : '' }}">
 
-<input type="email" name="email" id="email" placeholder="Email" autocomplete="email" class="form-control {{ ERRORS.uname ? 'form-control-danger' : '' }}"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}>
+<input type="email" name="email" id="email" placeholder="Email" autocomplete="email" class="form-control {{ ERRORS.uname ? 'form-control-danger' : '' }}"{{ theme_disabled == true ? ' disabled="disabled"' : ''}} value="{{ old_input.email }}">
 
 {% if ERRORS.email %}
 
