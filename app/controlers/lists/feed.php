@@ -1,40 +1,23 @@
 <?php
 
-namespace App\controlers\listed;
+namespace App\controlers\lists;
 
-use App\controlers\controler;
+use App\models\user;
 
-class feed extends controler {
+class feed {
 
 
 	/**
-	 * 	Renders the feed view
+	 * 	Parses recent user registries into a list
 	 *
-	 *	@param 	object 	$REQUEST
-	 * 	@param 	object 	$RESPONSE
-	 *
-	 * 	@return bool
+	 * 	@return array
 	 */
-	public function getFeed( $REQUEST, $RESPONSE ) {
+	public function getRecentRegistries() {
 
 		//
 	    //  Fetch existing users
 	    //
-	    $EXISTING_USERS  = $this->db->table( 'users as u' )
-	    ->select( [
-	        'u.id', 
-	        'u.created', 
-	        'ud.geo', 
-	        'ud.status', 
-	        'us.sname',
-	        's.name',
-	    ] )->join( 'user_data as ud', 'u.id', '=', 'ud.uid' )
-	        ->join( 'user_services as us', 'ud.uid', '=', 'us.uid' )
-	        ->join( 'services as s', 'us.sid', '=', 's.id' )
-	    ->where( 'us.status', 'public' )
-	    ->orderBy( 'u.created', 'desc' )
-	    ->limit( 200 )
-	    ->get();
+	    $EXISTING_USERS  = user::fetchRecentRegistries();
 
 
 	    //
@@ -44,11 +27,17 @@ class feed extends controler {
 	        'SERVICE_REGISTRIES'   => [],
 	    ];
 
+	    if( empty( $EXISTING_USERS ) ) {
+
+	    	return $FEED_DATA;
+
+	    }
+
 		foreach( $EXISTING_USERS as $USER_FEED ) {
 
-	        $FEED_DATA['SERVICE_REGISTRIES'][ $USER_FEED['id'] ]['string_data'] = $USER_FEED['sname'] . ' signed up from ';
+	        $FEED_DATA['SERVICE_REGISTRIES'][ $USER_FEED['id'] ]['string_data'] = $USER_FEED->sname . ' signed up from ';
 
-	        $GEO = json_decode($USER_FEED['geo']);
+	        $GEO = json_decode( $USER_FEED->geo );
 
 	        if ( !empty( $GEO->state ) ) {
 
@@ -70,9 +59,9 @@ class feed extends controler {
 
 	        }
 
-	        $FEED_DATA['SERVICE_REGISTRIES'][ $USER_FEED['id'] ]['string_data'] .= ' using ' . $USER_FEED['name'];
+	        $FEED_DATA['SERVICE_REGISTRIES'][ $USER_FEED['id'] ]['string_data'] .= ' using ' . $USER_FEED->name;
 
-	        $FEED_DATA['SERVICE_REGISTRIES'][ $USER_FEED['id'] ]['string_data'] .= ' in ' . date( 'F', strtotime( $USER_FEED['created'] ) ) . '!';
+	        $FEED_DATA['SERVICE_REGISTRIES'][ $USER_FEED['id'] ]['string_data'] .= ' in ' . date( 'F', strtotime( $USER_FEED->created ) ) . '!';
 
 	    }
 

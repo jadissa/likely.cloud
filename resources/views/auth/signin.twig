@@ -1,0 +1,79 @@
+{% extends 'templates/app.twig' %}
+
+{% block login %}
+
+<div class="panel default-panel">
+
+<div class="panel-body">
+
+<form name="signin" class="form" action="{{ path_for( 'auth.signin' ) }}" method="POST">
+
+<div class="form-group">
+
+<label for="service"><strong>Sign in using</strong></label>
+
+<select name="service" id="service" class="form-control"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}>
+
+{% for SERVICE in SERVICES %}
+
+{% if SERVICE.selected == true %}
+
+<option value="{{ SERVICE.name }}" selected="selected">{{ SERVICE.name }}</option>
+
+{% else %}
+
+<option value="{{ SERVICE.name }}">{{ SERVICE.name }}</option>
+
+{% endif %}
+
+{% endfor %}
+
+</select>
+
+</div>
+
+<div class="form-group{{ ERRORS.uname ? ' has-danger' : '' }}">
+
+<input type="text" name="uname" id="uname" placeholder="Username" autocomplete="username" class="form-control {{ ERRORS.uname ? 'form-control-danger' : '' }}"{{ theme_disabled == true ? ' disabled="disabled"' : ''}} value="{{ old_input.uname }}">
+
+{% if ERRORS.uname %}
+
+<div class="form-control-feedback">{{ ERRORS.uname | first }}</div>
+
+{% endif %}
+
+</div>
+
+<div class="form-group{{ ERRORS.pwd ? ' has-danger' : '' }}">
+
+<input type="password" name="pwd" id="pwd" placeholder="Password" autocomplete="new-password" class="form-control {{ ERRORS.uname ? 'form-control-danger' : '' }}"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}>
+
+{% if ERRORS.pwd %}
+
+<div class="form-control-feedback">{{ ERRORS.pwd | first }}</div>
+
+{% endif %}
+
+</div>
+
+<div class="checkbox mb-3">
+
+<label><input type="checkbox" name="remember-me" id="remember-me" value="{{ old_input.remember-me }}"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}> Remember me</label>
+
+</div>
+
+<div class="form-group">
+
+<button class="btn btn btn-primary btn-block" type="submit"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}>Sign in</button>
+
+{{ csrf.field | raw }}
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+    
+{% endblock %}

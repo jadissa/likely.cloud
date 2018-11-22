@@ -17,12 +17,10 @@ abstract class controler {
 	 */
 	public function __construct( ContainerInterface $CONTAINER ) {
 
-		$this->CONTAINER 	= $CONTAINER;
+		$this->CONTAINER = $CONTAINER;
 
 		$this->view->getEnvironment()->addGlobal( 'theme', $this->settings['theme'][0] );
-
-		$this->view->getEnvironment()->addGlobal( 'authenticated', !empty( $_SESSION['user'] ) );
-
+		
 	}
 
 

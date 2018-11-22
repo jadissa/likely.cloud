@@ -10,25 +10,50 @@
 
 <ul class="navbar-nav mr-auto">
 
+
+{% if user is not empty %}
+
+<li class="nav-item {{ current_path() == '/' ? 'active' : '' }}">
+
+<a href="{{ path_for( 'home' ) }}" class="nav-link">{{ user.uname }}{{ current_path() == '/' ? '<span class="sr-only">(current)</span>' : '' }}</a>
+
+</li>
+
+{# 
+<li class="nav-item {{ current_path() == '/preferences' ? 'active' : '' }}">
+
+<a href="{{ path_for( 'preferences' ) }}" class="nav-link">Preferences{{ current_path() == '/preferences' ? '<span class="sr-only">(current)</span>' : '' }}</a>
+
+</li>
+
+<li class="nav-item {{ current_path() == '/assets' ? 'active' : '' }}">
+
+<a href="{{ path_for( 'assets' ) }}" class="nav-link">Assets{{ current_path() == '/assets' ? '<span class="sr-only">(current)</span>' : '' }}</a>
+
+</li>
+#}
+
+<li class="nav-item {{ current_path() == '/logout' ? 'active' : '' }}">
+
+<a href="{{ path_for( 'logout' ) }}" class="nav-link">Signout{{ current_path() == '/logout' ? '<span class="sr-only">(current)</span>' : '' }}</a>
+
+</li>
+
+{% else %}
+
+<li class="nav-item {{ current_path() == '/register' ? 'active' : '' }}">
+
+<a href="{{ path_for( 'register' ) }}" class="nav-link">Signup{{ current_path() == '/register' ? '<span class="sr-only">(current)</span>' : '' }}</a>
+
+</li>
+
+{% endif %}
+
 <li class="nav-item {{ current_path() == '/policy' ? 'active' : '' }}">
 
 <a href="{{ path_for( 'policy' ) }}" class="nav-link">Policy{{ current_path() == '/policy' ? '<span class="sr-only">(current)</span>' : '' }}</a>
 
 </li>
-
-{#
-<li class="nav-item {{ current_path() == '/auth/preferences' ? 'active' : '' }}">
-
-<a href="{{ path_for( 'auth.preferences' ) }}" class="nav-link">Preferences{{ current_path() == '/auth/preferences' ? '<span class="sr-only">(current)</span>' : '' }}</a>
-
-</li>
-
-<li class="nav-item {{ current_path() == '/auth/assets' ? 'active' : '' }}">
-
-<a href="{{ path_for( 'auth.assets' ) }}" class="nav-link">Assets{{ current_path() == '/auth/assets' ? '<span class="sr-only">(current)</span>' : '' }}</a>
-
-</li>
-#}
 
 </ul>
 

@@ -2,7 +2,9 @@
 
 namespace App\controlers;
 
-use App\controlers\listed\feed as feed;
+use App\models\user;
+
+use App\controlers\lists\feed as feed;
 
 class home extends controler {
 
@@ -15,20 +17,18 @@ class home extends controler {
 	 *
 	 * 	@return bool
 	 */
-	public function index( $REQUEST, $RESPONSE, $ARGS ) {
+	public function index( $REQUEST, $RESPONSE ) {
 
 		//
 		//	Redirect check
 		//
-		if( empty( $_SESSION ) || empty( $_SESSION['user'] ) ) {
+		if( empty( user::authenticated() ) ) {
 
-			return $RESPONSE->withRedirect( $this->router->pathFor( 'auth.signup' ) );
+			return $RESPONSE->withRedirect( $this->router->pathFor( 'login' ) );
 			
 		}
 
-		$FEED 		= new feed( $this->CONTAINER );
-
-		$FEED_DATA 	= $FEED->getFeed( $REQUEST, $RESPONSE );
+		$FEED_DATA 	= feed::getRecentRegistries();
 
 		$this->view->getEnvironment()->addGlobal( 'SERVICE_REGISTRIES', $FEED_DATA['SERVICE_REGISTRIES'] );
 
@@ -36,6 +36,8 @@ class home extends controler {
 		//
 		//	Setup view
 		//
+		$this->view->getEnvironment()->addGlobal( 'user', $_SESSION['user'] );
+
 		return $this->view->render( $RESPONSE, 'home.twig' );
 
 	}

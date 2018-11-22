@@ -6,11 +6,25 @@ $( document ).ready( function() {
 
         	if( $(this).val() != 'email' ) {
 
-        		$('form input[type=text], form input[type=email], form input[type=password]' ).parent().hide();
+        		$('form input[type=email], form input[type=password]' ).parent().hide();
 
         	} else {
 
-        		$('form input[type=text], form input[type=email], form input[type=password]' ).parent().show();
+        		$('form input[type=email], form input[type=password]' ).parent().show();
+
+        	}
+
+        });
+
+        $('form[name=signin] select').change( function() {
+
+        	if( $(this).val() != 'email' ) {
+
+        		$('form input[type=email], form input[type=password]' ).parent().hide();
+
+        	} else {
+
+        		$('form input[type=email], form input[type=password]' ).parent().show();
 
         	}
 

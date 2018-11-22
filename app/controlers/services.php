@@ -2,6 +2,8 @@
 
 namespace App\controlers;
 
+use App\controlers\utility\crypt as c;
+
 use Respect\Validation\Validator as v;
 
 use Tumblr\API\Client as t;
@@ -9,17 +11,6 @@ use Tumblr\API\Client as t;
 use GuzzleHttp\Client as g;
 
 class services extends controler {
-
-	public function getActive( $REQUEST, $RESPONSE ) {
-
-		$SERVICES  = $this->db->table( 'services' )
-    	->select()
-    	->where( 'status', 'active' )->get();
-
-    	return $SERVICES;
-
-	}
-
 
 	/**
 	 * 	Gets user's permission to add their tumblr account to likely
@@ -36,6 +27,7 @@ class services extends controler {
 		//
 		$VALIDATION		= $this->validator->validate( $REQUEST, [
 			'service'	=> v::noWhitespace()->notEmpty(),
+			'uname'		=> v::noWhitespace()->notEmpty()->alpha(),
 		] );
 
 		if( $VALIDATION->failed() ) {
@@ -73,7 +65,7 @@ class services extends controler {
 
 			}
 
-			$_SESSION['ERRORS']['failed']	= 'Try again later';
+			$this->flash->addMessage( 'error', 'Try again later' );
 
 			return $RESPONSE->withRedirect( $this->router->pathFor( 'auth.signup' ) );
 
@@ -95,7 +87,7 @@ class services extends controler {
 
 			}
 
-	        $_SESSION['ERRORS']['failed']	= 'Try again later';
+	        $this->flash->addMessage( 'error', 'Try again later' );
 
 			return $RESPONSE->withRedirect( $this->router->pathFor( 'auth.signup' ) );
 
@@ -105,7 +97,9 @@ class services extends controler {
 	    //
 	    //  Prevent duplicate service
 	    //
-	    if( !empty( $_SESSION['user'] ) and !empty( $_SESSION['user']['uid'] ) ) {
+	    $AUTH 	= new auth;
+	    
+	    if( !empty( $AUTH->authenticated() ) ) {
 
 	    	$EXISTING_USER_SERVICE  = $this->db->table( 'user_services' )
 		    ->select( ['id'] )
@@ -121,6 +115,8 @@ class services extends controler {
 					$this->logger->addInfo( serialize( [ 'user already registered', __FILE__, __LINE__ ] ) );
 
 				}
+
+				$this->flash->addMessage( 'error', 'Try again later' );
 
 		        return $RESPONSE->withRedirect( $this->router->pathFor( 'auth.signup' ) );
 
@@ -158,15 +154,9 @@ class services extends controler {
 	    //
 	    //  Encrypt the data
 	    //
-	    $enc_method                     = 'AES-128-CTR';
+	    $CRYPT 			= new c( $this->CONTAINER );
 
-	    $enc_key                        = openssl_digest( $this->settings['salt'] . ':' . $this->settings['api_hash'] . '|' . $API_SETTINGS['value'], 'SHA256', TRUE );
-
-	    $enc_iv                         = openssl_random_pseudo_bytes( openssl_cipher_iv_length( $enc_method ) );
-
-	    $encrypted_oauth_token          = openssl_encrypt( $PARSED_TOKEN_RESPONSE['oauth_token'], $enc_method, $enc_key, 0, $enc_iv ) . '::' . bin2hex( $enc_iv );
-
-	    $encrypted_oauth_token_secret   = openssl_encrypt( $PARSED_TOKEN_RESPONSE['oauth_token_secret'], $enc_method, $enc_key, 0, $enc_iv ) . '::' . bin2hex( $enc_iv );
+	    $ENCRYPTED_DATA	= $CRYPT->encrypt( $PARSED_TOKEN_RESPONSE, $this->settings['api_hash'] );
 
 
 	    //
@@ -180,14 +170,15 @@ class services extends controler {
 	    $transaction_date_created       = date( 'Y-m-d H:i:s' );
 
 	    $transaction_data               = json_encode( [
-	        'status'                    => $USER_STATUSES[ !empty( $PARSED_REQUEST['status'] ) ? true : false ],
+	        'status'                    => $USER_STATUSES[ !empty( $REQUEST->getParam( 'status' ) ) ? true : false ],
+	        'uname'						=> $REQUEST->getParam( 'uname' ),
 	    ] );
 
 	    $this->db->table('transactions')->insert( [
 	        'sid'                       => $SERVICE['id'],
 	        'session_id'                => session_id(), 
-	        'oauth_token'               => $encrypted_oauth_token, 
-	        'oauth_token_secret'        => $encrypted_oauth_token_secret,
+	        'oauth_token'               => $ENCRYPTED_DATA['oauth_token'], 
+	        'oauth_token_secret'        => $ENCRYPTED_DATA['oauth_token_secret'],
 	        'created'                   => $transaction_date_created,
 	        'data'                      => $transaction_data,
 	    ] )->execute();
@@ -219,6 +210,8 @@ class services extends controler {
 
 		if( $VALIDATION->failed() ) {
 
+			$this->flash->addMessage( 'error', 'Try again later' );
+
 			return $RESPONSE->withRedirect( $this->router->pathFor( 'auth.signup' ) );
 
 		}
@@ -240,7 +233,7 @@ class services extends controler {
 
 			}
 
-			$_SESSION['ERRORS']['failed']	= 'Try again later';
+			$this->flash->addMessage( 'error', 'Try again later' );
 
 			return $RESPONSE->withRedirect( $this->router->pathFor( 'auth.signup' ) );
 
@@ -262,7 +255,7 @@ class services extends controler {
 
 			}
 
-	        $_SESSION['ERRORS']['failed']	= 'Try again later';
+	        $this->flash->addMessage( 'error', 'Try again later' );
 
 			return $RESPONSE->withRedirect( $this->router->pathFor( 'auth.signup' ) );
 
@@ -277,7 +270,7 @@ class services extends controler {
 	    //  - is the most recent
 	    //
 	    $EXISTING_TRANSACTION  = $this->db->table( 'transactions' )
-	    ->select()
+	    ->select( [ 'oauth_token', 'oauth_token_secret', 'data' ] )
 	    ->where( 'sid', $SERVICE['id'] )
 	    ->where( 'session_id', session_id() )
 	    ->where( 'created', '>=', date( 'Y-m-d H:i:s', time() - ( 60 * 15 ) ) )
@@ -291,25 +284,7 @@ class services extends controler {
 
 	        }
 
-	        return json_encode( [ 'stat' => false, 'message' => 'Try again later' ] );
-
-	    }
-
-
-	    //
-	    //  Parse the data
-	    //
-	    preg_match( '/^(.*)::(.*)$/', $EXISTING_TRANSACTION['oauth_token'], $PARSED_OAUTH_TOKEN );
-
-	    preg_match( '/^(.*)::(.*)$/', $EXISTING_TRANSACTION['oauth_token_secret'], $PARSED_OAUTH_TOKEN_SECRET );
-
-	    if( empty( $PARSED_OAUTH_TOKEN ) or empty( $PARSED_OAUTH_TOKEN_SECRET ) ) {
-
-	        if( !empty( $this->settings['debug'] ) ) {
-
-	            $this->logger->addInfo( serialize( [ 'something is broken', __FILE__, __LINE__ ] ) );
-
-	        }
+	        $this->flash->addMessage( 'error', 'Try again later' );
 
 	        return $RESPONSE->withRedirect( $this->router->pathFor( 'auth.signup' ) );
 
@@ -317,31 +292,74 @@ class services extends controler {
 
 
 	    //
+	    //	Parse data field
+	    //
+	    if( empty( $EXISTING_TRANSACTION['data' ] ) ) {
+
+	    	if( !empty( $this->settings['debug'] ) ) {
+
+	        	$this->logger->addInfo( serialize( [ 'something is broken ' . session_id(), __FILE__, __LINE__ ] ) );
+
+	        }
+
+	        $this->flash->addMessage( 'error', 'Try again later' );
+
+	        return $RESPONSE->withRedirect( $this->router->pathFor( 'auth.signup' ) );
+
+	    }
+
+	    if( !empty( $this->settings['debug'] ) ) {
+
+	        	$this->logger->addInfo( serialize( [ $EXISTING_TRANSACTION, __FILE__, __LINE__ ] ) );
+
+	        }
+
+	    $DATA_FIELD	= json_decode( $EXISTING_TRANSACTION['data' ] );
+
+	    unset( $EXISTING_TRANSACTION['data' ] );
+
+	    if( !empty( $this->settings['debug'] ) ) {
+
+	        	$this->logger->addInfo( serialize( [ $EXISTING_TRANSACTION, __FILE__, __LINE__ ] ) );
+
+	        }
+	        exit( 'exiting ' . __FILE__ . ' ' . __LINE__ );
+
+
+	    //
 	    //  Decrypt the data
 	    //
-	    $enc_method                                     = 'AES-128-CTR';
+	    $CRYPT 			= new c( $this->CONTAINER );
 
-	    list(, $encrypted_oauth_token, $enc_iv)         = $PARSED_OAUTH_TOKEN;
+	    $DECRYPTED_DATA = $CRYPT->decrypt( $EXISTING_TRANSACTION, $this->settings['api_hash'] );
 
-	    $enc_key                        				= openssl_digest( $this->settings['salt'] . ':' . $this->settings['api_hash'] . '|' . $API_SETTINGS['value'], 'SHA256', TRUE );
-
-	    $decrypted_oauth_token                          = openssl_decrypt( $encrypted_oauth_token, $enc_method, $enc_key, 0, hex2bin( $enc_iv ) );
-
-	    list(, $encrypted_oauth_token_secret, $enc_iv)  = $PARSED_OAUTH_TOKEN_SECRET;
-
-	    $decrypted_oauth_token_secret                   = openssl_decrypt( $encrypted_oauth_token_secret, $enc_method, $enc_key, 0, hex2bin( $enc_iv ) );
-
-
-	    //
-	    //  Confirm data validity
-	    //
-	    if( $decrypted_oauth_token != $REQUEST->getParam( 'oauth_token' ) ) {
+	    if( empty( $DECRYPTED_DATA ) ) {
 
 	        if( !empty( $this->settings['debug'] ) ) {
 
 	            $this->logger->addInfo( serialize( [ 'something is broken', __FILE__, __LINE__ ] ) );
 
 	        }
+
+	        $this->flash->addMessage( 'error', 'Try again later' );
+
+	        return $RESPONSE->withRedirect( $this->router->pathFor( 'auth.signup' ) );
+
+	    }
+
+
+	    //
+	    //  Confirm data validity
+	    //
+	    if( $DECRYPTED_DATA['oauth_token'] != $REQUEST->getParam( 'oauth_token' ) ) {
+
+	        if( !empty( $this->settings['debug'] ) ) {
+
+	            $this->logger->addInfo( serialize( [ 'something is broken', __FILE__, __LINE__ ] ) );
+
+	        }
+
+	        $this->flash->addMessage( 'error', 'Try again later' );
 
 	        return $RESPONSE->withRedirect( $this->router->pathFor( 'auth.signup' ) );
 
@@ -354,9 +372,8 @@ class services extends controler {
 	    $CLIENT = new t(
 	        $this->settings['social'][0]['tumblr'][0]['server'][0]['client_id'],
 	        $this->settings['social'][0]['tumblr'][0]['server'][0]['client_secret'],
-	        $REQUEST->getParam( 'oauth_token' ), $decrypted_oauth_token_secret
+	        $REQUEST->getParam( 'oauth_token' ), $DECRYPTED_DATA['oauth_token_secret']
 	    );
-
 
 	    $requestHandler = $CLIENT->getRequestHandler();
 
@@ -375,9 +392,13 @@ class services extends controler {
 	        $PARSED_REQUEST_TOKENS_RESPONSE['oauth_token_secret']
 	    );
 
-	    $PARSED_USER_RESPONSE  = $CLIENT->getUserInfo();
+	    if( !empty( $this->settings['debug'] ) ) {
 
-	    #print'<pre>';print_r( $PARSED_USER_RESPONSE );print'</pre>';exit;
+	        $this->logger->addInfo( serialize( [ $PARSED_REQUEST_TOKENS_RESPONSE, __LINE__ ] ) );
+
+	    }
+
+	    $PARSED_USER_RESPONSE  = $CLIENT->getUserInfo();
 
 
 	    //
@@ -391,7 +412,9 @@ class services extends controler {
 
 	        }
 
-	        return json_encode( [ 'stat' => false, 'message' => 'Try again later' ] );
+	        $this->flash->addMessage( 'error', 'Try again later' );
+
+	        return $RESPONSE->withRedirect( $this->router->pathFor( 'auth.signup' ) );
 
 	    }
 
@@ -407,13 +430,13 @@ class services extends controler {
 	    //
 	    $EXISTING_USER  = $this->db->table( 'users' )
 	    ->select( ['id'] )
-	    ->where( 'uname', $PARSED_USER_RESPONSE->user->name )
+	    ->where( 'uname', $DATA_FIELD->uname )
 	    ->orderBy( 'created', 'desc' )
 	    ->limit( 1 )->one();
 
 	    if( !empty( $EXISTING_USER ) ) {
 
-	    	$_SESSION['ERRORS']['failed']	= 'Username already taken';
+	    	$this->flash->addMessage( 'error', 'Username already taken' );
 
 			return $RESPONSE->withRedirect( $this->router->pathFor( 'home' ) );
 
@@ -433,7 +456,7 @@ class services extends controler {
 
         $this->db->table('users')->insert( [
             'created'   => $user_date_created, 
-            'uname'     => $PARSED_USER_RESPONSE->user->name,
+            'uname'     => $DATA_FIELD->uname,
         ] )->execute();
 
 
@@ -442,7 +465,7 @@ class services extends controler {
         //
         $EXISTING_USER  = $this->db->table( 'users' )
         ->select( ['id'] )
-        ->where( 'uname', $PARSED_USER_RESPONSE->user->name )
+        ->where( 'uname', $DATA_FIELD->uname )
         ->where( 'created', $user_date_created )
         ->orderBy( 'created', 'desc' )
         ->limit( 1 )->one();
@@ -453,11 +476,13 @@ class services extends controler {
 
 			if( !empty( $this->settings['debug'] ) ) {
 
+				$this->flash->addMessage( 'error', 'Username already taken' );
+
 				$this->logger->addInfo( serialize( [ 'access disabled service', __FILE__, __LINE__ ] ) );
 
 			}
 
-            $_SESSION['ERRORS']['failed']	= 'Try again later';
+            $this->flash->addMessage( 'error', 'Try again later' );
 
 			return $RESPONSE->withRedirect( $this->router->pathFor( 'auth.signup' ) );
 
@@ -465,26 +490,23 @@ class services extends controler {
 
 
         //
-		//  Encrypt password
-		//
-		$password 			= md5( uniqid( mt_rand() ) );
+	    //  Encrypt password
+	    //
+	    $password 		= md5( uniqid( mt_rand() ) );
 
-		$enc_method         = 'AES-128-CTR';
+	    $CRYPT 			= new c( $this->CONTAINER );
 
-		$enc_key            = openssl_digest( $this->settings['salt'] . ':' . $this->settings['api_hash'] . '|' . $API_SETTINGS['value'], 'SHA256', TRUE );
-
-		$enc_iv             = openssl_random_pseudo_bytes( openssl_cipher_iv_length( $enc_method ) );
-
-		$encrypted_password = openssl_encrypt( $password, $enc_method, $enc_key, 0, $enc_iv ) . '::' . bin2hex( $enc_iv );
+	    $ENCRYPTED_DATA	= $CRYPT->encrypt( ['password' => $password ], $this->settings['api_hash'] );
 
 
         //
         //  Append data
         //
         $this->db->table('user_data')->insert( [
-            'uid'   => $user_id, 
-            'email'	=> null,
-            'geo'   => json_encode( [
+            'uid'   	=> $user_id, 
+            'modified'	=> $user_date_created,
+            'email'		=> null,
+            'geo'   	=> json_encode( [
                             'REMOTE_ADDR'       => $_SERVER['REMOTE_ADDR'],
                             'city'              => $GEO['geoplugin_city'],
                             'state'             => $GEO['geoplugin_region'],
@@ -498,7 +520,7 @@ class services extends controler {
                             'timezone'          => $GEO['geoplugin_timezone'],
                         ] ),
             'sessid'    => session_id(),
-            'password'  => $encrypted_password,
+            'password'  => $ENCRYPTED_DATA['password'],
             'status'    => 'registered',
         ] )->execute();
 
@@ -521,11 +543,19 @@ class services extends controler {
 
 			}
 
-            $_SESSION['ERRORS']['failed']	= 'Try again later';
+            $this->flash->addMessage( 'error', 'Try again later' );
 
 			return $RESPONSE->withRedirect( $this->router->pathFor( 'auth.signup' ) );
 
         }
+
+
+        //
+        //	Encrypt long-lasting deets
+        //
+        $CRYPT 			= new c( $this->CONTAINER );
+
+	    $ENCRYPTED_DATA	= $CRYPT->encrypt( $PARSED_REQUEST_TOKENS_RESPONSE, $this->settings['api_hash'] );
 
 
 	    //
@@ -541,12 +571,12 @@ class services extends controler {
 	    $this->db->table('user_services')->insert( [
 	        'uid'           => $user_id, 
 	        'sid'           => $SERVICE['id'],
-	        'sname'         => $PARSED_USER_RESPONSE->user->name, 
+	        'sname'         => $DATA_FIELD->uname, 
 	        'created'       => date( 'Y-m-d H:i:s' ), 
 	        'login'         => date( 'Y-m-d H:i:s' ), 
 	        'status'        => $USER_STATUSES[ !empty( $EXISTING_TRANSACTION['status'] ) ] ? true : false, 
-	        'token'         => $EXISTING_TRANSACTION['oauth_token'],
-	        'refresh'       => $EXISTING_TRANSACTION['oauth_token_secret'],
+	        'token'         => $ENCRYPTED_DATA['oauth_token'],
+	        'refresh'       => $ENCRYPTED_DATA['oauth_token_secret'],
 	    ] )->execute();
 
 
@@ -556,13 +586,13 @@ class services extends controler {
         if( !empty( $_SESSION['user']['SERVICES'] ) ) {
 
         	array_push( $_SESSION['user']['SERVICES'], [
-				'tumblr'					=> [ 'status', $USER_STATUSES[ !empty( $REQUEST->getParam( 'status' ) ) ? true : false ] ],
+				'tumblr'					=> [ 'status', $USER_STATUSES[ !empty( $DATA_FIELD->status ) ? true : false ] ],
 			] );
 
         } else {
 
         	$_SESSION['user']['SERVICES']	= [
-				'tumblr'					=> [ 'status', $USER_STATUSES[ !empty( $REQUEST->getParam( 'status' ) ) ? true : false ] ],
+				'tumblr'					=> [ 'status', $USER_STATUSES[ !empty( $DATA_FIELD->status ) ? true : false ] ],
 			];
 
         }
@@ -570,6 +600,286 @@ class services extends controler {
 		$_SESSION['user']['last_updated']	= date( 'Y-m-d H:i:s' );
 
 	    return $RESPONSE->withRedirect( $this->router->pathFor( 'home' ) );
+
+	}
+
+
+	/**
+	 * 	Fetch tumblr data for an existing likely user
+	 *
+	 * 	@param 	object 	$REQUEST
+	 * 	@param 	object 	$RESPONSE 
+	 * 
+	 * 	@return object
+	 */
+	public function persistTumblr( $REQUEST, $RESPONSE ) {
+
+		//
+	    //  Verify active service or quit
+	    //
+	    $SERVICE  = $this->db->table( 'services' )
+	    ->select()
+	    ->where( 'status', 'active' )
+	    ->where( 'name', 'tumblr' )->one();
+
+	    if( empty( $SERVICE ) or $SERVICE['status'] != 'active' ) {
+
+			if( !empty( $this->settings['debug'] ) ) {
+
+				$this->logger->addInfo( serialize( [ 'access disabled service', __FILE__, __LINE__ ] ) );
+
+			}
+
+			$this->flash->addMessage( 'error', 'Try again later' );
+
+			return $RESPONSE->withRedirect( $this->router->pathFor( 'auth.signin' ) );
+
+	    }
+
+
+	    //
+	    //  Fetch API settings or quit
+	    //
+		$API_SETTINGS  = $this->db->table( 'settings' )
+	    ->select()
+	    ->where( 'name', 'api_key' )->one();
+
+    	if( empty( $API_SETTINGS ) ) {
+
+			if( !empty( $this->settings['debug'] ) ) {
+
+				$this->logger->addInfo( serialize( [ 'can not get api_key', __FILE__, __LINE__ ] ) );
+
+			}
+
+	        $this->flash->addMessage( 'error', 'Try again later' );
+
+			return $RESPONSE->withRedirect( $this->router->pathFor( 'auth.signin' ) );
+
+	    }
+
+
+	    //
+	    //  Fetch user_service record where
+	    //  - service matches
+	    //  - session matches
+	    //  - is the most recent
+	    //
+	    $EXISTING_SERVICE  = $this->db->table( 'user_services' )
+	    ->select( [ 'token', 'refresh' ] )
+	    ->where( 'sid', $SERVICE['id'] )
+	    ->where( 'sname', $REQUEST->getParam( 'uname' ) )
+	    ->orderBy( 'created', 'desc' )->one();
+
+	    if( empty( $EXISTING_SERVICE ) ) {
+
+	        if( !empty( $this->settings['debug'] ) ) {
+
+	        	$this->logger->addInfo( serialize( [ 'something is broken ' . session_id(), __FILE__, __LINE__ ] ) );
+
+	        }
+
+	        $this->flash->addMessage( 'error', 'Try again later' );
+
+	        return $RESPONSE->withRedirect( $this->router->pathFor( 'auth.signup' ) );
+
+	    }
+
+
+	    //
+	    //  Decrypt the data
+	    //
+	    $CRYPT 			= new c( $this->CONTAINER );
+
+	    $DECRYPTED_DATA = $CRYPT->decrypt( $EXISTING_SERVICE, $this->settings['api_hash'] );
+
+	    if( empty( $DECRYPTED_DATA ) ) {
+
+	        if( !empty( $this->settings['debug'] ) ) {
+
+	            $this->logger->addInfo( serialize( [ 'something is broken', __FILE__, __LINE__ ] ) );
+
+	        }
+
+	        $this->flash->addMessage( 'error', 'Please signup first' );
+
+	        return $RESPONSE->withRedirect( $this->router->pathFor( 'auth.signup' ) );
+
+	    }
+
+	    if( !empty( $this->settings['debug'] ) ) {
+
+            $this->logger->addInfo( serialize( [ 'decrypted_oauth_token' => $DECRYPTED_DATA['token'], 'decrypted_oauth_token_secret', $DECRYPTED_DATA['refresh'] ] ) );
+
+        }
+
+
+	    //
+	    //  Proceed with service auth
+	    //
+	    $CLIENT = new t(
+	        $this->settings['social'][0]['tumblr'][0]['server'][0]['client_id'],
+	        $this->settings['social'][0]['tumblr'][0]['server'][0]['client_secret'],
+	        $DECRYPTED_DATA['token'],
+	        $DECRYPTED_DATA['refresh']
+	    );
+
+	    $PARSED_USER_RESPONSE  = $CLIENT->getUserInfo();
+
+
+		//
+        //  Fetch user
+        //
+        $EXISTING_USER  = $this->db->table( 'users' )
+        ->select( ['id'] )
+        ->where( 'uname', $PARSED_USER_RESPONSE->user->name )
+        ->orderBy( 'created', 'desc' )
+        ->limit( 1 )->one();
+
+	    if( empty( $EXISTING_USER ) ) {
+
+	    	return $RESPONSE->withRedirect( $this->router->pathFor( 'auth.signup' ) );
+
+	    }
+
+
+	    //
+	    //	Update user_data
+	    //
+	    $user_date_updated 	= date( 'Y-m-d H:i:s' );
+
+	    $this->db->table( 'user_data' )
+	    ->update( ['modified' => $user_date_updated ] )
+	    ->where( 'uid', $EXISTING_USER['id'] )
+	    ->execute();
+
+	    
+	    //
+        //	Update session
+        //
+        $_SESSION['user']	= [
+        	'uid'			=> $EXISTING_USER['id'],
+        	'uname'			=> $REQUEST->getParam( 'uname' ),
+			'persistent'	=> !empty( $REQUEST->getParam( 'remember-me' ) ) ? true : false,
+			'last_updated'	=> $user_date_updated,
+		];
+
+	    return $RESPONSE->withRedirect( $this->router->pathFor( 'home' ) );
+
+	}
+
+
+	/**
+	 * 	Fetch email data for an existing likely user
+	 *
+	 * 	@param 	object 	$REQUEST
+	 * 	@param 	object 	$RESPONSE 
+	 * 
+	 * 	@return object
+	 */
+	public function persistEmail( $REQUEST, $RESPONSE ) {
+
+		//
+	    //  Verify active service or quit
+	    //
+	    $SERVICE  = $this->db->table( 'services' )
+	    ->select()
+	    ->where( 'status', 'active' )
+	    ->where( 'name', 'email' )->one();
+
+	    if( empty( $SERVICE ) or $SERVICE['status'] != 'active' ) {
+
+			if( !empty( $this->settings['debug'] ) ) {
+
+				$this->logger->addInfo( serialize( [ 'access disabled service', __FILE__, __LINE__ ] ) );
+
+			}
+
+			$this->flash->addMessage( 'error', 'Try again later' );
+
+			return $RESPONSE->withRedirect( $this->router->pathFor( 'auth.signin' ) );
+
+	    }
+
+
+	    //
+	    //  Fetch API settings or quit
+	    //
+		$API_SETTINGS  = $this->db->table( 'settings' )
+	    ->select()
+	    ->where( 'name', 'api_key' )->one();
+
+    	if( empty( $API_SETTINGS ) ) {
+
+			if( !empty( $this->settings['debug'] ) ) {
+
+				$this->logger->addInfo( serialize( [ 'can not get api_key', __FILE__, __LINE__ ] ) );
+
+			}
+
+	        $this->flash->addMessage( 'error', 'Try again later' );
+
+			return $RESPONSE->withRedirect( $this->router->pathFor( 'auth.signin' ) );
+
+	    }
+
+
+	    //
+	    //  Fetch user
+	    //
+	    $EXISTING_USER  = $this->db->table( 'user_data' )
+	    ->select( ['id', 'password'] )
+	    ->where( 'email', $REQUEST->getParam( 'uname' ) )
+	    ->orderBy( 'modified', 'desc' )
+	    ->limit( 1 )->one();
+
+	    if( empty( $EXISTING_USER ) ) {
+
+	    	$this->flash->addMessage( 'error', 'Invalid credentials' );
+
+	    	return $RESPONSE->withRedirect( $this->router->pathFor( 'auth.signin' ) );
+
+	    }
+
+
+	    //
+	    //  Decrypt the data
+	    //
+	    $CRYPT 				= new c( $this->CONTAINER );
+
+	    $DECRYPTED_DATA 	= $CRYPT->decrypt( [ 'password' => $EXISTING_USER['password'] ], $this->settings['api_hash'] );
+
+	    if( empty( $DECRYPTED_DATA ) or $REQUEST->getParam( 'pwd') != $DECRYPTED_DATA['password'] ) {
+
+	    	$this->flash->addMessage( 'error', 'Invalid credentials' );
+
+	    	return $RESPONSE->withRedirect( $this->router->pathFor( 'auth.signin' ) );
+
+	    }
+
+
+	    //
+	    //	Update user_data
+	    //
+	    $user_date_updated 	= date( 'Y-m-d H:i:s' );
+
+	    $this->db->table( 'user_data' )
+	    ->update( ['modified' => $user_date_updated ] )
+	    ->where( 'uid', $EXISTING_USER['id'] )
+	    ->execute();
+
+
+	    //
+        //	Update session
+        //
+        $_SESSION['user']	= [
+        	'uid'			=> $EXISTING_USER['id'],
+        	'uname'			=> $REQUEST->getParam( 'uname' ),
+			'persistent'	=> !empty( $REQUEST->getParam( 'remember-me' ) ) ? true : false,
+			'last_updated'	=> $user_date_updated,
+		];
+
+		return $RESPONSE->withRedirect( $this->router->pathFor( 'home' ) );
 
 	}
 

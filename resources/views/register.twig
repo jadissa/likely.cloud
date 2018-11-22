@@ -6,11 +6,11 @@
 
 <div class="panel-body">
 
-<form name="signup" class="form" action="{{ path_for( 'auth.signup' ) }}" method="POST">
+<form name="signup" class="form" action="{{ path_for( 'register' ) }}" method="POST">
 
 <div class="form-group">
 
-<label for="service">Sign up using</label>
+<label for="service"><strong>Sign up using</strong></label>
 
 <select name="service" id="service" class="form-control"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}>
 

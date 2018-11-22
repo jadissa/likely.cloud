@@ -31,8 +31,9 @@
 </head>
 
 <body>
+
     {% include 'templates/partials/navigation.twig' %}
-    <!--https://stackoverflow.com/questions/14518083/how-to-change-which-is-the-active-menu-without-js-in-twig-->
+
 	<div class="container rounded">
 
         {% include 'templates/partials/header.twig' %}
@@ -47,11 +48,13 @@
 
                 <div class="column-content col-sm-6">
 
-                {% if current_path() == '/' %}
+                {% include 'templates/partials/flash.twig' %}
+
+                {% if current_path() == '/home' %}
 
         	       {% block home %}{% endblock %}
 
-                {% elseif current_path() == '/auth/signup' %}
+                {% elseif current_path() == '/login' or current_path() == '/register' %}
 
                     {% block login %}{% endblock %}
 
