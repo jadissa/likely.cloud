@@ -54,6 +54,11 @@ class home extends controler {
 	 */
 	public function getPolicy( $REQUEST, $RESPONSE, $ARGS ) {
 
+		//
+		//	Setup view
+		//
+		$this->view->getEnvironment()->addGlobal( 'user', !empty( $_SESSION['user'] ) ? $_SESSION['user'] : null );
+
 		return $this->view->render( $RESPONSE, 'policy.twig' );
 
 	}

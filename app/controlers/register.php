@@ -4,8 +4,6 @@ namespace App\controlers;
 
 use App\controlers\controler;
 
-use App\controlers\services;
-
 use Respect\Validation\Validator as v;
 
 use App\models\service;
@@ -86,8 +84,6 @@ class register extends controler {
 
 				return $SERVICE->register( $REQUEST, $RESPONSE );
 
-				#return $RESPONSE->withStatus( 302 )->withHeader('Location', $this->router->pathFor( 'services.tumblr.register', [], $REQUEST->getParsedBody() ) );
-
 			break;
 
 			case 'email':
@@ -95,8 +91,6 @@ class register extends controler {
 				$SERVICE 	= new services\email( $this->CONTAINER );
 
 				return $SERVICE->register( $REQUEST, $RESPONSE );
-
-				#return $RESPONSE->withStatus( 302 )->withHeader('Location', $this->router->pathFor( 'services.email.register', [], $REQUEST->getParsedBody() ) );
 
 			break;
 

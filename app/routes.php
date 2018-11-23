@@ -46,6 +46,9 @@ $APP->group( '', function() {
 	$this->post( '/login', 'login:post' );
 
 
+	$this->get( '/tumblr/auth', 'tumblr:callback' )->setName( 'service.tumblr.callback' );
+
+
 	/*
 	$this->get( '/login/email', 'email:login' )->setName( 'services.email.login' );
 

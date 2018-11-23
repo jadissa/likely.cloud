@@ -4,8 +4,6 @@ namespace App\controlers;
 
 use App\controlers\controler;
 
-use App\controlers\services;
-
 use Respect\Validation\Validator as v;
 
 use App\models\service;

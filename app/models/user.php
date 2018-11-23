@@ -193,6 +193,7 @@ class user extends Model  {
 	public function fetchRecentRegistries() {
 
 		$REGISTRIES 	= self::select( 'users.created_at', 'user_data.geo', 'user_services.sname', 'services.name' )
+			->where( 'user_services.status', 'public' )
 			->join( 'user_data', 'users.id', '=', 'user_data.uid' )
 			->join( 'user_services', 'users.id', '=', 'user_services.uid' )
 			->join( 'services', 'user_services.sid', '=', 'services.id' )

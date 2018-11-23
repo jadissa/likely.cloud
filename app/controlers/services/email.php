@@ -134,7 +134,7 @@ class email extends controler {
 
 	    if( $PARSED_REQUEST['pwd'] != $DECRYPTED_DATA['pwd'] ) {
 
-	    	$this->flash->addMessage( 'error', 'Please register first' );
+	    	$this->flash->addMessage( 'error', 'That information seems incorrect' );
 
 	    	return $RESPONSE->withStatus( 302 )->withHeader('Location', $this->router->pathFor( 'register', [], $REQUEST->getParsedBody() ) );
 

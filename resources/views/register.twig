@@ -16,7 +16,7 @@
 
 {% for SERVICE in SERVICES %}
 
-{% if SERVICE.selected == true %}
+{% if old_input.service == SERVICE.name %}
 
 <option value="{{ SERVICE.name }}" selected="selected">{{ SERVICE.name }}</option>
 
