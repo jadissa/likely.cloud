@@ -1,65 +1,61 @@
 <?php
 
 //
+//  /var/www/html/likely.cloud/jobs/purge-transactions.php
+//
+
+//
+//  Settings
+//
+define( 'base_directory', '/var/www/html/likely.cloud' );
+
+$FROM_DATE  = date( 'Y-m-d H:i:s', time() - ( 60 * 15 ) );
+
+
+//
 //  Get initial settings
 //
-require_once dirname(__FILE__) . '/../api/bootstrap.php';
+$settings   = file_get_contents( base_directory . '/app/settings.json' );
 
-if( empty( $SETTINGS ) ) die( 'Improperly configured ' . __FILE__ );
+if( empty( $settings ) ) die( 'Improperly configured ' . __FILE__ . PHP_EOL );
+
+$SETTINGS   = json_decode( $settings );
 
 
 //
 //  Requirements
 //
-require_once dirname(__FILE__) . '/../vendor/autoload.php';
+require_once base_directory . '/vendor/autoload.php';
 
+use App\models\service;
 
-//
-//  Database
-//
-$DATABASE = new PDO( "mysql:host=" . $SETTINGS->database[0]->mysql[0]->host . ";dbname="
-    . $SETTINGS->database[0]->mysql[0]->db_name, $SETTINGS->database[0]->mysql[0]->user_name, $SETTINGS->database[0]->mysql[0]->pass_word );
+use App\models\transaction;
 
-$DATABASE->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-$DATABASE->setAttribute( PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC );
-
-$DB         = new NotORM( $DATABASE );
-
-$DB->debug  = $SETTINGS->debug;
-
-
-//
-//  Limit the timeframe to anything behind now - 15 minutes
-//
-$END_DATE  = date( 'Y-m-d H:i:s', time() - ( 60 * 15 ) );
+require_once base_directory . '/jobs/connection.php';
 
 
 //
 //  Fetch the active services
 //
-$SERVICES   = $DB->services()->fetch();
+$ACTIVE_SERVICES    = service::fetchActive();
 
 
 //
 //  Get the transactions within range
 //
-foreach( $SERVICES as $SERVICE ) {
+foreach( $ACTIVE_SERVICES as $SERVICE ) {
 
-    exit( var_dump( iterator_to_array( $SERVICE ) ) ) ;
-    print'<pre>';print_r( $SERVICE );print'</pre>';exit;
-
-    if( $SERVICE['status'] != 'active' )    continue;
-
-    $TRANSACTIONS    = $DB->transactions()->where( 'created >= "' . date( 'Y-m-d H:i:s', time() - ( 60 * 15 ) ) . '"' )->where( ['sid' => $SERVICE['id'] ] )->order( 'created desc' );
+    $TRANSACTIONS   = transaction::fetchByServiceDate( $SERVICE->id, $FROM_DATE );
 
     if( empty( $TRANSACTIONS) ) die();
 
-    $TRANSACTIONS   = iterator_to_array( $TRANSACTIONS );
 
+    //
+    //  Delete what is found
+    //
     foreach( $TRANSACTIONS as $TRANSACTION ) {
 
-        print'<pre>';print_r( $TRANSACTION);print'</pre>';
+        $deleted    = $TRANSACTION->delete();
 
     }
 

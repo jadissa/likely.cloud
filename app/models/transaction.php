@@ -67,6 +67,7 @@ class transaction extends Model  {
 
 	/**
 	 * 	Gets a service transaction for the current user
+	 * 	Results are limited to last 15 minutes
 	 * 
 	 *	@param 	int 	$service_id
 	 * 
@@ -94,6 +95,39 @@ class transaction extends Model  {
 		}
 
 		return $TRANSACTION;
+
+	}
+
+
+	/**
+	 * 	Gets service transactions older than a given date
+	 * 
+	 *	@param 	int 	$service_id
+	 * 	@param 	string 	$from_date
+	 * 
+	 * 	@return object
+	 */
+	public function fetchByServiceDate( int $service_id, string $from_date ) {
+
+		if( empty( $service_id ) or empty( $from_date ) ) {
+
+			return false;
+
+		}
+
+		$TRANSACTIONS 	= self::select( '*' )
+			->where( 'sid', $service_id )
+			->where( 'created_at', '<=', $from_date )
+			->orderBy( 'created_at', 'desc' )
+			->get();
+
+		if( empty( $TRANSACTIONS ) ) {
+
+			return false;
+
+		}
+
+		return $TRANSACTIONS;
 
 	}
 
