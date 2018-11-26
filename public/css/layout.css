@@ -294,9 +294,9 @@ margin-bottom: 			5px;
 
 }
 
-.col, .col-sm-2, .col-sm-10 {
+.col, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-8, .col-sm-10 {
 
-padding:                0;
+    display: inline-block;
 
 }
 

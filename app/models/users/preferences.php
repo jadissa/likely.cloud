@@ -14,6 +14,11 @@ use App\models\service;
 
 class preferences {
 
+	/**
+	 *	Gets a user's preference data
+	 *
+	 *	@return array
+	 */
 	public function getForUser() {
 
 		$USER_PREFERNCES	= [
@@ -54,6 +59,11 @@ class preferences {
 	}
 
 
+	/**
+	 *	Saves a user's preference data
+	 *
+	 *	@return array
+	 */
 	public function save( $PREFERENCES ) {
 
 		if( !empty( $PREFERENCES['user_status'] ) ) {
