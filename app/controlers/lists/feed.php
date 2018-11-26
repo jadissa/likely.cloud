@@ -35,33 +35,33 @@ class feed {
 
 		foreach( $EXISTING_USERS as $USER_FEED ) {
 
-	        $FEED_DATA['SERVICE_REGISTRIES'][ $USER_FEED['id'] ]['string_data'] = $USER_FEED->sname . ' signed up from ';
+	        $FEED_DATA['SERVICE_REGISTRIES'][ $USER_FEED->id ]['string_data'] = $USER_FEED->sname . ' signed up from ';
 
 	        $GEO = json_decode( $USER_FEED->geo );
 
 	        if ( !empty( $GEO->state ) ) {
 
-	            $FEED_DATA['SERVICE_REGISTRIES'][ $USER_FEED['id'] ]['string_data'] .= $GEO->state . ', all the way out in ';
+	            $FEED_DATA['SERVICE_REGISTRIES'][ $USER_FEED->id ]['string_data'] .= $GEO->state . ', all the way out in ';
 
 	        } else {
 
-	            $FEED_DATA['SERVICE_REGISTRIES'][ $USER_FEED['id'] ]['string_data'] .= 'undisclosed location, all the way out in ';
+	            $FEED_DATA['SERVICE_REGISTRIES'][ $USER_FEED->id ]['string_data'] .= 'undisclosed location, all the way out in ';
 
 	        }
 
 	        if( !empty( $GEO->country_name ) ) {
 
-	            $FEED_DATA['SERVICE_REGISTRIES'][ $USER_FEED['id'] ]['string_data'] .= $GEO->country_name;
+	            $FEED_DATA['SERVICE_REGISTRIES'][ $USER_FEED->id ]['string_data'] .= $GEO->country_name;
 
 	        } else {
 
-	            $FEED_DATA['SERVICE_REGISTRIES'][ $USER_FEED['id'] ]['string_data'] .= 'Nowhere\'sville';
+	            $FEED_DATA['SERVICE_REGISTRIES'][ $USER_FEED->id ]['string_data'] .= 'Nowhere\'sville';
 
 	        }
 
-	        $FEED_DATA['SERVICE_REGISTRIES'][ $USER_FEED['id'] ]['string_data'] .= ' using ' . $USER_FEED->name;
+	        $FEED_DATA['SERVICE_REGISTRIES'][ $USER_FEED->id ]['string_data'] .= ' using ' . $USER_FEED->name;
 
-	        $FEED_DATA['SERVICE_REGISTRIES'][ $USER_FEED['id'] ]['string_data'] .= ' in ' . date( 'F', strtotime( $USER_FEED->created_at ) ) . '!';
+	        $FEED_DATA['SERVICE_REGISTRIES'][ $USER_FEED->id ]['string_data'] .= ' in ' . date( 'F', strtotime( $USER_FEED->created_at ) ) . '!';
 
 	    }
 
@@ -81,6 +81,8 @@ class feed {
 	        $i++;
 	    }
 	    */
+
+	    #print'<pre>';print_r( $FEED_DATA );print'</pre>';exit;
 
 	    return $FEED_DATA;
 

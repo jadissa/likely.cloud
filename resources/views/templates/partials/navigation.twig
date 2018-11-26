@@ -19,23 +19,9 @@
 
 </li>
 
-{# 
-<li class="nav-item {{ current_path() == '/preferences' ? 'active' : '' }}">
-
-<a href="{{ path_for( 'preferences' ) }}" class="nav-link">Preferences{{ current_path() == '/preferences' ? '<span class="sr-only">(current)</span>' : '' }}</a>
-
-</li>
-
-<li class="nav-item {{ current_path() == '/assets' ? 'active' : '' }}">
-
-<a href="{{ path_for( 'assets' ) }}" class="nav-link">Assets{{ current_path() == '/assets' ? '<span class="sr-only">(current)</span>' : '' }}</a>
-
-</li>
-#}
-
 <li class="nav-item {{ current_path() == '/logout' ? 'active' : '' }}">
 
-<a href="{{ path_for( 'logout' ) }}" class="nav-link">Signout{{ current_path() == '/logout' ? '<span class="sr-only">(current)</span>' : '' }}</a>
+<a href="{{ path_for( 'logout' ) }}" class="nav-link">Logout{{ current_path() == '/logout' ? '<span class="sr-only">(current)</span>' : '' }}</a>
 
 </li>
 
@@ -43,7 +29,7 @@
 
 <li class="nav-item {{ current_path() == '/register' ? 'active' : '' }}">
 
-<a href="{{ path_for( 'register' ) }}" class="nav-link">Signup{{ current_path() == '/register' ? '<span class="sr-only">(current)</span>' : '' }}</a>
+<a href="{{ path_for( 'register' ) }}" class="nav-link">Register{{ current_path() == '/register' ? '<span class="sr-only">(current)</span>' : '' }}</a>
 
 </li>
 

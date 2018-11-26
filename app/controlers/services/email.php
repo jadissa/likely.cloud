@@ -64,7 +64,7 @@ class email extends controler {
 		//
 		//	Verify active service or quit
 		//
-		$SERVICE 	= service::fetchByName( 'email' );
+		$SERVICE 	= service::fetchByName( $REQUEST->getParam( 'service' ) );
 
 		if( empty( $SERVICE ) or $SERVICE['status'] != 'active' ) {
 
@@ -223,7 +223,7 @@ class email extends controler {
 		//
 		//	Verify active service or quit
 		//
-		$SERVICE 	= service::fetchByName( 'email' );
+		$SERVICE 	= service::fetchByName( $REQUEST->getParam( 'service' ) );
 
 		if( empty( $SERVICE ) or $SERVICE['status'] != 'active' ) {
 

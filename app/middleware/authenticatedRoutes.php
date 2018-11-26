@@ -8,7 +8,7 @@ class authenticatedRoutes extends middleware {
 
 		if( empty( \App\models\user::authenticated() ) ) {
 
-			$this->flash->addMessage( 'error', 'Please sign in or <a href="' . $this->router->pathFor( 'register' ) . '">register</a>' );
+			$this->flash->addMessage( 'error', 'Please login or <a href="' . $this->router->pathFor( 'register' ) . '">register</a>' );
 
 			return $RESPONSE->withRedirect( $this->router->pathFor( 'login' ) );
 

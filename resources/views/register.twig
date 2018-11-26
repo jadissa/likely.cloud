@@ -1,96 +1,106 @@
 {% extends 'templates/app.twig' %}
 
-{% block login %}
+{% block content %}
 
-<div class="panel default-panel">
+<div class="row row-marginless">
 
-<div class="panel-body">
-
-<form name="signup" class="form" action="{{ path_for( 'register' ) }}" method="POST">
-
-<div class="form-group">
-
-<label for="service"><strong>Sign up using</strong></label>
-
-<select name="service" id="service" class="form-control"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}>
-
-{% for SERVICE in SERVICES %}
-
-{% if old_input.service == SERVICE.name %}
-
-<option value="{{ SERVICE.name }}" selected="selected">{{ SERVICE.name }}</option>
-
-{% else %}
-
-<option value="{{ SERVICE.name }}">{{ SERVICE.name }}</option>
-
-{% endif %}
-
-{% endfor %}
-
-</select>
+    <strong class="block">Register</strong>
 
 </div>
 
-<div class="form-group{{ ERRORS.uname ? ' has-danger' : '' }}">
+<div class="row row-marginless">
 
-<input type="text" name="uname" id="uname" placeholder="Username" autocomplete="username" class="form-control {{ ERRORS.uname ? 'form-control-danger' : '' }}"{{ theme_disabled == true ? ' disabled="disabled"' : ''}} value="{{ old_input.uname }}">
+	<div class="col-sm-4 padding-left-0 padding-right-0">
 
-{% if ERRORS.uname %}
+		<form name="signup" class="form" action="{{ path_for( 'register' ) }}" method="POST">
 
-<div class="form-control-feedback">{{ ERRORS.uname | first }}</div>
+			<div class="form-group">
 
-{% endif %}
+				<select name="service" id="service" class="form-control"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}>
 
-</div>
+					{% for SERVICE in SERVICES %}
 
-<div class="form-group{{ ERRORS.email ? ' has-danger' : '' }}">
+						{% if old_input.service == SERVICE.name %}
 
-<input type="email" name="email" id="email" placeholder="Email" autocomplete="email" class="form-control {{ ERRORS.uname ? 'form-control-danger' : '' }}"{{ theme_disabled == true ? ' disabled="disabled"' : ''}} value="{{ old_input.email }}">
+							<option value="{{ SERVICE.name }}" selected="selected">{{ SERVICE.name }}</option>
 
-{% if ERRORS.email %}
+						{% else %}
 
-<div class="form-control-feedback">{{ ERRORS.email | first }}</div>
+							<option value="{{ SERVICE.name }}">{{ SERVICE.name }}</option>
 
-{% endif %}
+						{% endif %}
 
-</div>
+					{% endfor %}
 
-<div class="form-group{{ ERRORS.pwd ? ' has-danger' : '' }}">
+				</select>
 
-<input type="password" name="pwd" id="pwd" placeholder="Password" autocomplete="new-password" class="form-control {{ ERRORS.uname ? 'form-control-danger' : '' }}"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}>
+			</div>
 
-{% if ERRORS.pwd %}
+			<div class="form-group{{ ERRORS.uname ? ' has-danger' : '' }}">
 
-<div class="form-control-feedback">{{ ERRORS.pwd | first }}</div>
+				<input type="text" name="uname" id="uname" placeholder="Username" autocomplete="username" class="form-control {{ ERRORS.uname ? 'form-control-danger' : '' }}"{{ theme_disabled == true ? ' disabled="disabled"' : ''}} value="{{ old_input.uname }}">
 
-{% endif %}
+				{% if ERRORS.uname %}
 
-</div>
+					<div class="form-control-feedback">{{ ERRORS.uname | first }}</div>
 
-<div class="checkbox mb-3">
+				{% endif %}
 
-<label><input type="checkbox" name="status" id="status" checked="checked"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}> Let others know where you're from!</label>
+			</div>
 
-</div>
+			<div class="form-group{{ ERRORS.email ? ' has-danger' : '' }}">
 
-<div class="checkbox mb-3">
+				<input type="email" name="email" id="email" placeholder="Email" autocomplete="email" class="form-control {{ ERRORS.uname ? 'form-control-danger' : '' }}"{{ theme_disabled == true ? ' disabled="disabled"' : ''}} value="{{ old_input.email }}">
 
-<label><input type="checkbox" name="remember-me" id="remember-me" value="remember-me"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}> Remember me</label>
+				{% if ERRORS.email %}
 
-</div>
+					<div class="form-control-feedback">{{ ERRORS.email | first }}</div>
 
-<div class="form-group">
+				{% endif %}
 
-<button class="btn btn btn-primary btn-block" type="submit"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}>Sign up</button>
+			</div>
 
-{{ csrf.field | raw }}
+			<div class="form-group{{ ERRORS.pwd ? ' has-danger' : '' }}">
 
-</div>
+				<input type="password" name="pwd" id="pwd" placeholder="Password" autocomplete="new-password" class="form-control {{ ERRORS.uname ? 'form-control-danger' : '' }}"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}>
 
-</form>
+				{% if ERRORS.pwd %}
 
-</div>
+					<div class="form-control-feedback">{{ ERRORS.pwd | first }}</div>
+
+				{% endif %}
+
+			</div>
+
+			<div class="checkbox mb-3">
+
+				<label><input type="checkbox" name="status" id="status" checked="checked"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}> Let others know where you're from!</label>
+
+			</div>
+
+			<div class="checkbox mb-3">
+
+				<label><input type="checkbox" name="remember-me" id="remember-me" value="remember-me"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}> Remember me</label>
+
+			</div>
+
+			<div class="form-group">
+
+				<button class="btn btn btn-primary btn-block" type="submit"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}>Sign up</button>
+
+				{{ csrf.field | raw }}
+
+			</div>
+
+		</form>
+
+	</div>
+
+	<div class="col-sm-8">
+
+		{% include 'feed.twig' %}
+
+	</div>
 
 </div>
     

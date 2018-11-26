@@ -1,0 +1,113 @@
+{% extends 'templates/app.twig' %}
+
+{% block content %}
+
+<div class="row row-marginless">
+
+    <strong class="block">Preferences</strong>
+
+</div>
+
+<div class="row row-marginless">
+
+    <div class="col-sm-4 padding-left-0 padding-right-0">
+
+        <ul class="nav nav-pills flex-column">
+
+            <li class="nav-item">
+
+            <a class="nav-link" href="/">Home</a>
+
+          </li>
+
+          <li class="nav-item">
+
+            <a class="nav-link active" href="/preferences">Preferences</a>
+
+          </li>
+
+          <li class="nav-item">
+
+            <a class="nav-link" href="#">Assets</a>
+
+          </li>
+
+          <li class="nav-item">
+
+            <a class="nav-link" href="#">Exports</a>
+
+          </li>
+
+          <li class="nav-item">
+
+            <a class="nav-link disabled" href="#">Disabled</a>
+
+          </li>
+
+        </ul>
+
+    </div>
+
+    <div class="col-sm-8 rounded">
+
+        <form name="preferences_form" class="form" action="{{ path_for( 'users.preferences' ) }}" method="POST">
+
+            {% if USER_PREFERENCES.ACCOUNT is not empty %}
+
+                <div class="block">Last Updated: {{ USER_PREFERENCES.ACCOUNT.updated_at }}</div>
+
+                <div class="form-group">
+
+                    <label for="user_status">Your Visibility</label>
+
+                    <label><input type="radio" name="user_status" value="public"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}{{ USER_PREFERENCES.ACCOUNT.status == 'public' ? ' checked="checked"' : '' }}> Public</label>
+
+                    <label><input type="radio" name="user_status" value="registered"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}{{ USER_PREFERENCES.ACCOUNT.status == 'registered' ? ' checked="checked"' : '' }}> Registered</label>
+
+                    <label><input type="radio" name="user_status" value="invisible"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}{{ USER_PREFERENCES.ACCOUNT.status == 'invisible' ? ' checked="checked"' : '' }}> Invisible</label>
+
+                    <label><input type="radio" name="user_status" value="deleted"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}{{ USER_PREFERENCES.ACCOUNT.status == 'deleted' ? ' checked="checked"' : '' }}> Deleted</label>
+
+                </div>
+
+            {% endif %}
+
+            {% if USER_PREFERENCES.SERVICES is not empty %}
+
+                {% for USER_PREFERENCE in USER_PREFERENCES.SERVICES %}
+
+                    <div class="block">Last Updated: {{ USER_PREFERENCE.updated_at }}</div>
+
+                    <label>{{ USER_PREFERENCE.name }} Service Visibility</label>
+
+                    <div class="form-group">
+
+                        <label><input type="radio" name="service_status[{{ USER_PREFERENCE.id}}]" value="public"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}{{ USER_PREFERENCE.status == 'public' ? ' checked="checked"' : '' }}> Public</label>
+
+                        <label><input type="radio" name="service_status[{{ USER_PREFERENCE.id}}]" value="registered"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}{{ USER_PREFERENCE.status == 'registered' ? ' checked="checked"' : '' }}> Registered</label>
+
+                        <label><input type="radio" name="service_status[{{ USER_PREFERENCE.id}}]" value="invisible"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}{{ USER_PREFERENCE.status == 'invisible' ? ' checked="checked"' : '' }}> Invisible</label>
+
+                        <label><input type="radio" name="service_status[{{ USER_PREFERENCE.id}}]" value="deleted"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}{{ USER_PREFERENCE.status == 'deleted' ? ' checked="checked"' : '' }}> Deleted</label>
+
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+            <div class="form-group">
+
+                <button class="btn btn btn-primary btn-block" type="submit"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}>Save</button>
+
+                {{ csrf.field | raw }}
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

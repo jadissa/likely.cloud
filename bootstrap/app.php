@@ -142,6 +142,12 @@ $CONTAINER['home']      = function( $CONTAINER ) {
 
 };
 
+$CONTAINER['preferences']      = function( $CONTAINER ) {
+
+    return new \App\controlers\users\preference( $CONTAINER );
+
+};
+
 $CONTAINER['email']      = function( $CONTAINER ) {
 
     return new \App\controlers\services\email( $CONTAINER );

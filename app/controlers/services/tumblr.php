@@ -45,7 +45,7 @@ class tumblr extends controler {
 
 		if( $VALIDATION->failed() ) {
 
-			return $RESPONSE->withRedirect( $this->router->pathFor( 'register' ) );
+			return $RESPONSE->withRedirect( $this->router->pathFor( 'login' ) );
 
 		}
 
@@ -69,7 +69,7 @@ class tumblr extends controler {
 		//
 		//	Verify active service or quit
 		//
-		$SERVICE 	= service::fetchByName( 'tumblr' );
+		$SERVICE 	= service::fetchByName( $REQUEST->getParam( 'service' ) );
 
 		if( empty( $SERVICE ) or $SERVICE['status'] != 'active' ) {
 
@@ -169,6 +169,48 @@ class tumblr extends controler {
 
 
 	    //
+	    //  Decrypt the data
+	    //
+	    /*
+	    $CRYPT 			= new crypt( $this->CONTAINER );
+
+	    $DECRYPTED_DATA = $CRYPT->decrypt( [ 
+	    	'token'		=> $EXISTING_SERVICE['token'], 
+	    	'refresh'	=> $EXISTING_SERVICE['refresh'],
+	    ], $this->settings['api_hash'] );
+
+	    if( empty( $DECRYPTED_DATA ) ) {
+
+	        if( !empty( $this->settings['debug'] ) ) {
+
+	            $this->logger->addInfo( serialize( [ 'something is broken', __FILE__, __LINE__ ] ) );
+
+	        }
+
+	        $this->flash->addMessage( 'error', 'Please signup first' );
+
+	        return $RESPONSE->withRedirect( $this->router->pathFor( 'auth.signup' ) );
+
+	    }
+
+
+	    //
+	    //  Proceed with service auth
+	    //
+	    $CLIENT = new tumblr_client(
+	        $this->settings['social'][0]['tumblr'][0]['server'][0]['client_id'],
+	        $this->settings['social'][0]['tumblr'][0]['server'][0]['client_secret'],
+	        $DECRYPTED_DATA['token'],
+	        $DECRYPTED_DATA['refresh']
+	    );
+
+	    $PARSED_USER_RESPONSE  		= $CLIENT->getUserInfo();
+
+	    print'<pre>';print_r( $PARSED_USER_RESPONSE );print'</pre>';exit;
+	    */
+
+
+	    //
         //	Update session
         //
         $USER_STATUSES  = [
@@ -214,19 +256,6 @@ class tumblr extends controler {
 
 	    }
 
-
-	    //
-	    //  Proceed with service auth
-	    //
-	    $CLIENT = new tumblr_client(
-	        $this->settings['social'][0]['tumblr'][0]['server'][0]['client_id'],
-	        $this->settings['social'][0]['tumblr'][0]['server'][0]['client_secret'],
-	        $DECRYPTED_DATA['token'],
-	        $DECRYPTED_DATA['refresh']
-	    );
-
-	    $PARSED_USER_RESPONSE  		= $CLIENT->getUserInfo();
-
 	}
 
 
@@ -271,7 +300,7 @@ class tumblr extends controler {
 	    //
 		//	Verify active service or quit
 		//
-		$SERVICE 	= service::fetchByName( 'tumblr' );
+		$SERVICE 	= service::fetchByName( $REQUEST->getParam( 'service' ) );
 
 		if( empty( $SERVICE ) or $SERVICE['status'] != 'active' ) {
 

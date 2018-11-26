@@ -159,22 +159,24 @@ class user_data extends Model  {
 	/**
 	 * 	Updates a user_data record
 	 * 
-	 * 	@param 	int 	$id
 	 *	@param 	array 	$DATA
 	 * 
 	 * 	@return object
 	 */
-	public function updateUsername( int $id, array $DATA ) {
+	public function update( array $DATA ) {
 
-		if( empty( $DATA ) or empty( $username ) ) {
+		if( empty( $DATA ) ) {
 
 			return false;
 
 		}
 
+		$USER_DATA = new self( [] );
+		$FILLABLE_FIELDS	= $USER_DATA->getFillable();
+
 		$INSERTION_DATA		= [];
 
-		foreach( self::$fillable as $field_name ) {
+		foreach( $FILLABLE_FIELDS as $field_name ) {
 
 			if( empty( $DATA[ $field_name ] ) ) {
 
@@ -185,7 +187,7 @@ class user_data extends Model  {
 
 		}
 
-		return self::where( 'id', $id )
+		return self::where( 'uid', user::getId() )
             ->update( $INSERTION_DATA );
 
 	}

@@ -1,9 +1,59 @@
 {% extends 'templates/app.twig' %}
 
-{% block home %}
+{% block content %}
 
-<strong class="block">Likely!</strong>
+<div class="row row-marginless">
 
-You made it! Stay tuned!
+    <strong class="block">Home</strong>
+
+</div>
+
+<div class="row row-marginless">
+
+	<div class="col-sm-4 padding-left-0 padding-right-0">
+
+		<ul class="nav nav-pills flex-column">
+
+			<li class="nav-item">
+
+		    <a class="nav-link active" href="/">Home</a>
+
+		  </li>
+
+		  <li class="nav-item">
+
+		    <a class="nav-link" href="/preferences">Preferences</a>
+
+		  </li>
+
+		  <li class="nav-item">
+
+		    <a class="nav-link" href="#">Assets</a>
+
+		  </li>
+
+		  <li class="nav-item">
+
+		    <a class="nav-link" href="#">Exports</a>
+
+		  </li>
+
+		  <li class="nav-item">
+
+		    <a class="nav-link disabled" href="#">Disabled</a>
+
+		  </li>
+
+		</ul>
+
+	</div>
+
+	<div class="col-sm-8">
+
+		{% include 'feed.twig' %}
+
+	</div>
+
+</div>
 
 {% endblock %}

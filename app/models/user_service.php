@@ -6,6 +6,8 @@
 
 namespace App\models;
 
+use App\models\user;
+
 use \Illuminate\Database\Eloquent\Model;
 
 class user_service extends Model  {
@@ -41,7 +43,8 @@ class user_service extends Model  {
 
 		}
 
-		$USER_SERVICE 	=  self::where( 'id', $id )
+		$USER_SERVICE 	=  self::where( 'sid', $id )
+			->where( 'uid', user::getId() )
 			->first();
 
 		if( empty( $USER_SERVICE ) or empty( $USER_SERVICE->count() ) ) {
@@ -162,17 +165,20 @@ class user_service extends Model  {
 	 * 
 	 * 	@return object
 	 */
-	public function updateUsername( int $id, array $DATA ) {
+	public function update( int $id, array $DATA ) {
 
-		if( empty( $DATA ) or empty( $username ) ) {
+		if( empty( $id ) or empty( $DATA ) ) {
 
 			return false;
 
 		}
 
+		$USER_SERVICE = new self( [] );
+		$FILLABLE_FIELDS	= $USER_SERVICE->getFillable();
+
 		$INSERTION_DATA		= [];
 
-		foreach( self::$fillable as $field_name ) {
+		foreach( $FILLABLE_FIELDS as $field_name ) {
 
 			if( empty( $DATA[ $field_name ] ) ) {
 
@@ -184,6 +190,7 @@ class user_service extends Model  {
 		}
 
 		return self::where( 'id', $id )
+			->where( 'uid', user::getId() )
             ->update( $INSERTION_DATA );
 
 	}

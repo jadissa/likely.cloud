@@ -16,11 +16,12 @@ $APP->group( '', function() {
 
 	$this->get( '/', 'home:index' )->setName( 'home' );
 
+	
+	$this->get( '/preferences', 'preferences:get' )->setName( 'users.preferences' );
+
+	$this->post( '/preferences', 'preferences:post' );
+
 	/*
-	$this->get( '/auth/preferences', 'auth:getPreferences' )->setName( 'auth.preferences' );
-
-	$this->post( '/auth/preferences', 'auth:postPreferences' );
-
 	$this->get( '/auth/assets', 'auth:getAssets' )->setName( 'auth.assets' );
 
 	$this->post( '/auth/assets', 'auth:postAssets' );

@@ -86,7 +86,7 @@ class register extends controler {
 
 			break;
 
-			case 'email':
+			case 'username':
 
 				$SERVICE 	= new services\email( $this->CONTAINER );
 

@@ -38,37 +38,11 @@
 
         {% include 'templates/partials/header.twig' %}
 
+        {% include 'templates/partials/flash.twig' %}
+
         <div class="content row rounded">
 
-           {% if current_path() == '/policy' %}
-
-                {% block policy %}{% endblock %}
-
-            {% else %}
-
-                <div class="column-content col-sm-6">
-
-                {% include 'templates/partials/flash.twig' %}
-
-                {% if current_path() == '/home' %}
-
-        	       {% block home %}{% endblock %}
-
-                {% elseif current_path() == '/login' or current_path() == '/register' %}
-
-                    {% block login %}{% endblock %}
-
-                {% endif %}
-
-                </div>
-
-                <div class="column-content col-sm-6">
-
-                    {% include 'feed.twig' %}
-
-                </div>
-
-            {% endif %}
+           {% block content %}{% endblock %}
 
         </div>
 

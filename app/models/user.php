@@ -186,13 +186,13 @@ class user extends Model  {
 
 
 	/**
-	 * 	Gets most recent signups
+	 * 	Gets most recent public registries
 	 * 
 	 * 	@return object
 	 */
 	public function fetchRecentRegistries() {
 
-		$REGISTRIES 	= self::select( 'users.created_at', 'user_data.geo', 'user_services.sname', 'services.name' )
+		$REGISTRIES 	= self::select( 'users.id', 'users.created_at', 'user_data.geo', 'user_services.sname', 'services.name' )
 			->where( 'user_services.status', 'public' )
 			->join( 'user_data', 'users.id', '=', 'user_data.uid' )
 			->join( 'user_services', 'users.id', '=', 'user_services.uid' )
@@ -268,6 +268,11 @@ class user extends Model  {
 
 		return isset( $_SESSION['user']['uid'] );
 
+	}
+
+	public function getId() {
+
+		return !empty( self::authenticated() ) ? $_SESSION['user']['uid'] : null;
 	}
 
 
