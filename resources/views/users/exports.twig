@@ -1,0 +1,81 @@
+{% extends 'templates/app.twig' %}
+
+{% block content %}
+
+<div class="row row-marginless">
+
+    <strong class="block">Preferences</strong>
+
+</div>
+
+<div class="row row-marginless">
+
+    <div class="col-sm-4 padding-left-0 padding-right-0">
+
+        {% include 'templates/partials/sidenav.twig' %}
+
+    </div>
+
+    <div class="col-sm-8 rounded">
+
+        <form name="preferences_form" class="form" action="{{ path_for( 'users.exports' ) }}" method="POST">
+
+            {% if USER_EXPORTS is not empty %}
+
+                {% for USER_EXPORT in USER_EXPORTS %}
+
+                    <div class="col-sm-4 rounded">
+
+                        <div class="block">Last Updated: {{ USER_EXPORT.updated_at }}</div>
+
+                        <label>{{ USER_EXPORT.name }} Audience</label>
+
+                        <div class="form-group">
+
+                            <label><input type="radio" name="service_status[{{ USER_EXPORT.id}}]" value="public"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}{{ USER_EXPORT.status == 'public' ? ' checked="checked"' : '' }}> Public</label>
+
+                            <label><input type="radio" name="service_status[{{ USER_EXPORT.id}}]" value="registered"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}{{ USER_EXPORT.status == 'registered' ? ' checked="checked"' : '' }}> Registered</label>
+
+                            <label><input type="radio" name="service_status[{{ USER_EXPORT.id}}]" value="invisible"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}{{ USER_EXPORT.status == 'invisible' ? ' checked="checked"' : '' }}> Invisible</label>
+
+                            <label><input type="radio" name="service_status[{{ USER_EXPORT.id}}]" value="deleted"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}{{ USER_EXPORT.status == 'deleted' ? ' checked="checked"' : '' }}> Deleted</label>
+
+                        </div>
+
+                        <label>Relates To</label>
+
+                        <div class="form-group">
+
+                            <label><input type="radio" name="service_stype[{{ USER_EXPORT.id}}]" value="all"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}{{ USER_EXPORT.stype == 'all' ? ' checked="checked"' : '' }}> Everything</label>
+
+                            <label><input type="radio" name="service_stype[{{ USER_EXPORT.id}}]" value="play"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}{{ USER_EXPORT.stype == 'play' ? ' checked="checked"' : '' }}> Play</label>
+
+                            <label><input type="radio" name="service_stype[{{ USER_EXPORT.id}}]" value="work"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}{{ USER_EXPORT.stype == 'work' ? ' checked="checked"' : '' }}> Work</label>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+            <div class="col-sm-4 rounded">
+
+                <div class="form-group">
+
+                    <button class="btn btn btn-primary btn-block" type="submit"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}>Save</button>
+
+                    {{ csrf.field | raw }}
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

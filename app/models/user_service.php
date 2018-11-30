@@ -165,7 +165,7 @@ class user_service extends Model  {
 	 * 
 	 * 	@return object
 	 */
-	public function update( int $id, array $DATA ) {
+	public function edit( int $id, array $DATA ) {
 
 		if( empty( $id ) or empty( $DATA ) ) {
 

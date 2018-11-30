@@ -150,7 +150,7 @@ class email extends controler {
 	    //
         //	Update session
         //
-        $USER_STATUSES  = [
+        $SERVICE_STATUSES  = [
             false   => 'invisible',
             true    => 'public',
         ];
@@ -160,7 +160,7 @@ class email extends controler {
         	'uname'			=> $USER->uname,
 			'persistent'	=> !empty( $PARSED_REQUEST['remember-me'] ) ? true : false,
 			'SERVICES'		=> [
-				'email'	=> [ 'status', $USER_STATUSES[ !empty( $USER_SERVICE->status ) ? true : false ] ],
+				'email'	=> [ 'status', $SERVICE_STATUSES[ !empty( $USER_SERVICE->status ) ? true : false ] ],
 			],
 		];
 
@@ -325,7 +325,7 @@ class email extends controler {
                         ] ),
             'sessid'    => session_id(),
             'password'  => $ENCRYPTED_DATA['pwd'],
-            'status'    => 'registered',
+            'status'    => 'online',
         ] );
 
         if( empty( $USER_DATA->id ) ) {
@@ -346,7 +346,7 @@ class email extends controler {
         //
         //  Append service
         //
-        $USER_STATUSES  = [
+        $SERVICE_STATUSES  = [
             false   => 'invisible',
             true    => 'public',
         ];
@@ -355,7 +355,7 @@ class email extends controler {
             'uid'       => $USER->id, 
             'sid'       => $SERVICE->id,
             'sname'     => $PARSED_REQUEST['uname'], 
-            'status'    => $USER_STATUSES[ !empty( $PARSED_REQUEST['status'] ) ? true : false ], 
+            'status'    => $SERVICE_STATUSES[ !empty( $PARSED_REQUEST['status'] ) ? true : false ], 
         ] );
 
 
@@ -382,7 +382,7 @@ class email extends controler {
         	'uname'			=> $PARSED_REQUEST['uname'],
 			'persistent'	=> !empty( $PARSED_REQUEST['remember-me'] ) ? true : false,
 			'SERVICES'		=> [
-				'email'	=> [ 'status', $USER_STATUSES[ !empty( $PARSED_REQUEST['status'] ) ? true : false ] ],
+				'email'	=> [ 'status', $SERVICE_STATUSES[ !empty( $PARSED_REQUEST['status'] ) ? true : false ] ],
 			],
 		];
 

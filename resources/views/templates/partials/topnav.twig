@@ -13,25 +13,25 @@
 
 {% if user is not empty %}
 
-<li class="nav-item {{ current_path() == '/' ? 'active' : '' }}">
+	<li class="nav-item {{ current_path() == '/' ? 'active' : '' }}">
 
-<a href="{{ path_for( 'home' ) }}" class="nav-link">{{ user.uname }}{{ current_path() == '/' ? '<span class="sr-only">(current)</span>' : '' }}</a>
+		<a href="{{ path_for( 'home' ) }}" class="nav-link">{{ user.uname }}{{ current_path() == '/' ? '<span class="sr-only">(current)</span>' : '' }}</a>
 
-</li>
+	</li>
 
-<li class="nav-item {{ current_path() == '/logout' ? 'active' : '' }}">
+	<li class="nav-item {{ current_path() == '/logout' ? 'active' : '' }}">
 
-<a href="{{ path_for( 'logout' ) }}" class="nav-link">Logout{{ current_path() == '/logout' ? '<span class="sr-only">(current)</span>' : '' }}</a>
+		<a href="{{ path_for( 'logout' ) }}" class="nav-link">Logout{{ current_path() == '/logout' ? '<span class="sr-only">(current)</span>' : '' }}</a>
 
-</li>
+	</li>
 
 {% else %}
 
-<li class="nav-item {{ current_path() == '/register' ? 'active' : '' }}">
+	<li class="nav-item {{ current_path() == '/register' ? 'active' : '' }}">
 
-<a href="{{ path_for( 'register' ) }}" class="nav-link">Register{{ current_path() == '/register' ? '<span class="sr-only">(current)</span>' : '' }}</a>
+		<a href="{{ path_for( 'register' ) }}" class="nav-link">Register{{ current_path() == '/register' ? '<span class="sr-only">(current)</span>' : '' }}</a>
 
-</li>
+	</li>
 
 {% endif %}
 

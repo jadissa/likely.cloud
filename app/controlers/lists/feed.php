@@ -59,8 +59,6 @@ class feed {
 
 	        }
 
-	        $FEED_DATA['SERVICE_REGISTRIES'][ $USER_FEED->id ]['string_data'] .= ' using ' . $USER_FEED->name;
-
 	        $FEED_DATA['SERVICE_REGISTRIES'][ $USER_FEED->id ]['string_data'] .= ' in ' . date( 'F', strtotime( $USER_FEED->created_at ) ) . '!';
 
 	    }
@@ -82,7 +80,7 @@ class feed {
 	    }
 	    */
 
-	    #print'<pre>';print_r( $FEED_DATA );print'</pre>';exit;
+	    #print'<pre>';print_r( $USER_FEED );print'</pre>';exit;
 
 	    return $FEED_DATA;
 

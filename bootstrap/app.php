@@ -142,9 +142,15 @@ $CONTAINER['home']      = function( $CONTAINER ) {
 
 };
 
-$CONTAINER['preferences']      = function( $CONTAINER ) {
+$CONTAINER['preference']      = function( $CONTAINER ) {
 
     return new \App\controlers\users\preference( $CONTAINER );
+
+};
+
+$CONTAINER['export']      = function( $CONTAINER ) {
+
+    return new \App\controlers\users\export( $CONTAINER );
 
 };
 

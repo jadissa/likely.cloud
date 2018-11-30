@@ -163,7 +163,7 @@ class user_data extends Model  {
 	 * 
 	 * 	@return object
 	 */
-	public function update( array $DATA ) {
+	public function edit( array $DATA ) {
 
 		if( empty( $DATA ) ) {
 

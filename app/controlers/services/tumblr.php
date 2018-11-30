@@ -213,7 +213,7 @@ class tumblr extends controler {
 	    //
         //	Update session
         //
-        $USER_STATUSES  = [
+        $SERVICE_STATUSES  = [
             false   => 'invisible',
             true    => 'public',
         ];
@@ -223,7 +223,7 @@ class tumblr extends controler {
         	'uname'			=> $USER->uname,
 			'persistent'	=> !empty( $PARSED_REQUEST['remember-me'] ) ? true : false,
 			'SERVICES'		=> [
-				'email'	=> [ 'status', $USER_STATUSES[ !empty( $USER_SERVICE->status ) ? true : false ] ],
+				'email'	=> [ 'status', $SERVICE_STATUSES[ !empty( $USER_SERVICE->status ) ? true : false ] ],
 			],
 		];
 
@@ -386,13 +386,13 @@ class tumblr extends controler {
 	    //
 	    //  Append transaction
 	    //
-	    $USER_STATUSES  = [
+	    $SERVICE_STATUSES  = [
             false   => 'invisible',
             true    => 'public',
         ];
 
 	    $transaction_data               = json_encode( [
-	        'status'                    => $USER_STATUSES[ !empty( $REQUEST->getParam( 'status' ) ) ? true : false ],
+	        'status'                    => $SERVICE_STATUSES[ !empty( $REQUEST->getParam( 'status' ) ) ? true : false ],
 	        'remember_me'				=> $REQUEST->getParam( 'remember-me' ),
 	        'uname'						=> $REQUEST->getParam( 'uname' ),
 	        'pwd'						=> $ENCRYPTED_DATA['pwd'],
@@ -686,7 +686,7 @@ class tumblr extends controler {
                         ] ),
             'sessid'    => session_id(),
             'password'  => $DATA_FIELD->pwd,
-            'status'    => 'registered',
+            'status'    => 'online',
         ] );
 
         if( empty( $USER_DATA->id ) ) {

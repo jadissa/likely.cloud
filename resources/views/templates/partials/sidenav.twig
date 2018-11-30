@@ -1,0 +1,33 @@
+<ul class="nav nav-pills flex-column">
+
+    <li class="nav-item">
+
+    <a class="nav-link {{ current_path() == '/' ? 'active' : '' }}" href="/">Home</a>
+
+  </li>
+
+  <li class="nav-item">
+
+    <a class="nav-link  {{ current_path() == '/preferences' ? 'active' : '' }}" href="/preferences">Preferences</a>
+
+  </li>
+
+  <li class="nav-item">
+
+    <a class="nav-link {{ current_path() == '/exports' ? 'active' : '' }}" href="/exports">Exports</a>
+
+  </li>
+
+  <li class="nav-item">
+
+    <a class="nav-link" href="#">Assets</a>
+
+  </li>
+
+  <li class="nav-item">
+
+    <a class="nav-link disabled" href="#">Disabled</a>
+
+  </li>
+
+</ul>

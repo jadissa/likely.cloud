@@ -17,9 +17,14 @@ $APP->group( '', function() {
 	$this->get( '/', 'home:index' )->setName( 'home' );
 
 	
-	$this->get( '/preferences', 'preferences:get' )->setName( 'users.preferences' );
+	$this->get( '/preferences', 'preference:get' )->setName( 'users.preferences' );
 
-	$this->post( '/preferences', 'preferences:post' );
+	$this->post( '/preferences', 'preference:post' );
+
+
+	$this->get( '/exports', 'export:get' )->setName( 'users.exports' );
+
+	$this->post( '/exports', 'export:post' );
 
 	/*
 	$this->get( '/auth/assets', 'auth:getAssets' )->setName( 'auth.assets' );

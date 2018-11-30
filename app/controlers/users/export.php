@@ -6,12 +6,12 @@ use App\controlers\controler;
 
 use Respect\Validation\Validator as v;
 
-use App\models\users\preferences;
+use App\models\users\exports;
 
-class preference extends controler {
+class export extends controler {
 
 	/**
-	 * 	Renders the preference view
+	 * 	Renders the export view
 	 *
 	 *	@param 	object 	$REQUEST
 	 * 	@param 	object 	$RESPONSE
@@ -20,9 +20,9 @@ class preference extends controler {
 	 */
 	public function get( $REQUEST, $RESPONSE ) {
 
-		$USER_PREFERENCES 	= preferences::getForUser();
+		$USER_EXPORTS 	= exports::getForUser();
 
-		$this->view->getEnvironment()->addGlobal( 'USER_PREFERENCES', $USER_PREFERENCES );
+		$this->view->getEnvironment()->addGlobal( 'USER_EXPORTS', $USER_EXPORTS );
 
 		
 		//
@@ -30,13 +30,13 @@ class preference extends controler {
 		//
 		$this->view->getEnvironment()->addGlobal( 'user', $_SESSION['user'] );
 
-		return $this->view->render( $RESPONSE, 'users/preferences.twig' );
+		return $this->view->render( $RESPONSE, 'users/exports.twig' );
 
 	}
 
 
 	/**
-	 * 	Submits the preference view
+	 * 	Submits the export view
 	 *
 	 *	@param 	object 	$REQUEST
 	 * 	@param 	object 	$RESPONSE
@@ -49,12 +49,12 @@ class preference extends controler {
 		//	Validate request
 		//
 		$VALIDATION		= $this->validator->validate( $REQUEST, [
-			'user_status'		=> v::noWhitespace()->notEmpty(),
+			'service_status'	=> v::arrayVal()->each( v::noWhitespace()->notEmpty() ),
 		] );
 
 		if( $VALIDATION->failed() ) {
 
-			return $RESPONSE->withRedirect( $this->router->pathFor( 'users.preferences' ) );
+			return $RESPONSE->withRedirect( $this->router->pathFor( 'users.exports' ) );
 
 		}
 
@@ -74,7 +74,7 @@ class preference extends controler {
 		//
 		//	Save preference
 		//
-		$SAVED	= preferences::save( $PARSED_REQUEST );
+		$SAVED	= exports::save( $PARSED_REQUEST );
 
 		if( !empty( $SAVED ) ) {
 
@@ -86,7 +86,7 @@ class preference extends controler {
 
 		}
 
-		return $RESPONSE->withRedirect( $this->router->pathFor( 'users.preferences' ) );
+		return $RESPONSE->withRedirect( $this->router->pathFor( 'users.exports' ) );
 
 	}
 
