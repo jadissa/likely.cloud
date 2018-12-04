@@ -24,6 +24,8 @@ $APP->group( '', function() {
 
 	$this->get( '/exports', 'export:get' )->setName( 'users.exports' );
 
+	$this->get( '/exports/{stype}', 'export:getServiceType' )->setName( 'users.exports.stype' );
+
 	$this->post( '/exports', 'export:post' );
 
 	/*
@@ -55,16 +57,7 @@ $APP->group( '', function() {
 	$this->get( '/tumblr/auth', 'tumblr:callback' )->setName( 'service.tumblr.callback' );
 
 
-	/*
-	$this->get( '/login/email', 'email:login' )->setName( 'services.email.login' );
-
-	$this->get( '/login/tumblr', 'tumblr:login' )->setName( 'services.tumblr.login' );
-
-
-	$this->post( '/email', 'email:register' )->setName( 'services.email.register' );
-
-	$this->post( '/tumblr', 'tumblr:register' )->setName( 'services.tumblr.register' );
-	*/
+	$this->get( 'imgur/auth', 'imgur:callback' )->setName( 'service.imgur.callback' );
 
 
 	/*

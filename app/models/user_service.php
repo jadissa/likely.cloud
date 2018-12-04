@@ -23,6 +23,7 @@ class user_service extends Model  {
 		'sid',
 		'sname',
 		'status',
+		'stype',
 		'refresh',
 		'token',
 	];
@@ -47,13 +48,50 @@ class user_service extends Model  {
 			->where( 'uid', user::getId() )
 			->first();
 
-		if( empty( $USER_SERVICE ) or empty( $USER_SERVICE->count() ) ) {
+		if( empty( $USER_SERVICE ) ) {
 
 			return false;
 
 		}
 
 		return $USER_SERVICE;
+
+	}
+
+
+	/**
+	 * 	Gets a user_services for current user
+	 * 
+	 * 	@return object
+	 */
+	public function fetchForUser( string $service_type = null ) {
+
+		if( empty( user::getId() ) ) {
+
+			return false;
+
+		}
+
+		if( !empty( $service_type ) ) {
+
+			$USER_SERVICES 	=  self::where( 'uid', user::getId() )
+			->where( 'stype', $service_type )
+			->get();
+
+		} else {
+
+			$USER_SERVICES 	=  self::where( 'uid', user::getId() )
+			->get();
+
+		}
+
+		if( empty( $USER_SERVICES ) ) {
+
+			return false;
+
+		}
+
+		return $USER_SERVICES;
 
 	}
 
@@ -189,7 +227,7 @@ class user_service extends Model  {
 
 		}
 
-		return self::where( 'id', $id )
+		return self::where( 'sid', $id )
 			->where( 'uid', user::getId() )
             ->update( $INSERTION_DATA );
 

@@ -65,6 +65,9 @@ sex
 ### @todo: 
 Implement
 
+testing key: vfO3O5LLS2mshQAK9FxvNKSG4Aaip1j7Hf3jsnRC299LyHt0JZ
+production key: cuG5KbmQcImsh1OBJPeDDnDYz1erp1FQhuyjsn3cKwsJgBKe2l
+
 Forward communications via irc. forward via discord
 
 You may use the secret URL above to login from another location, or recover your account if you delete your cookies.

@@ -20,7 +20,11 @@ class export extends controler {
 	 */
 	public function get( $REQUEST, $RESPONSE ) {
 
-		$USER_EXPORTS 	= exports::getForUser();
+		$ROUTE = $REQUEST->getAttribute( 'route' );
+
+		$service_type	= !empty( $ROUTE->getArgument( 'stype' ) ) ? $ROUTE->getArgument( 'stype' ) : null;
+
+		$USER_EXPORTS 	= exports::getForUser( $service_type );
 
 		$this->view->getEnvironment()->addGlobal( 'USER_EXPORTS', $USER_EXPORTS );
 
@@ -31,6 +35,21 @@ class export extends controler {
 		$this->view->getEnvironment()->addGlobal( 'user', $_SESSION['user'] );
 
 		return $this->view->render( $RESPONSE, 'users/exports.twig' );
+
+	}
+
+
+	/**
+	 * 	Renders the export service_type view
+	 *
+	 *	@param 	object 	$REQUEST
+	 * 	@param 	object 	$RESPONSE
+	 *
+	 * 	@return object
+	 */
+	public function getServiceType( $REQUEST, $RESPONSE ) {
+
+		return self::get( $REQUEST, $RESPONSE );
 
 	}
 
@@ -50,6 +69,7 @@ class export extends controler {
 		//
 		$VALIDATION		= $this->validator->validate( $REQUEST, [
 			'service_status'	=> v::arrayVal()->each( v::noWhitespace()->notEmpty() ),
+			'service_stype'		=> v::arrayVal()->each( v::noWhitespace()->notEmpty() ),
 		] );
 
 		if( $VALIDATION->failed() ) {
@@ -86,7 +106,19 @@ class export extends controler {
 
 		}
 
-		return $RESPONSE->withRedirect( $this->router->pathFor( 'users.exports' ) );
+		$service_type 	= array_values( $PARSED_REQUEST['service_stype'] )[0];
+
+		if( !empty( $service_type and $service_type != 'all' ) )
+
+			$url = $this->router->pathFor( 'users.exports.stype', [ 'stype' => $service_type ] );
+
+			return $RESPONSE->withStatus(302)->withHeader( 'Location', $url );
+
+		} else {
+
+			return $RESPONSE->withRedirect( $this->router->pathFor( 'users.exports' ) );
+
+		}
 
 	}
 

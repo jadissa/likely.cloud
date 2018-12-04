@@ -19,27 +19,28 @@ class exports {
 	 *
 	 *	@return array
 	 */
-	public function getForUser() {
+	public function getForUser( string $service_type = null ) {
 
 		$USER_EXPORTS	= [];
 
-		$ACTIVE_SERVICES	= service::fetchActive();
+		$ACTIVE_SERVICES	= user_service::fetchForUser( $service_type );
+
+		if( empty( $ACTIVE_SERVICES ) ) {
+
+			return $USER_EXPORTS;
+		}
 
 		foreach( $ACTIVE_SERVICES as $ACTIVE_SERVICE ) {
 
-			$USER_SERVICE 	= user_service::fetchById( $ACTIVE_SERVICE->id );
-
-			if( empty( $USER_SERVICE ) )	continue;
-
-			$SERVICE 		= service::fetchById( $USER_SERVICE->id );
+			$SERVICE 		= service::fetchById( $ACTIVE_SERVICE->sid );
 
 			array_push( $USER_EXPORTS, [
-				'id'			=> $USER_SERVICE->id,
+				'id'			=> $ACTIVE_SERVICE->sid,
 				'name'			=> $SERVICE->name,
-				'created_at'	=> $USER_SERVICE->created_at,
-				'updated_at'	=> $USER_SERVICE->updated_at,
-				'status'		=> $USER_SERVICE->status,
-				'stype'			=> $USER_SERVICE->stype,
+				'created_at'	=> $ACTIVE_SERVICE->created_at,
+				'updated_at'	=> $ACTIVE_SERVICE->updated_at,
+				'status'		=> $ACTIVE_SERVICE->status,
+				'stype'			=> $ACTIVE_SERVICE->stype,
 			] );
 
 		}
@@ -86,6 +87,8 @@ class exports {
 	 *	@return array
 	 */
 	public function save( $EXPORTS ) {
+
+		#print'<pre>';print_r( $EXPORTS );print'</pre>';exit;
 
 		foreach( $EXPORTS['service_status'] as $service_id => $status ) {
 

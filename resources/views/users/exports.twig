@@ -20,6 +20,8 @@
 
         <form name="preferences_form" class="form" action="{{ path_for( 'users.exports' ) }}" method="POST">
 
+            {% include 'templates/partials/interiornav.twig' %}
+
             {% if USER_EXPORTS is not empty %}
 
                 {% for USER_EXPORT in USER_EXPORTS %}
@@ -37,8 +39,6 @@
                             <label><input type="radio" name="service_status[{{ USER_EXPORT.id}}]" value="registered"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}{{ USER_EXPORT.status == 'registered' ? ' checked="checked"' : '' }}> Registered</label>
 
                             <label><input type="radio" name="service_status[{{ USER_EXPORT.id}}]" value="invisible"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}{{ USER_EXPORT.status == 'invisible' ? ' checked="checked"' : '' }}> Invisible</label>
-
-                            <label><input type="radio" name="service_status[{{ USER_EXPORT.id}}]" value="deleted"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}{{ USER_EXPORT.status == 'deleted' ? ' checked="checked"' : '' }}> Deleted</label>
 
                         </div>
 
@@ -58,9 +58,7 @@
 
                 {% endfor %}
 
-            {% endif %}
-
-            <div class="col-sm-4 rounded">
+                <div class="col-sm-4 rounded">
 
                 <div class="form-group">
 
@@ -71,6 +69,12 @@
                 </div>
 
             </div>
+
+            {% else %}
+
+                <div class="alert alert-danger">You do not have any of those</div>
+
+            {% endif %}
 
         </form>
 

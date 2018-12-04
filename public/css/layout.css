@@ -264,6 +264,8 @@ box-shadow:             -5px 5px 5px 0px rgba(31,16,31,1);
 
 flex-grow:              1;
 
+overflow: 				hidden;
+
 }
 
 .column-content .column-content {
@@ -349,6 +351,12 @@ width:                  100%;
 .navbar-toggler {
 
 border:                 1px solid #232222;
+
+}
+
+.nav-tabs .nav-item {
+
+margin-bottom: inherit;
 
 }
 
