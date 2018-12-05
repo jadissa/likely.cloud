@@ -22,11 +22,19 @@ $APP->group( '', function() {
 	$this->post( '/preferences', 'preference:post' );
 
 
+	$this->get( '/services', 'service:get' )->setName( 'users.services' );
+
+	$this->post( '/services', 'service:post' );
+
+
 	$this->get( '/exports', 'export:get' )->setName( 'users.exports' );
 
 	$this->get( '/exports/{stype}', 'export:getServiceType' )->setName( 'users.exports.stype' );
 
 	$this->post( '/exports', 'export:post' );
+
+
+	$this->get( '/content', 'content:get' )->setName( 'users.content' );
 
 	/*
 	$this->get( '/auth/assets', 'auth:getAssets' )->setName( 'auth.assets' );

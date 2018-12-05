@@ -108,7 +108,7 @@ class export extends controler {
 
 		$service_type 	= array_values( $PARSED_REQUEST['service_stype'] )[0];
 
-		if( !empty( $service_type and $service_type != 'all' ) )
+		if( !empty( $service_type and $service_type != 'all' ) ) {
 
 			$url = $this->router->pathFor( 'users.exports.stype', [ 'stype' => $service_type ] );
 

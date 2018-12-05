@@ -1,0 +1,33 @@
+{% extends 'templates/app.twig' %}
+
+{% block content %}
+
+<div class="row row-marginless">
+
+    <strong class="block">Content</strong>
+
+</div>
+
+<div class="row row-marginless">
+
+    <div class="col-sm-4 padding-left-0 padding-right-0">
+
+        {% include 'templates/partials/sidenav.twig' %}
+
+    </div>
+
+    <div class="col-sm-8 rounded">
+
+        <form name="content_form" class="form" action="{{ path_for( 'users.content' ) }}" method="POST">
+
+            {% include 'templates/partials/interiornav.twig' %}
+
+            
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

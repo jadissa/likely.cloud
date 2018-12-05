@@ -1,11 +1,21 @@
+<div class="col-sm-8">
+
 <strong class="block">Public Feed</strong>
+
+<div class="feed">
+
+<div class="scrollable">
 
 {% for SERVICE_REGISTRY in SERVICE_REGISTRIES %}
 
 	{% for string_data in SERVICE_REGISTRY %}
 
-		<div class="service-registry">{{ string_data }}</div>
+		<div class="feed-item rounded">{{ string_data }}</div>
 
 	{% endfor %}
 	
 {% endfor %}
+
+</div>
+
+</div>

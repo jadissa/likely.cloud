@@ -34,14 +34,14 @@ class exports {
 
 			$SERVICE 		= service::fetchById( $ACTIVE_SERVICE->sid );
 
-			array_push( $USER_EXPORTS, [
+			$USER_EXPORTS[ $ACTIVE_SERVICE->sid ] = [
 				'id'			=> $ACTIVE_SERVICE->sid,
 				'name'			=> $SERVICE->name,
 				'created_at'	=> $ACTIVE_SERVICE->created_at,
 				'updated_at'	=> $ACTIVE_SERVICE->updated_at,
 				'status'		=> $ACTIVE_SERVICE->status,
 				'stype'			=> $ACTIVE_SERVICE->stype,
-			] );
+			];
 
 		}
 
@@ -77,6 +77,18 @@ class exports {
 		}
 
 		return !empty( $TYPE_EXPORTS ) ? $TYPE_EXPORTS : [];
+
+	}
+
+
+	/**
+	 * 	Gets active services
+	 * 
+	 * 	@return object
+	 */
+	public function getActive() {
+
+		return service::fetchActive();
 
 	}
 

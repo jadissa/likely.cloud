@@ -41,11 +41,11 @@ class feed {
 
 	        if ( !empty( $GEO->state ) ) {
 
-	            $FEED_DATA['SERVICE_REGISTRIES'][ $USER_FEED->id ]['string_data'] .= $GEO->state . ', all the way out in ';
+	            $FEED_DATA['SERVICE_REGISTRIES'][ $USER_FEED->id ]['string_data'] .= $GEO->state . ', ';
 
 	        } else {
 
-	            $FEED_DATA['SERVICE_REGISTRIES'][ $USER_FEED->id ]['string_data'] .= 'undisclosed location, all the way out in ';
+	            $FEED_DATA['SERVICE_REGISTRIES'][ $USER_FEED->id ]['string_data'] .= 'undisclosed location, ';
 
 	        }
 
@@ -59,7 +59,7 @@ class feed {
 
 	        }
 
-	        $FEED_DATA['SERVICE_REGISTRIES'][ $USER_FEED->id ]['string_data'] .= ' in ' . date( 'F', strtotime( $USER_FEED->created_at ) ) . '!';
+	        $FEED_DATA['SERVICE_REGISTRIES'][ $USER_FEED->id ]['string_data'] .= ' during ' . date( 'F', strtotime( $USER_FEED->created_at ) ) . '!';
 
 	    }
 

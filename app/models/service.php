@@ -92,7 +92,7 @@ class service extends Model  {
 
 		$ACTIVE_SERVICES	= self::where( 'status', 'active' )
 			->orderBy( 'created_at', 'desc' )
-			->get();
+			->get()->keyBy( 'id' );
 
 		if( empty( $ACTIVE_SERVICES ) or empty( $ACTIVE_SERVICES->count() ) ) {
 

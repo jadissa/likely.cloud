@@ -148,9 +148,21 @@ $CONTAINER['preference']      = function( $CONTAINER ) {
 
 };
 
+$CONTAINER['service']      = function( $CONTAINER ) {
+
+    return new \App\controlers\users\service( $CONTAINER );
+
+};
+
 $CONTAINER['export']      = function( $CONTAINER ) {
 
     return new \App\controlers\users\export( $CONTAINER );
+
+};
+
+$CONTAINER['content']      = function( $CONTAINER ) {
+
+    return new \App\controlers\users\content( $CONTAINER );
 
 };
 

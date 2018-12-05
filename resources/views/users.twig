@@ -1,0 +1,15 @@
+<div class="col-sm-2">
+
+<strong class="block">Who's Online</strong>
+
+{% for SERVICE_REGISTRY in SERVICE_REGISTRIES %}
+
+	{% for string_data in SERVICE_REGISTRY %}
+
+		<div class="users-online">{{ string_data }}</div>
+
+	{% endfor %}
+	
+{% endfor %}
+
+</div>
