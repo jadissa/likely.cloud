@@ -1,0 +1,15 @@
+<div class="user_list">
+
+    <strong class="block">Users</strong>
+
+    {% if BUDDIES is not empty %}
+
+      {% for BUDDY in BUDDIES %}
+
+        {{ BUDDY }}
+
+      {% endfor %}
+
+    {% endif %}
+
+</div>

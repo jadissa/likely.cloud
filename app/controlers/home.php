@@ -6,6 +6,8 @@ use App\models\user;
 
 use App\controlers\lists\feed as feed;
 
+use App\controlers\lists\users as users;
+
 class home extends controler {
 
 	/**
@@ -20,6 +22,14 @@ class home extends controler {
 	public function index( $REQUEST, $RESPONSE ) {
 
 		//
+		//	Setup view
+		//
+		$USERS 	= users::getUsers( 'public' );
+
+		$this->view->getEnvironment()->addGlobal( 'BUDDIES', $USERS );
+
+
+		//
 		//	Redirect check
 		//
 		if( empty( user::authenticated() ) ) {
@@ -32,10 +42,11 @@ class home extends controler {
 
 		$this->view->getEnvironment()->addGlobal( 'SERVICE_REGISTRIES', $FEED_DATA['SERVICE_REGISTRIES'] );
 
-		
-		//
-		//	Setup view
-		//
+
+		$USERS 	= users::getUsers( 'registered' );
+
+		$this->view->getEnvironment()->addGlobal( 'BUDDIES', $USERS );
+
 		$this->view->getEnvironment()->addGlobal( 'user', $_SESSION['user'] );
 
 		return $this->view->render( $RESPONSE, 'home.twig' );

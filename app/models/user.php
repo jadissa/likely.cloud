@@ -211,6 +211,32 @@ class user extends Model  {
 
 	}
 
+
+	/**
+	 * 	Gets a list of users within context
+	 *
+	 *	@param 	string 	$context (registered, public)
+	 *
+	 * 	@return array
+	 */
+	public function fetchUsers( $context = 'registered' ) {
+
+		$USERS 	= self::select( 'users.id', 'users.uname', 'user_services.status', 'user_services.updated_at', 'user_services.stype' )
+			->where( 'user_services.status', $context )
+			->join( 'user_services', 'users.id', '=', 'user_services.uid' )
+			->orderBy( 'user_services.updated_at', 'desc' )
+			->get();
+
+		if( empty( $USERS ) ) {
+
+			return false;
+
+		}
+
+		return $USERS;
+
+	}
+
 	/**
 	 * 	Inserts a user record
 	 * 

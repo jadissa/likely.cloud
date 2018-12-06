@@ -312,6 +312,16 @@ width:              	100%;
 
 }
 
+.user_list {
+
+float: right;
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 99999;
+
+}
+
 .row {
 
 margin: 				0;

@@ -1,20 +1,20 @@
 {% if flash.getMessage( 'info' ) %}
 
-<div class="alert alert-info">
+	<div class="alert alert-info">
 
-{{ flash.getFirstMessage( 'info' ) | raw }}
+		{{ flash.getFirstMessage( 'info' ) | raw }}
 
-</div>
+	</div>
 
 {% endif %}
 
 
 {% if flash.getMessage( 'error' ) %}
 
-<div class="alert alert-danger">
+	<div class="alert alert-danger">
 
-{{ flash.getMessage( 'error' ) | first | raw }}
+		{{ flash.getMessage( 'error' ) | first | raw }}
 
-</div>
+	</div>
 
 {% endif %}
