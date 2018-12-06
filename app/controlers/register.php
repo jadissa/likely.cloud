@@ -44,10 +44,6 @@ class register extends controler {
 
 			$this->view->getEnvironment()->addGlobal( 'theme_disabled', true );
 
-		} else {
-
-			$this->flash->addMessage( 'info', 'Try again later' );
-
 		}
 
 		return $this->view->render( $RESPONSE, 'register.twig' );

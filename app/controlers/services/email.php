@@ -40,7 +40,7 @@ class email extends controler {
 
 		if( $VALIDATION->failed() ) {
 
-			return $RESPONSE->withRedirect( $this->router->pathFor( 'register' ) );
+			return $RESPONSE->withRedirect( $this->router->pathFor( 'login' ) );
 
 		}
 
@@ -76,7 +76,7 @@ class email extends controler {
 
 			$this->flash->addMessage( 'error', 'Try again later' );
 
-			return $RESPONSE->withRedirect( $this->router->pathFor( 'register' ) );
+			return $RESPONSE->withRedirect( $this->router->pathFor( 'login' ) );
 
 	    }
 
@@ -96,7 +96,7 @@ class email extends controler {
 
 	        $this->flash->addMessage( 'error', 'Try again later' );
 
-			return $RESPONSE->withRedirect( $this->router->pathFor( 'register' ) );
+			return $RESPONSE->withRedirect( $this->router->pathFor( 'login' ) );
 
 	    }
 
@@ -108,9 +108,9 @@ class email extends controler {
 
 	    if( empty( $USER ) ) {
 
-	    	$this->flash->addMessage( 'error', 'Please register first' );
+	    	$this->flash->addMessage( 'error', 'That information seems incorrect' );
 
-	    	return $RESPONSE->withStatus( 302 )->withHeader('Location', $this->router->pathFor( 'register', [], $REQUEST->getParsedBody() ) );
+	    	return $RESPONSE->withRedirect( $this->router->pathFor( 'login' ) );
 
 	    }
 
@@ -128,7 +128,7 @@ class email extends controler {
 
 	    	$this->flash->addMessage( 'error', 'Try again later' );
 
-			return $RESPONSE->withRedirect( $this->router->pathFor( 'register' ) );
+			return $RESPONSE->withRedirect( $this->router->pathFor( 'login' ) );
 
 	    }
 
@@ -136,7 +136,7 @@ class email extends controler {
 
 	    	$this->flash->addMessage( 'error', 'That information seems incorrect' );
 
-	    	return $RESPONSE->withStatus( 302 )->withHeader('Location', $this->router->pathFor( 'register', [], $REQUEST->getParsedBody() ) );
+	    	return $RESPONSE->withRedirect( $this->router->pathFor( 'login' ) );
 
 	    }
 

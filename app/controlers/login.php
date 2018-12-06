@@ -44,10 +44,6 @@ class login extends controler {
 
 			$this->view->getEnvironment()->addGlobal( 'theme_disabled', true );
 
-		} else {
-
-			$this->flash->addMessage( 'info', 'Try again later' );
-
 		}
 
 		return $this->view->render( $RESPONSE, 'login.twig' );
@@ -72,7 +68,7 @@ class login extends controler {
 
 			$this->flash->addMessage( 'error', 'That service is not registered' );
 
-			return $RESPONSE->withRedirect( $this->router->pathFor( 'register' ) );
+			return $RESPONSE->withRedirect( $this->router->pathFor( 'home' ) );
 
 		}
 
@@ -102,7 +98,7 @@ class login extends controler {
 
 				$this->flash->addMessage( 'error', 'That service is not registered' );
 
-				return $RESPONSE->withRedirect( $this->router->pathFor( 'register' ) );
+				return $RESPONSE->withRedirect( $this->router->pathFor( 'home' ) );
 
 			break;
 

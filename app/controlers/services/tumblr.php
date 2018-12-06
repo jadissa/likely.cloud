@@ -81,7 +81,7 @@ class tumblr extends controler {
 
 			$this->flash->addMessage( 'error', 'Try again later' );
 
-			return $RESPONSE->withRedirect( $this->router->pathFor( 'register' ) );
+			return $RESPONSE->withRedirect( $this->router->pathFor( 'login' ) );
 
 	    }
 
@@ -101,7 +101,7 @@ class tumblr extends controler {
 
 	        $this->flash->addMessage( 'error', 'Try again later' );
 
-			return $RESPONSE->withRedirect( $this->router->pathFor( 'register' ) );
+			return $RESPONSE->withRedirect( $this->router->pathFor( 'login' ) );
 
 	    }
 
@@ -113,9 +113,9 @@ class tumblr extends controler {
 
 	    if( empty( $USER ) ) {
 
-	    	$this->flash->addMessage( 'error', 'Please register first' );
+	    	$this->flash->addMessage( 'error', 'That information seems incorrect' );
 
-	    	return $RESPONSE->withStatus( 302 )->withHeader('Location', $this->router->pathFor( 'register', [], $REQUEST->getParsedBody() ) );
+	    	return $RESPONSE->withRedirect( $this->router->pathFor( 'login' ) );
 
 	    }
 
@@ -133,17 +133,17 @@ class tumblr extends controler {
 
 	    	$this->flash->addMessage( 'error', 'Try again later' );
 
-			return $RESPONSE->withRedirect( $this->router->pathFor( 'register' ) );
+			return $RESPONSE->withRedirect( $this->router->pathFor( 'login' ) );
 
 	    }
 
 	    if( $PARSED_REQUEST['pwd'] != $DECRYPTED_DATA['pwd'] ) {
 
-	    	$this->flash->addMessage( 'error', 'That information seems incorrect' );
-
 	    	$this->logger->addInfo( serialize( [ 'non-matching credentials', __FILE__, __LINE__ ] ) );
 
-	    	return $RESPONSE->withStatus( 302 )->withHeader('Location', $this->router->pathFor( 'register', [], $REQUEST->getParsedBody() ) );
+	    	$this->flash->addMessage( 'error', 'That information seems incorrect' );
+
+	    	return $RESPONSE->withRedirect( $this->router->pathFor( 'login' ) );
 
 	    }
 
@@ -163,7 +163,7 @@ class tumblr extends controler {
 
 	        $this->flash->addMessage( 'error', 'Try again later' );
 
-	        return $RESPONSE->withRedirect( $this->router->pathFor( 'register' ) );
+	        return $RESPONSE->withRedirect( $this->router->pathFor( 'login' ) );
 
 	    }
 
