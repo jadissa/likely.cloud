@@ -2,6 +2,8 @@
 
 namespace App\controlers\lists;
 
+use App\controlers\controler;
+
 use App\models\user;
 
 class feed {

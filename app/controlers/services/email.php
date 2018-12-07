@@ -147,22 +147,14 @@ class email extends controler {
 	    $USER_SERVICE 	= user::fetchService( $USER->id, $SERVICE->id );
 
 
-	    //
-        //	Update session
-        //
-        $SERVICE_STATUSES  = [
-            false   => 'invisible',
-            true    => 'public',
-        ];
-
-        $_SESSION['user']	= [
-        	'uid'			=> $USER->id,
-        	'uname'			=> $USER->uname,
+		//
+		//	Update session
+		//
+		$AUTHENTICATED 	= user::auth( [
+			'USER'			=> [ 'uid' => $USER->id, 'uname' => $USER->uname ],
+			'SERVICE'		=> [ 'email' => service::$SERVICE_STATUSES[ !empty( $USER_SERVICE->status ) ? true : false ] ],
 			'persistent'	=> !empty( $PARSED_REQUEST['remember-me'] ) ? true : false,
-			'SERVICES'		=> [
-				'email'	=> [ 'status', $SERVICE_STATUSES[ !empty( $USER_SERVICE->status ) ? true : false ] ],
-			],
-		];
+		] );
 
 		$this->flash->addMessage( 'info', 'Yay you\'ve returned!' );
 

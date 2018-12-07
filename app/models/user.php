@@ -215,15 +215,16 @@ class user extends Model  {
 	/**
 	 * 	Gets a list of users within context
 	 *
-	 *	@param 	string 	$context (registered, public)
+	 *	@param 	string 	$context (online, invisible)
 	 *
 	 * 	@return array
 	 */
-	public function fetchUsers( $context = 'registered' ) {
+	public function fetchUsers( $context = 'online' ) {
 
-		$USERS 	= self::select( 'users.id', 'users.uname', 'user_services.status', 'user_services.updated_at', 'user_services.stype' )
-			->where( 'user_services.status', $context )
+		$USERS 	= self::select( 'users.id', 'users.uname', 'users.updated_at', 'user_services.status as user_service_status', 'user_services.stype', 'user_data.status as user_data_status' )
+			->where( 'user_data.status', $context )
 			->join( 'user_services', 'users.id', '=', 'user_services.uid' )
+			->join( 'user_data', 'users.id', '=', 'user_data.uid' )
 			->orderBy( 'user_services.updated_at', 'desc' )
 			->get();
 
@@ -286,6 +287,38 @@ class user extends Model  {
 
 
 	/**
+	 * 	Updates a user session
+	 * 	
+	 * 	@param 	array 	$DATA 
+	 * 	
+	 * 	@return bool
+	 */
+	public function auth( array $DATA = [] ) {
+
+		if( empty( $DATA ) 
+			or empty( $DATA['USER'] ) 
+			or empty( $DATA['SERVICE'] ) ) {
+
+			return false;
+
+		}
+
+		$_SESSION['user']	= $DATA['USER'];
+
+		! empty( $_SESSION['SERVICES'] ) ? array_push( $_SESSION['SERVICES'], $DATA['SERVICE'] ) : $_SESSION['SERVICES'][] = $DATA['SERVICE'];
+
+		self::where( 'id', self::getId() )
+			->update( [ 'updated_at' => date( 'Y-m-d H:i:s' ) ] );
+
+		user_data::where( 'uid', self::getId() )
+			->update( [ 'status' => 'online' ] );
+
+		return true;
+
+	}
+
+
+	/**
 	 * 	Determines if user signed in
 	 * 
 	 * 	@return bool
@@ -310,6 +343,8 @@ class user extends Model  {
 	public function logout() {
 
 		unset( $_SESSION['user'] );
+
+		session_destroy();
 
 		return true;
 

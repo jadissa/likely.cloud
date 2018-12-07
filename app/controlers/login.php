@@ -80,8 +80,6 @@ class login extends controler {
 
 				return $SERVICE->login( $REQUEST, $RESPONSE );
 
-				#return $RESPONSE->withStatus( 302 )->withHeader('Location', $this->router->pathFor( 'services.tumblr.register', [], $REQUEST->getParsedBody() ) );
-
 			break;
 
 			case 'username':
@@ -89,8 +87,6 @@ class login extends controler {
 				$SERVICE 	= new services\email( $this->CONTAINER );
 
 				return $SERVICE->login( $REQUEST, $RESPONSE );
-
-				#return $RESPONSE->withStatus( 302 )->withHeader('Location', $this->router->pathFor( 'services.email.register', [], $REQUEST->getParsedBody() ) );
 
 			break;
 

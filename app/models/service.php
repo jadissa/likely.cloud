@@ -23,6 +23,15 @@ class service extends Model  {
 	];
 
 
+	//
+	//	Service statuses
+	//
+	public static $SERVICE_STATUSES  = [
+        false   => 'invisible',
+        true    => 'public',
+    ];
+
+
 	/**
 	 * 	Gets a service by id
 	 * 

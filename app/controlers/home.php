@@ -4,6 +4,8 @@ namespace App\controlers;
 
 use App\models\user;
 
+use App\controlers\controler;
+
 use App\controlers\lists\feed as feed;
 
 use App\controlers\lists\users as users;
@@ -22,14 +24,6 @@ class home extends controler {
 	public function index( $REQUEST, $RESPONSE ) {
 
 		//
-		//	Setup view
-		//
-		$USERS 	= users::getUsers( 'public' );
-
-		$this->view->getEnvironment()->addGlobal( 'BUDDIES', $USERS );
-
-
-		//
 		//	Redirect check
 		//
 		if( empty( user::authenticated() ) ) {
@@ -38,12 +32,16 @@ class home extends controler {
 			
 		}
 
+
+		//
+		//	Setup view
+		//
 		$FEED_DATA 	= feed::getRecentRegistries();
 
 		$this->view->getEnvironment()->addGlobal( 'SERVICE_REGISTRIES', $FEED_DATA['SERVICE_REGISTRIES'] );
 
 
-		$USERS 	= users::getUsers( 'registered' );
+		$USERS 	= users::getUsers( 'online' );
 
 		$this->view->getEnvironment()->addGlobal( 'BUDDIES', $USERS );
 

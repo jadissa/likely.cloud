@@ -20,6 +20,8 @@ abstract class controler {
 		$this->CONTAINER = $CONTAINER;
 
 		$this->view->getEnvironment()->addGlobal( 'theme', $this->settings['theme'][0] );
+
+		ini_set( 'date.timezone', $this->settings['timezone'] );
 		
 	}
 
