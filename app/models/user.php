@@ -199,7 +199,7 @@ class user extends Model  {
 			->join( 'services', 'user_services.sid', '=', 'services.id' )
 			->orderBy( 'users.created_at', 'desc' )
 			->limit( 20 )
-			->get();
+			->get()->keyBy( 'id' );
 
 		if( empty( $REGISTRIES ) ) {
 
@@ -226,7 +226,7 @@ class user extends Model  {
 			->join( 'user_services', 'users.id', '=', 'user_services.uid' )
 			->join( 'user_data', 'users.id', '=', 'user_data.uid' )
 			->orderBy( 'user_services.updated_at', 'desc' )
-			->get();
+			->get()->keyBy( 'id' );
 
 		if( empty( $USERS ) ) {
 

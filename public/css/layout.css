@@ -30,6 +30,8 @@ color:                  #fff;
 
 width:                  100%;
 
+overflow:               hidden;
+
 }
 
 html, body {
@@ -45,6 +47,26 @@ flex-direction:         column;
 body > * {
 
 flex-shrink:            0;
+
+}
+
+body::-webkit-scrollbar {
+
+width:                  1em;
+
+}
+ 
+body::-webkit-scrollbar-track {
+
+-webkit-box-shadow:     inset 0 0 6px rgba(0,0,0,0.3);
+
+}
+ 
+body::-webkit-scrollbar-thumb {
+
+background-color:       #232222;
+
+outline: 1px solid      #000;
 
 }
 
@@ -144,12 +166,11 @@ animation:              blue-color 2s infinite;
 
 
 @keyframes content {
-    0% {
-        transform: translateX(-100%);
-    }
-    100% {
-        transform: translateX(0);
-    }
+
+0%                      { transform: translateX(-100%); }
+
+100%                    { transform: translateX(0); }
+
 }
 
 
@@ -272,9 +293,11 @@ background-color:       #232222;
 
 .feed-item {
 
-	    border-bottom: 1px solid #403839;
-    padding: 10px;
-    max-height: 300px;
+border-bottom:          1px solid #403839;
+
+padding:                10px;
+
+max-height:             300px;
 
 }
 
@@ -312,13 +335,162 @@ width:              	100%;
 
 }
 
-.user_list {
+.user-list-toggle {
 
-float: right;
-    position: fixed;
-    top: 0;
-    right: 0;
-    z-index: 99999;
+z-index:                1;
+
+margin-top:             50px;
+
+padding-right: 10px;
+    text-align: right;
+
+float:                  right;
+
+position:               fixed;
+
+bottom:                 0;
+
+right:                  0;
+
+width:                  113px;
+
+}
+
+.user-list {
+
+float:                  right;
+
+position:               fixed;
+
+overflow-y:             scroll;
+
+align-items:            center;
+
+bottom:                 0;
+
+right:                  0;
+
+width:                  113px;
+
+height:                 100%;
+
+padding:                5px;
+
+}
+
+.user-list::-webkit-scrollbar {
+
+width:                  1em;
+
+}
+ 
+.user-list::-webkit-scrollbar-track {
+
+-webkit-box-shadow:     inset 0 0 6px rgba(0,0,0,0.3);
+
+}
+ 
+.user-list::-webkit-scrollbar-thumb {
+
+background-color:       #232222;
+
+outline: 1px solid      #000;
+
+}
+
+.user-buddy-detail {
+
+display:                block;
+
+text-align:             right;
+
+}
+
+.user-buddy-detail:hover {
+
+background-color:       #fa29fc;
+
+}
+
+.user-buddy-online, .user-buddy-away {
+
+display:                inline-block;
+
+vertical-align:         top;
+
+white-space:            nowrap;
+
+text-overflow:          ellipsis;
+
+overflow:               hidden;
+
+height:                 20px;
+
+line-height:            20px;
+
+max-width:              78px;
+
+}
+
+.user-buddy-online:hover, .user-buddy-away:hover {
+
+color:                  #fff;
+
+}
+
+.user-buddy-online {
+
+
+
+}
+
+.user-buddy-away {
+
+color:                  grey;
+
+}
+
+.user-online {
+
+margin-top:             5px;
+
+margin-left:            2px;
+
+float:                  right;
+
+width:                  10px;
+
+height:                 10px;
+
+background-color:       #07bd07;
+
+border-radius:          50%;
+
+content:                ".";
+
+display:                inline-block;
+
+}
+
+.user-away {
+
+margin-top:             5px;
+
+margin-left:            2px;
+
+float:                  right;
+
+width:                  10px;
+
+height:                 10px;
+
+background-color:       orange;
+
+border-radius:          50%;
+
+content:                ".";
+
+display:                inline-block;
 
 }
 
@@ -403,6 +575,8 @@ width:                  100%;
 
 .navbar-toggler {
 
+position:               static;
+
 border:                 1px solid #232222;
 
 }
@@ -410,6 +584,12 @@ border:                 1px solid #232222;
 .nav-tabs .nav-item {
 
 margin-bottom: 			inherit;
+
+}
+
+.btn-primary.focus, .btn-primary:focus {
+
+    color:              #fff;
 
 }
 
@@ -492,3 +672,32 @@ width: 					100%;
 margin-bottom: 			25px;
 
 }
+
+
+/*
+alternate buddy list
+.user-list {
+
+    width: 100%;
+
+        max-height: 200px;
+
+}
+
+.user-buddy-detail {
+
+text-align: left;
+
+}
+
+.user-away {
+
+    float: left;
+}
+
+.user-online {
+
+
+    float: left;
+}
+*/

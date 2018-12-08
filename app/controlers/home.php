@@ -8,8 +8,6 @@ use App\controlers\controler;
 
 use App\controlers\lists\feed as feed;
 
-use App\controlers\lists\users as users;
-
 class home extends controler {
 
 	/**
@@ -39,11 +37,6 @@ class home extends controler {
 		$FEED_DATA 	= feed::getRecentRegistries();
 
 		$this->view->getEnvironment()->addGlobal( 'SERVICE_REGISTRIES', $FEED_DATA['SERVICE_REGISTRIES'] );
-
-
-		$USERS 	= users::getUsers( 'online' );
-
-		$this->view->getEnvironment()->addGlobal( 'BUDDIES', $USERS );
 
 		$this->view->getEnvironment()->addGlobal( 'user', $_SESSION['user'] );
 

@@ -1,14 +1,40 @@
-<div class="user_list">
+<div class="user-list-toggle content rounded">
 
-    <strong class="block">Users</strong>
+	<a class="btn btn-primary" data-toggle="collapse" href="#user-list" role="button" aria-expanded="true" aria-controls="multiCollapseExample1">Users</a>
 
-    {% if BUDDIES is not empty %}
+</div>
 
-      {% for BUDDY in BUDDIES %}
+<div id="user-list" class="user-list content collapse">
 
-        <div class="buddy block">{{ BUDDY.uname }} {{ BUDDY.user_data_status }}</div>
+	{% if BUDDIES is not empty %}
 
-      {% endfor %}
+		{% for i in range(0, 100) %}
+    	{% for BUDDY in BUDDIES %}
+
+			{% if BUDDY.user_data_status == 'online' %}
+
+		        <div class="user-buddy-detail">
+
+		        	<div class="user-buddy-online">{{ BUDDY.uname }}</div>
+
+		        	<div class="user-online"></div>
+
+				</div>
+
+			{% elseif BUDDY.user_data_status == 'away' %} 
+
+				<div class="user-buddy-detail">
+
+					<div class="user-buddy-away">{{ BUDDY.uname }}</div>
+
+					<div class="user-away"></div>
+
+		        </div>
+
+	        {% endif %} 
+
+      	{% endfor %}
+      	{% endfor %}
 
     {% endif %}
 
