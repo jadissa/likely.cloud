@@ -23,8 +23,6 @@ class preferences {
 
 		$USER_PREFERNCES	= [];
 
-		var_dump( $_SESSION );
-
 		$USER_DATA			= user_data::fetchById( user::getId() );
 
 		$USER_PREFERNCES = [

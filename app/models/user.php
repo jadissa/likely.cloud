@@ -373,6 +373,8 @@ class user extends Model  {
 		//
 		//	Check for session
 		//
+		session::regenerateId();
+		
 		$user_id 	= self::getId();
 
 		if( !empty( $user_id ) ) {
@@ -380,8 +382,6 @@ class user extends Model  {
 			return true;
 
 		}
-
-		session::regenerateId();
 		
 		
 		//
@@ -404,8 +404,6 @@ class user extends Model  {
 				return false;
 
 			}
-
-			session::regenerateId();
 
 			$USER_UPDATED 	= self::updateUser( $USER->getAttributes() );
 
