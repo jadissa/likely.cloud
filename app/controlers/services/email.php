@@ -151,10 +151,9 @@ class email extends controler {
 		//	Update session
 		//
 		$AUTHENTICATED 	= user::auth( [
-			'USER'			=> [ 'uid' => $USER->id, 'uname' => $USER->uname ],
-			'SERVICE'		=> [ 'email' => service::$SERVICE_STATUSES[ !empty( $USER_SERVICE->status ) ? true : false ] ],
+			'USER'			=> ( array ) $USER->getAttributes(),
 			'persistent'	=> !empty( $PARSED_REQUEST['remember-me'] ) ? true : false,
-		] );
+		], $this->settings, new crypt( $this->CONTAINER ) );
 
 		$this->flash->addMessage( 'info', 'Yay you\'ve returned!' );
 

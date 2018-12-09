@@ -18,10 +18,7 @@ class logout extends controler {
 	 */
 	public function get( $REQUEST, $RESPONSE ) {
 
-		if( !empty( user::authenticated() ) ) {
-
-			user::logout();
-		}
+		user::logout();
 
 		return $RESPONSE->withRedirect( $this->router->pathFor( 'login' ) );
 

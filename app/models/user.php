@@ -6,6 +6,12 @@
 
 namespace App\models;
 
+use App\models\cookie;
+
+use App\models\session;
+
+use App\models\setting;
+
 use \Illuminate\Database\Eloquent\Model;
 
 class user extends Model  {
@@ -290,28 +296,61 @@ class user extends Model  {
 	 * 	Updates a user session
 	 * 	
 	 * 	@param 	array 	$DATA 
+	 * 	@param 	object 	$SETTINGS
+	 * 	@param 	object 	$CRYPT
 	 * 	
 	 * 	@return bool
 	 */
-	public function auth( array $DATA = [] ) {
+	public function auth( array $DATA, object $SETTINGS, object $CRYPT ) {
 
 		if( empty( $DATA ) 
 			or empty( $DATA['USER'] ) 
-			or empty( $DATA['SERVICE'] ) ) {
+			or empty( $SETTINGS ) 
+			or empty( $CRYPT ) ) {
 
 			return false;
 
 		}
 
-		$_SESSION['user']	= $DATA['USER'];
 
-		! empty( $_SESSION['SERVICES'] ) ? array_push( $_SESSION['SERVICES'], $DATA['SERVICE'] ) : $_SESSION['SERVICES'][] = $DATA['SERVICE'];
+		//
+		//	Remember me check
+		//
+		if( !empty( $DATA['persistent'] ) and !empty( $SETTINGS['session'][0]['ini_settings'][0]['session.use_cookies'] ) ) {
 
-		self::where( 'id', self::getId() )
-			->update( [ 'updated_at' => date( 'Y-m-d H:i:s' ) ] );
+			//
+			//	Build persistent string
+			//
+			$PERSISTENT 	= [
+				'name' 		=> setting::fetchByName( 'session_name' )->value,
+				'data'		=> time() . self::getId() . random_bytes( 16 ) . session::getId(),
+			];
 
-		user_data::where( 'uid', self::getId() )
-			->update( [ 'status' => 'online' ] );
+
+			//
+			//  Encrypt the data
+			//
+			$ENCRYPTED_DATA	= $CRYPT->encrypt( [ 'data' => $PERSISTENT['data'] ], $SETTINGS['api_hash'] );
+
+		    if( empty( $ENCRYPTED_DATA ) ) {
+
+		    	return false;
+
+		    }
+
+
+		    //
+			//	Update user
+			//
+			$DATA['USER']['cookie']	= $ENCRYPTED_DATA['data'];
+
+			session::set( 'page_requests', 0 );
+
+			self::updateUser( $DATA['USER'] );
+
+		    cookie::set( $PERSISTENT['name'], $DATA['USER']['cookie'], $SETTINGS['session'][0]['ini_settings'][0]['session.cookie_lifetime'] );
+			
+		}
 
 		return true;
 
@@ -319,19 +358,114 @@ class user extends Model  {
 
 
 	/**
-	 * 	Determines if user signed in
+	 * 	Determines if user can be signed in
 	 * 
 	 * 	@return bool
 	 */
-	public function authenticated() {
+	public function authenticated( $CONTAINER, $SETTINGS ) {
 
-		return isset( $_SESSION['user']['uid'] );
+		//
+		//	Check for session
+		//
+		$user_id 	= self::getId();
+
+		if( !empty( $user_id ) ) {
+
+			return true;
+
+		}
+
+		session::regenerateId();
+		
+		
+		//
+		//	Check for cookie
+		//
+		$session_name 	= setting::fetchByName( 'session_name' )->value;
+
+		if( !empty( $SETTINGS['session'][0]['ini_settings'][0]['session.use_cookies'] ) and !empty( $session_name ) and !empty( $_COOKIE[ $session_name ] ) ) {
+
+			$USER['cookie']	= unserialize( $_COOKIE[ $session_name ] );
+
+			$USER 			= user_data::where( 'cookie', $USER['cookie'] )->where( 'sessid', session::getId() )->join( 'users', 'user_data.uid', '=', 'users.id' )->first();
+
+			if( empty( $USER ) ) {
+
+				return false;
+
+			}
+
+			session::regenerateId();
+
+			$USER_UPDATED 	= self::updateUser( $USER->getAttributes() );
+
+			return !empty( $USER_UPDATED );
+
+		}
+
+
+		//
+		//	The user cannot be signed in
+		//
+		return false;
 
 	}
 
+
+	private function updateUser( $USER ) {
+
+		if( empty( $USER ) ) return false;
+
+
+		//
+		//	Populate session
+		//
+		$SESSION_USER 	= session::get( 'user' );
+
+		if( empty( $SESSION_USER ) ) {
+
+			session::set( 'user', $USER );
+
+		}
+
+
+		//
+		//	Update the user last updated
+		//
+		self::where( 'id', $USER['uid'] )
+			->update( [ 'updated_at' => date( 'Y-m-d H:i:s' ) ] );
+
+
+		//
+		//	Update the user status
+		//
+		if( $USER['status'] != 'online' ) {
+
+			user_data::where( 'uid', $USER['uid'] )
+				->update( [ 'status' => 'online', 'cookie' => $USER['cookie'] ] );
+
+		}
+
+
+		//
+		//	Update the user session
+		//
+		if( session::getId() != $USER['sessid'] ) {
+
+			user_data::where( 'uid', $USER['uid'] )
+				->update( [ 'sessid' => session::getId() ] );
+
+		}
+
+		return true;
+
+	}
+
+
 	public function getId() {
 
-		return !empty( self::authenticated() ) ? $_SESSION['user']['uid'] : null;
+		return session::get( 'uid' );
+
 	}
 
 
@@ -342,11 +476,30 @@ class user extends Model  {
 	 */
 	public function logout() {
 
-		unset( $_SESSION['user'] );
+		//
+		//	Check for cookie
+		//
+		$session_name 	= setting::fetchByName( 'session_name' )->value;
 
-		session_destroy();
+		if( !empty( $SETTINGS['session'][0]['ini_settings'][0]['session.use_cookies'] ) and !empty( $session_name ) and !empty( cookie::get( $session_name ) ) ) {
 
-		return true;
+			$USER['cookie']	= unserialize( cookie::get( $session_name ) );
+
+			$USER_UPDATED 	= user_data::where( 'uid', self::getId() )->where( 'cookie', $USER['cookie'] )->where( 'sessid', session::getId() )->update( [ 'sessid' => '' ] );
+
+		} else {
+
+			$USER_UPDATED 	= user_data::where( 'uid', self::getId() )->where( 'sessid', session::getId() )->update( [ 'sessid' => '' ] );
+
+		}
+
+		session::unset( 'user' );
+
+		cookie::set( $session_name, null, 0 );
+
+		cookie::unset( $session_name );
+
+		return !empty( $USER_UPDATED );
 
 	}
 

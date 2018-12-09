@@ -22,16 +22,6 @@ class home extends controler {
 	public function index( $REQUEST, $RESPONSE ) {
 
 		//
-		//	Redirect check
-		//
-		if( empty( user::authenticated() ) ) {
-
-			return $RESPONSE->withRedirect( $this->router->pathFor( 'login' ) );
-			
-		}
-
-
-		//
 		//	Setup view
 		//
 		$FEED_DATA 	= feed::getRecentRegistries();

@@ -29,7 +29,6 @@ $SETTINGS['displayErrorDetails']    = !empty( $SETTINGS['debug'] ) ? true : fals
 $SETTINGS['api_hash']               = 'Gbr363GBcULpP5RepWNCs9DWh6bmkuRt';
 
 # https://laravel.com/docs/5.7/database#configuration
-# https://www.youtube.com/watch?v=70IkLMkPyPs&list=PLOfTY28w1MFlKq7fNPUlQol6Uzp3VXkBM&index=7
 # https://github.com/illuminate/database
 # https://laravel.com/docs/5.7/queries
 $SETTINGS['db']                     = [
@@ -209,14 +208,14 @@ $CONTAINER['logger']    = function() use( $SETTINGS ) {
 
 };
 
-$APP->add( new \App\middleware\csrf( $CONTAINER ) );
+$APP->add( new \App\middleware\csrf( $CONTAINER, $SETTINGS ) );
 $APP->add( $CONTAINER->get( 'csrf' ) );
 
-$APP->add( new \App\middleware\validation( $CONTAINER ) );
+$APP->add( new \App\middleware\validation( $CONTAINER, $SETTINGS ) );
 
-$APP->add( new \App\middleware\input( $CONTAINER ) );
+$APP->add( new \App\middleware\input( $CONTAINER, $SETTINGS ) );
 
-$APP->add( new \App\middleware\flash( $CONTAINER ) );
+$APP->add( new \App\middleware\flash( $CONTAINER, $SETTINGS ) );
 
 # @todo: implement custom rules
 #v::with( 'App\\validation\\rules\\' );

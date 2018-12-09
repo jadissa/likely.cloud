@@ -44,7 +44,7 @@ $APP->group( '', function() {
 
 	$this->get( '/logout', 'logout:get' )->setName( 'logout' );
 
-})->add( new authenticatedRoutes( $CONTAINER ) );
+})->add( new authenticatedRoutes( $CONTAINER, $SETTINGS ) );
 
 
 //
@@ -76,7 +76,7 @@ $APP->group( '', function() {
 	$this->get( '/services/email_persist', 'services:persistEmail' )->setName( 'service.email_persist' );
 	*/
 
-})->add( new guestRoutes( $CONTAINER ) );
+})->add( new guestRoutes( $CONTAINER, $SETTINGS ) );
 
 
 //

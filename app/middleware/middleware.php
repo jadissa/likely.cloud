@@ -6,9 +6,11 @@ class middleware {
 
 	protected $CONTAINER;
 
-	public function __construct( $CONTAINER ) {
+	public function __construct( $CONTAINER, $SETTINGS ) {
 
 		$this->CONTAINER	= $CONTAINER;
+
+		$this->SETTINGS 	= $SETTINGS;
 
 	}
 

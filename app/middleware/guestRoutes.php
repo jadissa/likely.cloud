@@ -6,7 +6,7 @@ class guestRoutes extends middleware {
 
 	public function __invoke( $REQUEST, $RESPONSE, $NEXT ) {
 
-		if( isset( $_SESSION['user']['uid'] ) ) {
+		if( !empty( \App\models\user::authenticated( $this->CONTAINER, $this->SETTINGS ) ) ) {
 
 			return $RESPONSE->withRedirect( $this->router->pathFor( 'home' ) );
 
