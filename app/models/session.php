@@ -99,7 +99,7 @@ class session {
 	 * 	@return bool
 	 */
 	public function regenerateId() {
-
+		
 		if( empty( $_SESSION ) ) {
 
 			return false;

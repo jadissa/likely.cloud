@@ -344,7 +344,13 @@ class user extends Model  {
 			//
 			$DATA['USER']['cookie']	= $ENCRYPTED_DATA['data'];
 
-			session::set( 'page_requests', 0 );
+			$USER_SESSION_DATA 	= [
+				'uid'			=> $DATA['USER']['uid'],
+				'uname'			=> $DATA['USER']['uname'],
+				'page_requests'	=> 0,
+			];
+
+			session::set( 'user', $USER_SESSION_DATA );
 
 			self::updateUser( $DATA['USER'] );
 
@@ -387,7 +393,11 @@ class user extends Model  {
 
 			$USER['cookie']	= unserialize( $_COOKIE[ $session_name ] );
 
-			$USER 			= user_data::where( 'cookie', $USER['cookie'] )->where( 'sessid', session::getId() )->join( 'users', 'user_data.uid', '=', 'users.id' )->first();
+			$USER 			= user_data::where( 'cookie', $USER['cookie'] )
+				->where( 'sessid', session::getId() )
+				->where( 'sessid', '<>', '' )
+				->join( 'users', 'user_data.uid', '=', 'users.id' )
+				->first();
 
 			if( empty( $USER ) ) {
 
@@ -438,13 +448,12 @@ class user extends Model  {
 
 		//
 		//	Update the user status
-		//
-		if( $USER['status'] != 'online' ) {
-
-			user_data::where( 'uid', $USER['uid'] )
-				->update( [ 'status' => 'online', 'cookie' => $USER['cookie'] ] );
-
-		}
+		//	@todo: consider storing status value in session?
+		user_data::where( 'uid', $USER['uid'] )
+			->update( [ 
+				'status' => 'online', 
+				'cookie' => $USER['cookie'],
+			] );
 
 
 		//
