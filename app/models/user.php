@@ -369,19 +369,6 @@ class user extends Model  {
 	 * 	@return bool
 	 */
 	public function authenticated( $CONTAINER, $SETTINGS ) {
-
-		//
-		//	Check for session
-		//
-		session::regenerateId();
-		
-		$user_id 	= self::getId();
-
-		if( !empty( $user_id ) ) {
-
-			return true;
-
-		}
 		
 		
 		//
@@ -392,7 +379,7 @@ class user extends Model  {
 		if( !empty( $SETTINGS['session'][0]['ini_settings'][0]['session.use_cookies'] ) and !empty( $session_name ) and !empty( $_COOKIE[ $session_name ] ) ) {
 
 			$USER['cookie']	= unserialize( $_COOKIE[ $session_name ] );
-
+			# @todo: check out best practices for looking up a user via cookie to be sure we are doing this right
 			$USER 			= user_data::where( 'cookie', $USER['cookie'] )
 				->where( 'sessid', session::getId() )
 				->where( 'sessid', '<>', '' )
@@ -408,6 +395,20 @@ class user extends Model  {
 			$USER_UPDATED 	= self::updateUser( $USER->getAttributes() );
 
 			return !empty( $USER_UPDATED );
+
+		}
+
+
+		//
+		//	Check for session
+		//
+		session::regenerateId();
+
+		$user_id 	= self::getId();
+
+		if( !empty( $user_id ) ) {
+
+			return true;
 
 		}
 
