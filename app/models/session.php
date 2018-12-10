@@ -82,6 +82,8 @@ class session {
 
 			session_destroy();
 
+			unset( $_SESSION );
+
 		} else {
 
 			unset( $_SESSION['user'][ $name ] );

@@ -43,7 +43,7 @@ class cookie {
 
 		}
 
-		return !empty( $_COOKIE[ $name ] ) ? $_COOKIE[ $name ] : null;
+		return !empty( $_COOKIE[ $name ] ) ? unserialize( $_COOKIE[ $name ] ) : null;
 
 	}
 

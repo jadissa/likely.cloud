@@ -4,6 +4,8 @@ namespace App\controlers;
 
 use App\models\user;
 
+use App\models\session;
+
 use App\controlers\controler;
 
 use App\controlers\lists\feed as feed;
@@ -28,7 +30,7 @@ class home extends controler {
 
 		$this->view->getEnvironment()->addGlobal( 'SERVICE_REGISTRIES', $FEED_DATA['SERVICE_REGISTRIES'] );
 
-		$this->view->getEnvironment()->addGlobal( 'user', $_SESSION['user'] );
+		$this->view->getEnvironment()->addGlobal( 'user', session::get( 'user' ) );
 
 		return $this->view->render( $RESPONSE, 'home.twig' );
 
@@ -49,7 +51,7 @@ class home extends controler {
 		//
 		//	Setup view
 		//
-		$this->view->getEnvironment()->addGlobal( 'user', !empty( $_SESSION['user'] ) ? $_SESSION['user'] : null );
+		$this->view->getEnvironment()->addGlobal( 'user', session::get( 'user' ) );
 
 		return $this->view->render( $RESPONSE, 'policy.twig' );
 

@@ -370,15 +370,14 @@ class user extends Model  {
 	 */
 	public function authenticated( $CONTAINER, $SETTINGS ) {
 		
-		
 		//
 		//	Check for cookie
 		//
 		$session_name 	= setting::fetchByName( 'session_name' )->value;
 
-		if( !empty( $SETTINGS['session'][0]['ini_settings'][0]['session.use_cookies'] ) and !empty( $session_name ) and !empty( $_COOKIE[ $session_name ] ) ) {
+		if( !empty( $SETTINGS['session'][0]['ini_settings'][0]['session.use_cookies'] ) and !empty( $session_name ) and !empty( cookie::get( $session_name ) ) ) {
 
-			$USER['cookie']	= unserialize( $_COOKIE[ $session_name ] );
+			$USER['cookie']	= cookie::get( $session_name );
 			# @todo: check out best practices for looking up a user via cookie to be sure we are doing this right
 			$USER 			= user_data::where( 'cookie', $USER['cookie'] )
 				->where( 'sessid', session::getId() )
@@ -491,13 +490,18 @@ class user extends Model  {
 
 		if( !empty( $SETTINGS['session'][0]['ini_settings'][0]['session.use_cookies'] ) and !empty( $session_name ) and !empty( cookie::get( $session_name ) ) ) {
 
-			$USER['cookie']	= unserialize( cookie::get( $session_name ) );
+			$USER['cookie']	= cookie::get( $session_name );
 
-			$USER_UPDATED 	= user_data::where( 'uid', self::getId() )->where( 'cookie', $USER['cookie'] )->where( 'sessid', session::getId() )->update( [ 'sessid' => '' ] );
+			$USER_UPDATED 	= user_data::where( 'uid', self::getId() )
+				->where( 'cookie', $USER['cookie'] )
+				->where( 'sessid', session::getId() )
+				->update( [ 'sessid' => '' ] );
 
 		} else {
 
-			$USER_UPDATED 	= user_data::where( 'uid', self::getId() )->where( 'sessid', session::getId() )->update( [ 'sessid' => '' ] );
+			$USER_UPDATED 	= user_data::where( 'uid', self::getId() )
+			->where( 'sessid', session::getId() )
+			->update( [ 'sessid' => '' ] );
 
 		}
 
