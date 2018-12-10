@@ -83,3 +83,5 @@ $APP->group( '', function() {
 //	Everyone routes
 //
 $APP->get( '/policy', 'home:getPolicy' )->setName( 'policy' );
+
+$APP->get( '/disabled', 'home:getDisabled' )->setName( 'disabled' );

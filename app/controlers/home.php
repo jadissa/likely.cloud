@@ -17,7 +17,6 @@ class home extends controler {
 	 *
 	 *	@param 	object 	$REQUEST
 	 * 	@param 	object 	$RESPONSE
-	 *	@param 	object 	$ARGS
 	 *
 	 * 	@return bool
 	 */
@@ -30,8 +29,6 @@ class home extends controler {
 
 		$this->view->getEnvironment()->addGlobal( 'SERVICE_REGISTRIES', $FEED_DATA['SERVICE_REGISTRIES'] );
 
-		$this->view->getEnvironment()->addGlobal( 'user', session::get( 'user' ) );
-
 		return $this->view->render( $RESPONSE, 'home.twig' );
 
 	}
@@ -42,18 +39,27 @@ class home extends controler {
 	 *
 	 *	@param 	object 	$REQUEST
 	 * 	@param 	object 	$RESPONSE
-	 *	@param 	object 	$ARGS
 	 *
 	 * 	@return bool
 	 */
-	public function getPolicy( $REQUEST, $RESPONSE, $ARGS ) {
-
-		//
-		//	Setup view
-		//
-		$this->view->getEnvironment()->addGlobal( 'user', session::get( 'user' ) );
+	public function getPolicy( $REQUEST, $RESPONSE ) {
 
 		return $this->view->render( $RESPONSE, 'policy.twig' );
+
+	}
+
+
+	/**
+	 * 	Renders the disabled view
+	 *
+	 *	@param 	object 	$REQUEST
+	 * 	@param 	object 	$RESPONSE
+	 *
+	 * 	@return bool
+	 */
+	public function getDisabled( $REQUEST, $RESPONSE ) {
+
+		return $this->view->render( $RESPONSE, 'disabled.twig' );
 
 	}
 

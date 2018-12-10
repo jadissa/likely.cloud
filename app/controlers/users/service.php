@@ -42,12 +42,6 @@ class service extends controler {
 
 		$this->view->getEnvironment()->addGlobal( 'AVAILABLE_SERVICES', $AVAILABLE_SERVICES );
 
-		
-		//
-		//	Setup view
-		//
-		$this->view->getEnvironment()->addGlobal( 'user', $_SESSION['user'] );
-
 		return $this->view->render( $RESPONSE, 'users/services.twig' );
 
 	}

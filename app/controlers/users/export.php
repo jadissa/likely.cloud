@@ -6,6 +6,8 @@ use App\controlers\controler;
 
 use Respect\Validation\Validator as v;
 
+use App\models\session;
+
 use App\models\users\exports;
 
 class export extends controler {
@@ -27,12 +29,6 @@ class export extends controler {
 		$USER_EXPORTS 	= exports::getForUser( $service_type );
 
 		$this->view->getEnvironment()->addGlobal( 'USER_EXPORTS', $USER_EXPORTS );
-
-		
-		//
-		//	Setup view
-		//
-		$this->view->getEnvironment()->addGlobal( 'user', $_SESSION['user'] );
 
 		return $this->view->render( $RESPONSE, 'users/exports.twig' );
 

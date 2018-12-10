@@ -66,8 +66,6 @@ class register extends controler {
 		//
 		if( empty( $REQUEST->getParam( 'service' ) ) ) {
 
-			$this->flash->addMessage( 'error', 'That service is not registered' );
-
 			return $RESPONSE->withRedirect( $this->router->pathFor( 'register' ) );
 
 		}
@@ -91,8 +89,6 @@ class register extends controler {
 			break;
 
 			default:
-
-				$this->flash->addMessage( 'error', 'That service is not registered' );
 
 				return $RESPONSE->withRedirect( $this->router->pathFor( 'register' ) );
 
