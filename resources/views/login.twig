@@ -14,27 +14,7 @@
 
 		<form name="signin" class="form" action="{{ path_for( 'login' ) }}" method="POST">
 
-			<div class="form-group">
-
-				<select name="service" id="service" class="form-control"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}>
-
-					{% for SERVICE in SERVICES %}
-
-						{% if old_input.service == SERVICE.name %}
-
-							<option value="{{ SERVICE.name }}" selected="selected">{{ SERVICE.name }}</option>
-
-						{% else %}
-
-							<option value="{{ SERVICE.name }}">{{ SERVICE.name }}</option>
-
-						{% endif %}
-
-					{% endfor %}
-
-				</select>
-
-			</div>
+			<input type="hidden" name="service" id="service" value="username" />
 
 			<div class="form-group{{ ERRORS.uname ? ' has-danger' : '' }}">
 

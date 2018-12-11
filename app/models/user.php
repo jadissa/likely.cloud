@@ -389,8 +389,6 @@ class user extends Model  {
 		//
 		$UPDATED_USER 	= self::updateUser( $DATA['USER'], $INSTANCE );
 
-		exit( $UPDATED_USER );exit;
-
 		return true;
 
 	}

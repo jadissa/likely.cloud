@@ -36,16 +36,6 @@ class login extends controler {
 
 		$this->view->getEnvironment()->addGlobal( 'SERVICE_REGISTRIES', $FEED_DATA['SERVICE_REGISTRIES'] );
 
-		$this->view->getEnvironment()->addGlobal( 'SERVICES', $ACTIVE_SERVICES );
-
-		if( empty( $ACTIVE_SERVICES ) ) {
-
-			$this->flash->addMessage( 'error', 'Try again later' );
-
-			$this->view->getEnvironment()->addGlobal( 'theme_disabled', true );
-
-		}
-
 		return $this->view->render( $RESPONSE, 'login.twig' );
 
 	}
