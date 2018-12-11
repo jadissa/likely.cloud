@@ -6,6 +6,8 @@ use App\controlers\controler;
 
 use Respect\Validation\Validator as v;
 
+use App\models\session;
+
 use App\models\users\exports;
 
 class service extends controler {
@@ -39,6 +41,8 @@ class service extends controler {
 			}
 
 		}
+
+		$this->view->getEnvironment()->addGlobal( 'user', session::get( 'user' ) );
 
 		$this->view->getEnvironment()->addGlobal( 'AVAILABLE_SERVICES', $AVAILABLE_SERVICES );
 

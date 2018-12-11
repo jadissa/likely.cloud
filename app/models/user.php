@@ -301,11 +301,11 @@ class user extends Model  {
 	 * 	
 	 * 	@return bool
 	 */
-	public function auth( array $DATA, object $SETTINGS, object $CRYPT ) {
+	public function auth( array $DATA, object $INSTANCE, object $CRYPT ) {
 
 		if( empty( $DATA ) 
 			or empty( $DATA['USER'] ) 
-			or empty( $SETTINGS ) 
+			or empty( $INSTANCE ) 
 			or empty( $CRYPT ) ) {
 
 			return false;
@@ -316,7 +316,7 @@ class user extends Model  {
 		//
 		//	Remember me check
 		//
-		if( !empty( $DATA['persistent'] ) and !empty( $SETTINGS['session'][0]['ini_settings'][0]['session.use_cookies'] ) ) {
+		if( !empty( $DATA['persistent'] ) and !empty( $INSTANCE->settings['session'][0]['ini_settings'][0]['session.use_cookies'] ) ) {
 
 			//
 			//	Build persistent string
@@ -328,9 +328,9 @@ class user extends Model  {
 
 
 			//
-			//  Encrypt the data
+			//  Encrypt data
 			//
-			$ENCRYPTED_DATA	= $CRYPT->encrypt( [ 'data' => $PERSISTENT['data'] ], $SETTINGS['api_hash'] );
+			$ENCRYPTED_DATA	= $CRYPT->encrypt( [ 'data' => $PERSISTENT['data'] ], $INSTANCE->settings['api_hash'] );
 
 		    if( empty( $ENCRYPTED_DATA ) ) {
 
@@ -340,23 +340,56 @@ class user extends Model  {
 
 
 		    //
-			//	Update user
+			//	Set session
 			//
-			$DATA['USER']['cookie']	= $ENCRYPTED_DATA['data'];
-
 			$USER_SESSION_DATA 	= [
 				'uid'			=> $DATA['USER']['uid'],
 				'uname'			=> $DATA['USER']['uname'],
+				'using_cookie'	=> true,
 				'page_requests'	=> 0,
 			];
 
-			session::set( 'user', $USER_SESSION_DATA );
+			$UPDATED_SESSION	= session::set( 'user', $USER_SESSION_DATA );
 
-			self::updateUser( $DATA['USER'] );
+			if( empty( $UPDATED_SESSION ) ) return false;
 
-		    cookie::set( $PERSISTENT['name'], $DATA['USER']['cookie'], $SETTINGS['session'][0]['ini_settings'][0]['session.cookie_lifetime'] );
+
+			//
+			//	Set cookie
+			//
+			$DATA['USER']['cookie']	= $ENCRYPTED_DATA['data'];
+
+			$UPDATED_COOKIE 	= cookie::set(
+				$PERSISTENT['name'], 
+				$ENCRYPTED_DATA['data'], 
+				$INSTANCE->settings['session'][0]['ini_settings'][0]['session.cookie_lifetime'] 
+			);
+
+			if( empty( $UPDATED_COOKIE ) ) return false;
 			
+		} else {
+
+			//
+			//	Set session
+			//
+			$USER_SESSION_DATA 	= [
+				'uid'			=> $DATA['USER']['uid'],
+				'uname'			=> $DATA['USER']['uname'],
+				'using_cookie'	=> false,
+				'page_requests'	=> 0,
+			];
+
+			if( empty( $UPDATED_SESSION ) ) return false;
+
 		}
+
+
+		//
+		//	Update user
+		//
+		$UPDATED_USER 	= self::updateUser( $DATA['USER'], $INSTANCE );
+
+		exit( $UPDATED_USER );exit;
 
 		return true;
 
@@ -368,15 +401,23 @@ class user extends Model  {
 	 * 
 	 * 	@return bool
 	 */
-	public function authenticated( $CONTAINER, $SETTINGS ) {
+	public function authenticated( $INSTANCE ) {
 		
 		//
-		//	Check for cookie
+		//	Check cookie
 		//
 		$session_name 	= setting::fetchByName( 'session_name' )->value;
 
-		if( !empty( $SETTINGS['session'][0]['ini_settings'][0]['session.use_cookies'] ) and !empty( $session_name ) and !empty( cookie::get( $session_name ) ) ) {
+		if( !empty( $INSTANCE->settings['session'][0]['ini_settings'][0]['session.use_cookies'] ) 
+			and !empty( $session_name ) 
+			and !empty( cookie::get( $session_name ) ) ) {
 
+			//
+			//	Get user where
+			//	- the current session matches
+			//	- the session is not empty
+			//	- the cookie matches
+			//
 			$USER['cookie']	= cookie::get( $session_name );
 			# @todo: check out best practices for looking up a user via cookie to be sure we are doing this right
 			$USER 			= user_data::where( 'cookie', $USER['cookie'] )
@@ -391,36 +432,45 @@ class user extends Model  {
 
 			}
 
-			$USER_UPDATED 	= self::updateUser( $USER->getAttributes() );
+		} else {
 
-			return !empty( $USER_UPDATED );
+			$USER 			= user_data::where( 'sessid', session::getId() )
+				->where( 'sessid', '<>', '' )
+				->join( 'users', 'user_data.uid', '=', 'users.id' )
+				->first();
+
+			if( empty( $USER ) ) {
+
+				return false;
+
+			}
 
 		}
 
 
 		//
-		//	Check for session
+		//	Update session
 		//
 		session::regenerateId();
 
-		$user_id 	= self::getId();
 
-		if( !empty( $user_id ) ) {
+		//
+		//	Update user
+		//
+		$USER_UPDATED 	= self::updateUser( $USER->getAttributes(), $INSTANCE );
 
-			return true;
-
-		}
+		if( empty( $USER_UPDATED ) ) return false;
 
 
 		//
-		//	The user cannot be signed in
+		//	Success
 		//
-		return false;
+		return true;
 
 	}
 
 
-	private function updateUser( $USER ) {
+	private function updateUser( $USER, $INSTANCE  ) {
 
 		if( empty( $USER ) ) return false;
 
@@ -432,35 +482,66 @@ class user extends Model  {
 
 		if( empty( $SESSION_USER ) ) {
 
-			session::set( 'user', $USER );
+			$UPDATED_SESSION 	= session::set( 'user', $USER );
+
+			if( empty( $UPDATED_SESSION ) ) return false;
 
 		}
 
 
 		//
-		//	Update the user last updated
+		//	Update user last updated
 		//
-		self::where( 'id', $USER['uid'] )
+		$UPDATED_USER 	= self::where( 'id', $USER['uid'] )
 			->update( [ 'updated_at' => date( 'Y-m-d H:i:s' ) ] );
 
 
 		//
-		//	Update the user status
-		//	@todo: consider storing status value in session?
-		user_data::where( 'uid', $USER['uid'] )
-			->update( [ 
-				'status' => 'online', 
-				'cookie' => $USER['cookie'],
-			] );
-
-
+		//	Check for cookie
 		//
-		//	Update the user session
+		$session_name 	= setting::fetchByName( 'session_name' )->value;
+
+		if( !empty( session::get( 'user')['using_cookie'] ) 
+			and !empty( $session_name ) 
+			and !empty( cookie::get( $session_name ) ) ) {
+
+			//
+			//	Update user status
+			//
+			$UPDATED_USER 	= user_data::where( 'uid', $USER['uid'] )
+				->update( [ 
+					'status' => 'online', 
+					'sessid' => session::getId(),
+					'cookie' => $USER['cookie'],
+				] );
+
+			if( empty( $UPDATED_USER ) ) return false;
+
+		} else {
+
+			//
+			//	Update user status
+			//
+			$UPDATED_USER 	= user_data::where( 'uid', $USER['uid'] )
+				->update( [ 
+					'status' => 'online', 
+					'sessid' => session::getId(),
+				] );
+
+			if( empty( $UPDATED_USER ) ) return false;
+
+		}
+
+		
+		//
+		//	Update user session
 		//
 		if( session::getId() != $USER['sessid'] ) {
 
-			user_data::where( 'uid', $USER['uid'] )
+			$UPDATED_USER 	= user_data::where( 'uid', $USER['uid'] )
 				->update( [ 'sessid' => session::getId() ] );
+
+			# @todo: do we need a check here to see if this worked?
 
 		}
 
@@ -488,7 +569,9 @@ class user extends Model  {
 		//
 		$session_name 	= setting::fetchByName( 'session_name' )->value;
 
-		if( !empty( $SETTINGS['session'][0]['ini_settings'][0]['session.use_cookies'] ) and !empty( $session_name ) and !empty( cookie::get( $session_name ) ) ) {
+		if( !empty( $SETTINGS['session'][0]['ini_settings'][0]['session.use_cookies'] ) 
+			and !empty( $session_name ) 
+			and !empty( cookie::get( $session_name ) ) ) {
 
 			$USER['cookie']	= cookie::get( $session_name );
 

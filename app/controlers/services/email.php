@@ -141,19 +141,13 @@ class email extends controler {
 	    }
 
 
-	    //
-	    //	Fetch user service
-	    //
-	    $USER_SERVICE 	= user::fetchService( $USER->id, $SERVICE->id );
-
-
 		//
-		//	Update session
+		//	Authenticate user
 		//
 		$AUTHENTICATED 	= user::auth( [
 			'USER'			=> ( array ) $USER->getAttributes(),
 			'persistent'	=> !empty( $PARSED_REQUEST['remember-me'] ) ? true : false,
-		], $this->settings, new crypt( $this->CONTAINER ) );
+		], $this, new crypt( $this->CONTAINER ) );
 
 		$this->flash->addMessage( 'info', 'Yay you\'ve returned!' );
 

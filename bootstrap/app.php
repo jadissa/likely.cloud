@@ -28,6 +28,8 @@ $SETTINGS['displayErrorDetails']    = !empty( $SETTINGS['debug'] ) ? true : fals
 
 $SETTINGS['api_hash']               = 'Gbr363GBcULpP5RepWNCs9DWh6bmkuRt';
 
+ini_set( 'date.timezone', $SETTINGS['timezone'] );
+
 # https://laravel.com/docs/5.7/database#configuration
 # https://github.com/illuminate/database
 # https://laravel.com/docs/5.7/queries

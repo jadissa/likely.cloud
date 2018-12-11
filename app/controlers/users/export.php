@@ -28,6 +28,8 @@ class export extends controler {
 
 		$USER_EXPORTS 	= exports::getForUser( $service_type );
 
+		$this->view->getEnvironment()->addGlobal( 'user', session::get( 'user' ) );
+
 		$this->view->getEnvironment()->addGlobal( 'USER_EXPORTS', $USER_EXPORTS );
 
 		return $this->view->render( $RESPONSE, 'users/exports.twig' );

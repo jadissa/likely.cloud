@@ -26,6 +26,8 @@ class content extends controler {
 
 		$service_type	= !empty( $ROUTE->getArgument( 'stype' ) ) ? $ROUTE->getArgument( 'stype' ) : null;
 
+		$this->view->getEnvironment()->addGlobal( 'user', session::get( 'user' ) );
+
 		return $this->view->render( $RESPONSE, 'users/content.twig' );
 
 	}

@@ -12,7 +12,7 @@ class guestRoutes extends middleware {
 
 		}
 
-		if( !empty( \App\models\user::authenticated( $this->CONTAINER, $this->SETTINGS ) ) ) {
+		if( !empty( \App\models\user::authenticated( $this ) ) ) {
 
 			return $RESPONSE->withRedirect( $this->router->pathFor( 'home' ) );
 

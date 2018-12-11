@@ -148,62 +148,17 @@ class tumblr extends controler {
 	    }
 
 
-	    //
-	    //  Fetch user_service record
-	    //
-	    $EXISTING_SERVICE  = user::fetchService( $USER->id, $SERVICE->id );
-
-	    if( empty( $EXISTING_SERVICE ) ) {
-
-	        if( !empty( $this->settings['debug'] ) ) {
-
-	        	$this->logger->addInfo( serialize( [ 'something is broken ' . session_id(), __FILE__, __LINE__ ] ) );
-
-	        }
-
-	        $this->flash->addMessage( 'error', 'Try again later' );
-
-	        return $RESPONSE->withRedirect( $this->router->pathFor( 'login' ) );
-
-	    }
-
-
         //
-		//	Update session
+		//	Authenticate user
 		//
 		$AUTHENTICATED 	= user::auth( [
 			'USER'			=> ( array ) $USER->getAttributes(),
 			'persistent'	=> !empty( $PARSED_REQUEST['remember-me'] ) ? true : false,
-		], $this->settings, new crypt( $this->CONTAINER ) );
+		], $this, new crypt( $this->CONTAINER ) );
 
 	    $this->flash->addMessage( 'info', 'Yay you\'ve returned!' );
 
         return $RESPONSE->withRedirect( $this->router->pathFor( 'home' ) );
-
-
-	    //
-	    //  Decrypt the data
-	    //
-	    $CRYPT 			= new crypt( $this->CONTAINER );
-
-	    $DECRYPTED_DATA = $CRYPT->decrypt( [ 
-	    	'token'		=> $EXISTING_SERVICE['token'], 
-	    	'refresh'	=> $EXISTING_SERVICE['refresh'],
-	    ], $this->settings['api_hash'] );
-
-	    if( empty( $DECRYPTED_DATA ) ) {
-
-	        if( !empty( $this->settings['debug'] ) ) {
-
-	            $this->logger->addInfo( serialize( [ 'something is broken', __FILE__, __LINE__ ] ) );
-
-	        }
-
-	        $this->flash->addMessage( 'error', 'Please signup first' );
-
-	        return $RESPONSE->withRedirect( $this->router->pathFor( 'auth.signup' ) );
-
-	    }
 
 	}
 

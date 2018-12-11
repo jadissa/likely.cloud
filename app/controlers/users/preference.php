@@ -6,6 +6,8 @@ use App\controlers\controler;
 
 use Respect\Validation\Validator as v;
 
+use App\models\session;
+
 use App\models\users\preferences;
 
 class preference extends controler {
@@ -28,7 +30,7 @@ class preference extends controler {
 		//
 		//	Setup view
 		//
-		$this->view->getEnvironment()->addGlobal( 'user', $_SESSION['user'] );
+		$this->view->getEnvironment()->addGlobal( 'user', session::get( 'user' ) );
 
 		return $this->view->render( $RESPONSE, 'users/preferences.twig' );
 

@@ -28,9 +28,10 @@ abstract class controler {
 
 		$this->view->getEnvironment()->addGlobal( 'theme', self::$SETTINGS['theme'][0] );
 
-		ini_set( 'date.timezone', $this->settings['timezone'] );
 
-
+		//
+		//	Get online users
+		//
 		$USERS 	= users::getUsers( 'online' );
 
 		$this->view->getEnvironment()->addGlobal( 'BUDDIES', $USERS );

@@ -27,6 +27,8 @@ class home extends controler {
 		//
 		$FEED_DATA 	= feed::getRecentRegistries();
 
+		$this->view->getEnvironment()->addGlobal( 'user', session::get( 'user' ) );
+
 		$this->view->getEnvironment()->addGlobal( 'SERVICE_REGISTRIES', $FEED_DATA['SERVICE_REGISTRIES'] );
 
 		return $this->view->render( $RESPONSE, 'home.twig' );
