@@ -359,17 +359,13 @@ class email extends controler {
         }
 
 	    
-	    //
-        //	Update session
         //
-        $_SESSION['user']	= [
-        	'uid'			=> $USER->id,
-        	'uname'			=> $PARSED_REQUEST['uname'],
+		//	Authenticate user
+		//
+		$AUTHENTICATED 	= user::auth( [
+			'USER'			=> ( array ) $USER->getAttributes(),
 			'persistent'	=> !empty( $PARSED_REQUEST['remember-me'] ) ? true : false,
-			'SERVICES'		=> [
-				'email'	=> [ 'status', $SERVICE_STATUSES[ !empty( $PARSED_REQUEST['status'] ) ? true : false ] ],
-			],
-		];
+		], $this, new crypt( $this->CONTAINER ) );
 
 		$this->flash->addMessage( 'info', 'Yay for registering!' );
 

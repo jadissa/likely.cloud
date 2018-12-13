@@ -12,6 +12,8 @@ use App\models\user_service;
 
 use App\models\service;
 
+use App\models\session;
+
 class preferences {
 
 	/**
@@ -44,6 +46,8 @@ class preferences {
 	public function save( $PREFERENCES ) {
 
 		if( !empty( $PREFERENCES['user_status'] ) ) {
+
+			session::set( 'status', $PREFERENCES['user_status'] );
 
 			return user_data::edit( ['status' => $PREFERENCES['user_status'] ] );
 
