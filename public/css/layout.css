@@ -30,7 +30,7 @@ color:                  #fff;
 
 width:                  100%;
 
-overflow:               hidden;
+height: 				100%;
 
 }
 
@@ -50,23 +50,29 @@ flex-shrink:            0;
 
 }
 
-body::-webkit-scrollbar {
+::-webkit-scrollbar {
 
 width:                  1em;
 
+background-color: 		#000;
+
 }
  
-body::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
 
 -webkit-box-shadow:     inset 0 0 6px rgba(0,0,0,0.3);
 
 }
  
-body::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
 
-background-color:       #232222;
+-webkit-border-radius: 	10px;
 
-outline: 1px solid      #000;
+border-radius: 			10px;
+
+background: 			rgba(250, 41, 252, 1); 
+
+-webkit-box-shadow: 	inset 0 0 6px rgba(0,0,0,0.5); 
 
 }
 
@@ -192,9 +198,9 @@ text-decoration:        none;
 
 }
 
-.header-content {
+.header {
 
-margin-bottom:      	0;
+margin-top:      		50px;
 
 }
 
@@ -224,10 +230,6 @@ flex-grow: 				0 !important;
 
 .footer-content {
 
-position:               absolute;
-
-bottom:                 0;
-
 }
 
 .footer-content .description {
@@ -238,17 +240,14 @@ text-align:             center;
 
 .content {
 
-padding-top: 			10px;
-
-padding-bottom: 		10px;
-
 background: 			#292b2c;
 
--webkit-box-shadow:     -5px 5px 5px 0px rgba(31,16,31,1);
+-webkit-box-shadow: -5px 5px 5px 0px rgba(31,16,31,1);
+    -moz-box-shadow: -5px 5px 5px 0px rgba(31,16,31,1);
+    box-shadow: -5px 5px 5px 0px rgba(31,16,31,1);
 
--moz-box-shadow:        -5px 5px 5px 0px rgba(31,16,31,1);
 
-box-shadow:             -5px 5px 5px 0px rgba(31,16,31,1);
+
 
 /*
 transform: rotateX(180deg); 
@@ -339,21 +338,9 @@ width:              	100%;
 
 z-index:                1;
 
-margin-top:             50px;
+margin-top:             10px;
 
 padding-right:          10px;
-
-text-align:             right;
-
-float:                  right;
-
-position:               fixed;
-
-bottom:                 0;
-
-right:                  0;
-
-width:                  113px;
 
 }
 
@@ -362,6 +349,8 @@ width:                  113px;
 float:                  right;
 
 position:               fixed;
+
+z-index: 				2;
 
 overflow-y:             scroll;
 
@@ -501,8 +490,6 @@ display:                inline-block;
 
 margin: 				0;
 
-margin-bottom:          25px;
-
 padding:           		10px;
 
 clear: 					both;
@@ -572,6 +559,10 @@ outline: 				0;
 
 .navbar {
 
+position: 				fixed;
+
+z-index: 				1;
+
 width:                  100%;
 
 }
@@ -593,6 +584,12 @@ margin-bottom: 			inherit;
 .btn-primary {
 
 border-color:           transparent;
+
+-webkit-box-shadow:     -2px 2px 2px 0px rgba(31,16,31,1);
+
+-moz-box-shadow:        -2px 2px 2px 0px rgba(31,16,31,1);
+
+box-shadow:             -2px 2px 2px 0px rgba(31,16,31,1);
 
 }
 

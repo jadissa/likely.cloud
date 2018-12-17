@@ -186,7 +186,7 @@ class user_data extends Model  {
 			$INSERTION_DATA[ $field_name ]	= $DATA[ $field_name ];
 
 		}
-
+		
 		return self::where( 'uid', user::getId() )
             ->update( $INSERTION_DATA );
 

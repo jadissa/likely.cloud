@@ -18,7 +18,7 @@ class logout extends controler {
 	 */
 	public function get( $REQUEST, $RESPONSE ) {
 
-		user::logout();
+		user::logout( [ 'settings' => $this->settings, 'logger' => $this->logger ] );
 
 		return $RESPONSE->withRedirect( $this->router->pathFor( 'login' ) );
 

@@ -24,25 +24,14 @@ if( empty( $SETTINGS ) || json_last_error() != JSON_ERROR_NONE ) {
 
 }
 
+use App\models\session;
+session::start( $SETTINGS['session'][0] );
+
 $SETTINGS['displayErrorDetails']    = !empty( $SETTINGS['debug'] ) ? true : false;
 
 $SETTINGS['api_hash']               = 'Gbr363GBcULpP5RepWNCs9DWh6bmkuRt';
 
 ini_set( 'date.timezone', $SETTINGS['timezone'] );
-
-# https://laravel.com/docs/5.7/database#configuration
-# https://github.com/illuminate/database
-# https://laravel.com/docs/5.7/queries
-$SETTINGS['db']                     = [
-    'sticky'    => true,
-    'driver'    => 'mysql',
-    'host'      => $SETTINGS['database'][0]['mysql'][0]['host'],
-    'database'  => $SETTINGS['database'][0]['mysql'][0]['db_name'],
-    'username'  => $SETTINGS['database'][0]['mysql'][0]['user_name'],
-    'password'  => $SETTINGS['database'][0]['mysql'][0]['pass_word'],
-    'charset'   => $SETTINGS['database'][0]['mysql'][0]['charset'],
-    'collation' => $SETTINGS['database'][0]['mysql'][0]['collation'],
-];
 
 
 //
@@ -61,10 +50,22 @@ $CONTAINER              = $APP->getContainer();
 
 //
 //  Register connection
+# https://laravel.com/docs/5.7/database#configuration
+# https://github.com/illuminate/database
+# https://laravel.com/docs/5.7/queries
 //
 $CAPSULE                = new \Illuminate\Database\Capsule\Manager;
 
-$CAPSULE->addConnection( $CONTAINER['settings']['db'] );
+$CAPSULE->addConnection( [
+    'sticky'    => true,
+    'driver'    => 'mysql',
+    'host'      => $SETTINGS['database'][0]['mysql'][0]['host'],
+    'database'  => $SETTINGS['database'][0]['mysql'][0]['db_name'],
+    'username'  => $SETTINGS['database'][0]['mysql'][0]['user_name'],
+    'password'  => $SETTINGS['database'][0]['mysql'][0]['pass_word'],
+    'charset'   => $SETTINGS['database'][0]['mysql'][0]['charset'],
+    'collation' => $SETTINGS['database'][0]['mysql'][0]['collation'],
+] );
 
 $CAPSULE->setAsGlobal();
 
@@ -198,6 +199,14 @@ $CONTAINER['csrf']      = function( $c ) {
 
 };
 
+$CONTAINER['csrf']->setFailureCallable(function ($request, $response, $next) {
+
+    $request = $request->withAttribute("csrf_status", false);
+
+    return $next($request, $response);
+
+});;
+
 $CONTAINER['logger']    = function() use( $SETTINGS ) {
 
     $LOGGER = new \Monolog\Logger( $SETTINGS['log'][0]['name'] );
@@ -221,5 +230,6 @@ $APP->add( new \App\middleware\flash( $CONTAINER, $SETTINGS ) );
 
 # @todo: implement custom rules
 #v::with( 'App\\validation\\rules\\' );
+
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/../app/routes.php';

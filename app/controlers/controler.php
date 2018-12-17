@@ -10,8 +10,6 @@ abstract class controler {
 
 	protected $CONTAINER;
 
-	public static $SETTINGS;
-
 
 	/**
 	 * 	Instantiates a controler
@@ -24,15 +22,28 @@ abstract class controler {
 
 		$this->CONTAINER 	= $CONTAINER;
 
-		self::$SETTINGS 	= $this->settings;
+		$this->view->getEnvironment()->addGlobal( 'theme', $this->settings['theme'][0] );
 
-		$this->view->getEnvironment()->addGlobal( 'theme', self::$SETTINGS['theme'][0] );
 
+		//
+		//	Routes without additionals
+		//
+		$BARE_ROUTES 	= [ 'policy' ];
+
+		foreach( $BARE_ROUTES as $bare_route ) {
+
+			if( stripos( $this->request->getUri()->getPath(), $bare_route ) !== false ) {
+				
+				return;
+
+			}
+
+		}
 
 		//
 		//	Get online users
 		//
-		$USERS 	= users::getUsers( 'online' );
+		$USERS 	= users::getUsers( $this->settings, 'online' );
 
 		$this->view->getEnvironment()->addGlobal( 'BUDDIES', $USERS );
 		

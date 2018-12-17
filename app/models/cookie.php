@@ -2,18 +2,17 @@
 
 namespace App\models;
 
-class cookie {
+class cookie extends file_storage {
 
 	/**
 	 * 	Sets a cookie variable
 	 * 	
 	 * 	@param 	string 	$name
 	 * 	@param 	mixed 	$DATA
-	 * 	@param 	int 	$duration
 	 *
 	 *	@return bool 
 	 */
-	public function set( string $name, $DATA, int $duration = 86400 ) {
+	public function set( string $name, $DATA ) {
 
 		if( empty( $name ) ) {
 
@@ -21,9 +20,19 @@ class cookie {
 
 		}
 
-		$cookie_data 	= !empty( $DATA ) ? serialize( $DATA ) : $DATA;
+		$cookie_data 	= $DATA; //!empty( $DATA ) ? serialize( $DATA ) : $DATA;
 
-		return setcookie( $name, $cookie_data, time() + $duration );
+		$OPTIONS 	= parent::initialize();
+
+		return setcookie(
+			$name, 
+			$cookie_data, 
+			time() + $OPTIONS['cookie_lifetime'], 
+			$OPTIONS['cookie_path'], 
+			$OPTIONS['cookie_domain'], 
+			$OPTIONS['cookie_secure'], 
+			$OPTIONS['cookie_httponly']
+		);
 
 	}
 
@@ -42,8 +51,8 @@ class cookie {
 			return null;
 
 		}
-
-		return !empty( $_COOKIE[ $name ] ) ? unserialize( $_COOKIE[ $name ] ) : null;
+		
+		return !empty( $_COOKIE[ $name ] ) ? $_COOKIE[ $name ]/*unserialize( $_COOKIE[ $name ] )*/ : null;
 
 	}
 

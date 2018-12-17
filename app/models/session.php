@@ -2,7 +2,14 @@
 
 namespace App\models;
 
-class session {
+class session extends file_storage {
+
+	public function start( array $OPTIONS = [] ) {
+		
+		return session_start( parent::initialize( $OPTIONS ) );
+
+	}
+
 
 	/**
 	 * 	Sets a session variable 
@@ -133,6 +140,18 @@ class session {
 	public function getId() {
 
 		return session_id();
+
+	}
+
+
+	/**
+	 *	Gets the session name
+	 * 
+	 * 	@return string
+	 */
+	public function getName() {
+
+		return session_name();
 
 	}
 

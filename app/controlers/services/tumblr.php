@@ -154,7 +154,10 @@ class tumblr extends controler {
 		$AUTHENTICATED 	= user::auth( [
 			'USER'			=> ( array ) $USER->getAttributes(),
 			'persistent'	=> !empty( $PARSED_REQUEST['remember-me'] ) ? true : false,
-		], $this, new crypt( $this->CONTAINER ) );
+			'settings' 		=> $this->settings, 
+			'logger' 		=> $this->logger,
+			'crypt'			=> new crypt( $this->CONTAINER ),
+		 ] );
 
 	    $this->flash->addMessage( 'info', 'Yay you\'ve returned!' );
 
@@ -648,17 +651,15 @@ class tumblr extends controler {
 
 
         //
-        //	Update session
-        //
-        $_SESSION['user']	= [
-        	'uid'			=> $USER->id,
-        	'uname'			=> $DATA_FIELD->uname,
-			'persistent'	=> !empty( $DATA_FIELD->remember_me ) ? true : false,
-			'SERVICES'		=> [
-				'email'	=> [ 'status', $DATA_FIELD->status ],
-			],
-		];
-
+		//	Authenticate user
+		//
+		$AUTHENTICATED 	= user::auth( [
+			'USER'			=> ( array ) $USER->getAttributes(),
+			'persistent'	=> !empty( $PARSED_REQUEST['remember-me'] ) ? true : false,
+			'settings' 		=> $this->settings, 
+			'logger' 		=> $this->logger,
+			'crypt'			=> new crypt( $this->CONTAINER ),
+		 ] );
 
 		$this->flash->addMessage( 'info', 'Yay for registering!' );
 

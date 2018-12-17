@@ -14,11 +14,13 @@ class users extends controler {
 	 * 	Removes offline users
 	 * 	afk and offline are defined app settings
 	 *
+	 *	@param 	array 	$SETTINGS 
+	 *
 	 *	@param 	string 	$context (online, invisible)
 	 *
 	 * 	@return array
 	 */
-	public function getUsers( $context = 'online' ) {
+	public function getUsers( $SETTINGS, $context = 'online' ) {
 
 		$time_now 	= time();
 
@@ -32,7 +34,7 @@ class users extends controler {
 			//
 			//	Check for afk
 			//
-			if( abs( $time_now - $updated_user ) > self::$SETTINGS['afk_timeout'] ) {
+			if( abs( $time_now - $updated_user ) > $SETTINGS['afk_timeout'] ) {
 
 				$USER->user_data_status 	= 'away';
 
@@ -40,7 +42,7 @@ class users extends controler {
 
 
 			//	Check for offline 
-			if( abs( $time_now - $updated_user ) > self::$SETTINGS['offline_timeout'] ) {
+			if( abs( $time_now - $updated_user ) > $SETTINGS['offline_timeout'] ) {
 
 				#unset( $USERS[ $id ] );
 
