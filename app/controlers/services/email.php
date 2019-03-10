@@ -81,26 +81,6 @@ class email extends controler {
 	    }
 
 
-		//
-	    //  Fetch API settings or quit
-	    //
-		$API_SETTING  = setting::fetchByName( 'api_key' );
-
-		if( empty( $API_SETTING ) ) {
-
-			if( !empty( $this->settings['debug'] ) ) {
-
-				$this->logger->addInfo( serialize( [ 'access disabled service', __FILE__, __LINE__ ] ) );
-
-			}
-
-	        $this->flash->addMessage( 'error', 'Try again later' );
-
-			return $RESPONSE->withRedirect( $this->router->pathFor( 'login' ) );
-
-	    }
-
-
 	    //
 	    //	Fetch the user or quit
 	    //
@@ -141,16 +121,34 @@ class email extends controler {
 	    }
 
 
+	    //
+		//	Update session
 		//
-		//	Authenticate user
-		//
-		$AUTHENTICATED 	= user::auth( [
-			'USER'			=> ( array ) $USER->getAttributes(),
+		$SESSION_UPDATED 	= user::session( [
+			'USER'			=> $USER,
 			'persistent'	=> !empty( $PARSED_REQUEST['remember-me'] ) ? true : false,
 			'settings' 		=> $this->settings, 
 			'logger' 		=> $this->logger,
 			'crypt'			=> new crypt( $this->CONTAINER ),
-		 ] );
+		] );
+
+
+	    //
+	    //	Appearing offline
+	    //
+	    if( empty( $PARSED_REQUEST['status'] ) ) {
+
+	    	user_data::edit( [ 'status' => 'offline' ] );
+
+	    	$USER 				= ( array ) $USER->getAttributes();
+
+	    	$USER['status']		= 'offline';
+
+	    	$SESSION_UPDATED 	= user::session( [
+				'USER'			=> $USER,
+			 ] );
+
+	    }
 
 		$this->flash->addMessage( 'info', 'Yay you\'ve returned!' );
 
@@ -365,7 +363,7 @@ class email extends controler {
         //
 		//	Authenticate user
 		//
-		$AUTHENTICATED 	= user::auth( [
+		$AUTHENTICATED 	= user::session( [
 			'USER'			=> ( array ) $USER->getAttributes(),
 			'persistent'	=> !empty( $PARSED_REQUEST['remember-me'] ) ? true : false,
 			'settings' 		=> $this->settings, 

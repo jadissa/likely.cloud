@@ -1,11 +1,10 @@
 .DS_Store
-yarn.lock
-package-lock.json
-yarn-error.log
-node_modules
 settings.json
 logs
 STAR_likely_cloud*
 *.txt
 images/comodo*
 likely.sublime-workspace
+sftp-config.json
+vendor
+composer.lock

@@ -67,4 +67,11 @@ class home extends controler {
 
 	}
 
+
+	public function getProxy( $REQUEST, $RESPONSE ) {
+
+		return $RESPONSE;
+
+	}
+
 }

@@ -85,3 +85,5 @@ $APP->group( '', function() {
 $APP->get( '/policy', 'home:getPolicy' )->setName( 'policy' );
 
 $APP->get( '/disabled', 'home:getDisabled' )->setName( 'disabled' );
+
+$APP->get( '/proxy', 'home:getProxy' )->setName( 'proxy' );

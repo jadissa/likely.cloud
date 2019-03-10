@@ -5,8 +5,10 @@ namespace App\models;
 class session extends file_storage {
 
 	public function start( array $OPTIONS = [] ) {
-		
-		return session_start( parent::initialize( $OPTIONS ) );
+		# @todo: the reason this is comemented out
+		# - this server currently lacks a certificate
+		# - once installed, re-enable
+		return session_start( /*parent::initialize( $OPTIONS )*/ );
 
 	}
 

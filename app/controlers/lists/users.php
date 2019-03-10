@@ -24,6 +24,7 @@ class users extends controler {
 
 		$time_now 	= time();
 
+		# @todo: at some point this may return a lot of users, start thinking about how to further limit
 		$USERS 		= user::fetchUsers( $context );
 
 		foreach( $USERS as $id => $USER ) {
@@ -41,10 +42,12 @@ class users extends controler {
 			}
 
 
+			//
 			//	Check for offline 
+			//
 			if( abs( $time_now - $updated_user ) > $SETTINGS['offline_timeout'] ) {
 
-				#unset( $USERS[ $id ] );
+				unset( $USERS[ $id ] );
 
 			}
 

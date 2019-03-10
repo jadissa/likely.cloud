@@ -7,7 +7,7 @@
 # /_______  |__|   \___  (____  |__|_|  |_______ \____/|____/\____ |
 #         \/           \/     \/      \/        \/                \/
 #
-#                                                © likely.cloud 2018
+#                                                © likely.cloud 2018-2019
 #
 # Digital Ocean Droplet Install
 
@@ -25,7 +25,7 @@ echo '             \/    \/     \/      \/        \/                       \/ '
 
 echo
 
-echo '                                                    © likely.cloud 2018'
+echo '                                                     © likely.cloud 2019'
 
 echo
 
@@ -34,13 +34,13 @@ echo
 
 # Your droplet info
 # https://cloud.digitalocean.com/settings/api/tokens
-DOKEY=
-PROJECT_NAME=
-TAG_NAME=
+ACCESS_TOKEN=be4f9b0abc66f1ccd7d1669327ff507130d5aa14155f1e64d5735d0bae48b979
+PROJECT_NAME=likely.cloud
+TAG_NAME=likely
 
-if [ "$DOKEY" == "" ] || [ "$PROJECT_NAME" == "" ] || [ "$TAG_NAME" == "" ]; then
+if [ "$ACCESS_TOKEN" == "" ] || [ "$PROJECT_NAME" == "" ] || [ "$TAG_NAME" == "" ]; then
 
-    echo 'Edit this script by adding your Droplet info'
+    echo 'Edit this script by adding your DititalOcean/Droplet info'
 
     exit
 
@@ -48,7 +48,6 @@ fi
 
 
 # Generate key data
-
 [ -d ~/.ssh/$PROJECT_NAME/ ] || mkdir ~/.ssh/$PROJECT_NAME/
 
 ssh-keygen -t rsa -f ~/.ssh/$PROJECT_NAME/id_rsa
@@ -59,7 +58,7 @@ ssh-add -K ~/.ssh/$PROJECT_NAME/id_rsa
 
 eval "$(ssh-agent -s)"
 
-KEY_RSA=`cat ~/.ssh/$MACHINE_NAME/id_rsa.pub`
+KEY_RSA=`cat ~/.ssh/$PROJECT_NAME/id_rsa.pub`
 
 if [ "$KEY_RSA" == "" ]; then
 
@@ -69,96 +68,132 @@ if [ "$KEY_RSA" == "" ]; then
 
 fi
 
-echo "Created key: $KEY_RSA"
+
+# Determine if droplet is created
+JSON=`curl -X GET "https://api.digitalocean.com/v2/droplets?tag_name=$TAG_NAME" -H "Authorization: Bearer $ACCESS_TOKEN" -H "Content-Type: application/json"`
 
 
-# Check Droplet Already Created
-JSON=`curl -X GET "https://api.digitalocean.com/v2/droplets?tag_name=$TAG_NAME" -H "Authorization: Bearer $DOKEY" -H "Content-Type: application/json"`
-
-# Parse Response
-DROPLET_ID=`echo $JSON | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["droplets"][0]["id"]'`
+# Check to see if there's something to parse
+DROPLET_RECORD=`echo $JSON | python -c 'import json,sys;obj=json.load(sys.stdin);print len(obj["droplets"])'`
 sleep 1
 
-if [ "$DROPLET_ID"!="" ]; then
+if (( $DROPLET_RECORD > 0 )); then
 
     echo 'Droplet already created'
 
     exit
 
-    #curl -X DELETE -H "Content-Type: application/json" -H "Authorization: Bearer $DOKEY" "https://api.digitalocean.com/v2/droplets?tag_name=$TAG_NAME"
-
 fi
 
 
-# List All Distribution Images
-#curl -X GET -H "Content-Type: application/json" -H "Authorization: Bearer $DOKEY" "https://api.digitalocean.com/v2/images?page=1&per_page=31&type=distribution" 
+# Upload key
+# JSON=`curl -X POST "https://api.digitalocean.com/v2/account/keys" -d '{"name":"$PROJECT_NAME","public_key":"$KEY_RSA"}' -H "Authorization: Bearer $ACCESS_TOKEN" -H "Content-Type: application/json"`
+# ^ this is broken because, fuck you, I guess
+#curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer b7d03a6947b217efb6f3ec3bd3504582" -d '{"name":"My SSH Public Key","public_key":"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAQQDDHr/jh2Jy4yALcK4JyWbVkPRaWmhck3IgCoeOO3z1e2dBowLh64QAM+Qb72pxekALga2oi4GvT+TlWNhzPH4V example"}' "https://api.digitalocean.com/v2/account/keys" 
 
 
-# Create New Droplet
+# List distribution images
+#curl -X GET -H "Content-Type: application/json" -H "Authorization: Bearer $ACCESS_TOKEN" "https://api.digitalocean.com/v2/images?page=1&per_page=31&type=distribution" 
+
+
+# List all keys
+#JSON=`curl -X GET "https://api.digitalocean.com/v2/account/keys" -H "Authorization: Bearer $ACCESS_TOKEN" -H "Content-Type: application/json"`
+
+
+# Create new droplet
 curl -X POST "https://api.digitalocean.com/v2/droplets" \
-    -d"{\"name\":\"$MACHINE_NAME\",\"region\":\"sfo2\",\"size\":\"512mb\",\"image\":\"centos-7-x64\",\"ssh_username\": \"root\",\"ssh_keys\":null,\"private_networking\":true,\"user_data\":null,\"tags\":[\"$TAG_NAME\"]}" \
-    -H "Authorization: Bearer $DOKEY" \
+    -d"{\"name\":\"$PROJECT_NAME\",\"region\":\"sfo2\",\"size\":\"512mb\",\"image\":\"centos-7-x64\",\"ssh_keys\":null,\"private_networking\":true,\"user_data\":null,\"tags\":[\"$TAG_NAME\"]}" \
+    -H "Authorization: Bearer $ACCESS_TOKEN" \
     -H "Content-Type: application/json" 
 sleep 15
-# @todo: parse creation response because probably contains password
 
-# List Created Droplet
-JSON=`curl -X GET "https://api.digitalocean.com/v2/droplets?tag_name=$TAG_NAME" -H "Authorization: Bearer $DOKEY" -H "Content-Type: application/json"`
 
-# Parse Response
+# List created droplet
+JSON=`curl -X GET "https://api.digitalocean.com/v2/droplets?tag_name=$TAG_NAME" -H "Authorization: Bearer $ACCESS_TOKEN" -H "Content-Type: application/json"`
+
+
+# Parse response
 DROPLET_ID=`echo $JSON | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["droplets"][0]["id"]'`
-DROPLET_IP=`echo $JSON | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["droplets"][0]["networks"]["v4"][1]["ip_address"]'`
+DROPLET_IP=`echo $JSON | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["droplets"][0]["networks"]["v4"][0]["ip_address"]'`
 
 
-# SSH Key Droplet
-JSON=`curl -X POST "https://api.digitalocean.com/v2/account/keys" -H "Authorization: Bearer $DOKEY" -d "{\"name\":\"$MACHINE_NAME\",\"public_key\":\"\$KEY_RSA\"}" -H "Content-Type: application/json"`
+# Delete previous firewall
+JSON=`curl -X GET "https://api.digitalocean.com/v2/firewalls" -H "Authorization: Bearer $ACCESS_TOKEN" -H "Content-Type: application/json"`
 
-# Parse Response
-PUBLIC_KEY=`echo $JSON | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["ssh_key"]["public_key"]'`
+FIREWALL_RECORD=`echo $JSON | python -c 'import json,sys;obj=json.load(sys.stdin);print len(obj["firewalls"])'`
+sleep 1
 
+if (( $FIREWALL_RECORD > 0 )); then
+    
+    FIREWALL_ID=`echo $JSON | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["firewalls"][0]["id"]'`
 
-# Check Firewall Already Created
-JSON=`curl -X GET "https://api.digitalocean.com/v2/firewalls" -H "Authorization: Bearer $DOKEY" -H "Content-Type: application/json"`
+    curl -X DELETE -H "Content-Type: application/json" -H "Authorization: Bearer $ACCESS_TOKEN" "https://api.digitalocean.com/v2/firewalls/$FIREWALL_ID" 
 
-# Parse Response
-FIREWALL_ID=`echo $JSON | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["firewalls"][0]["id"]'`
+    sleep 1
 
-if [ "$FIREWALL_ID"!="" ]; then
-    curl -X DELETE -H "Content-Type: application/json" -H "Authorization: Bearer $DOKEY" "https://api.digitalocean.com/v2/firewalls/$FIREWALL_ID" 
 fi
 
-# Create Firewall
-curl -X POST "https://api.digitalocean.com/v2/firewalls" -d "{\"name\":\"$MACHINE_NAME\",\"inbound_rules\":[{\"protocol\":\"tcp\",\"ports\":\"22\",\"sources\":{\"addresses\":[\"0.0.0.0\/0\",\"::\/0\"]}},{\"protocol\":\"tcp\",\"ports\":\"80\",\"sources\":{\"addresses\":[\"0.0.0.0\/0\",\"::\/0\"]}},{\"protocol\":\"tcp\",\"ports\":\"3306\",\"sources\":{\"addresses\":[\"0.0.0.0\/0\",\"::\/0\"]}}],\"outbound_rules\":[{\"protocol\":\"icmp\",\"destinations\":{\"addresses\":[\"0.0.0.0\/0\",\"::\/0\"]}},{\"protocol\":\"tcp\",\"ports\":\"all\",\"destinations\":{\"addresses\":[\"0.0.0.0\/0\",\"::\/0\"]}},{\"protocol\":\"udp\",\"ports\":\"all\",\"destinations\":{\"addresses\":[\"0.0.0.0\/0\",\"::\/0\"]}}],\"droplet_ids\":[$DROPLET_ID],\"tags\":\"$TAG_NAME\"}" -H "Authorization: Bearer $DOKEY" -H "Content-Type: application/json"
+
+# Create firewall
+curl -X POST "https://api.digitalocean.com/v2/firewalls" \
+    -d "{\"name\":\"$PROJECT_NAME\",\"inbound_rules\":[{\"protocol\":\"tcp\",\"ports\":\"22\",\"sources\":{\"addresses\":[\"0.0.0.0\/0\",\"::\/0\"]}},{\"protocol\":\"tcp\",\"ports\":\"80\",\"sources\":{\"addresses\":[\"0.0.0.0\/0\",\"::\/0\"]}},{\"protocol\":\"tcp\",\"ports\":\"3306\",\"sources\":{\"addresses\":[\"0.0.0.0\/0\",\"::\/0\"]}}],\"outbound_rules\":[{\"protocol\":\"icmp\",\"destinations\":{\"addresses\":[\"0.0.0.0\/0\",\"::\/0\"]}},{\"protocol\":\"tcp\",\"ports\":\"all\",\"destinations\":{\"addresses\":[\"0.0.0.0\/0\",\"::\/0\"]}},{\"protocol\":\"udp\",\"ports\":\"all\",\"destinations\":{\"addresses\":[\"0.0.0.0\/0\",\"::\/0\"]}}],\"droplet_ids\":[$DROPLET_ID],\"tags\":\"$TAG_NAME\"}" \
+    -H "Authorization: Bearer $ACCESS_TOKEN" \
+    -H "Content-Type: application/json"
 sleep 1
 
 
-# Check Domain Already Created
-JSON=`curl -X GET -H "Content-Type: application/json" -H "Authorization: Bearer $DOKEY" "https://api.digitalocean.com/v2/domains/$MACHINE_NAME"`
+# Delete previous domain
+JSON=`curl -X GET -H "Content-Type: application/json" -H "Authorization: Bearer $ACCESS_TOKEN" "https://api.digitalocean.com/v2/domains/$PROJECT_NAME"`
 
-# Parse Response
-DOMAIN_NAME=`echo $JSON | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["domain"]["name"]'`
+DOMAIN_RECORD=`echo $JSON | python -c 'import json,sys;obj=json.load(sys.stdin);print len(obj["domain"])'`
+sleep 1
 
-if [ "$DOMAIN_NAME"!="" ]; then
-    curl -X DELETE -H "Content-Type: application/json" -H "Authorization: Bearer $DOKEY" "https://api.digitalocean.com/v2/domains/$MACHINE_NAME" 
+if (( $DOMAIN_RECORD > 0 )); then
+
+    DOMAIN_NAME=`echo $JSON | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["domain"]["name"]'`
+
+    curl -X DELETE -H "Content-Type: application/json" -H "Authorization: Bearer $ACCESS_TOKEN" "https://api.digitalocean.com/v2/domains/$DOMAIN_NAME" 
+
+    sleep 1
+
 fi
 
-# Create Domain
+
+# Create domain
 curl -X POST "https://api.digitalocean.com/v2/domains" \
--d "{\"name\":\"$MACHINE_NAME\",\"ip_address\":\"$DROPLET_IP\"}" \
-    -H "Authorization: Bearer $DOKEY" \
-    -H "Content-Type: application/json" 
-sleep 1
-
-# Domain Droplet
-curl -X POST "https://api.digitalocean.com/v2/domains/$MACHINE_NAME/records"  \
-    -d "{\"type\":\"A\",\"name\":\"$MACHINE_NAME\",\"data\":\"$DROPLET_IP\",\"priority\":null,\"port\":null,\"ttl\":1800,\"weight\":null,\"flags\":null,\"tag\":null}" \
-    -H "Authorization: Bearer $DOKEY" \
+-d "{\"name\":\"$PROJECT_NAME\",\"ip_address\":\"$DROPLET_IP\"}" \
+    -H "Authorization: Bearer $ACCESS_TOKEN" \
     -H "Content-Type: application/json" 
 sleep 1
 
 
-# Snapshot Droplet
-curl -X POST "https://api.digitalocean.com/v2/droplets/$DROPLET_ID/actions" \
-    -d '{"type":"snapshot","name":"Newly Configured"}' \
-    -H "Authorization: Bearer $DOKEY" \
+# Delete previous domain association
+JSON=`curl -X GET -H "Content-Type: application/json" -H "Authorization: Bearer $ACCESS_TOKEN" "https://api.digitalocean.com/v2/domains/$PROJECT_NAME/records"`
+
+DOMAINED_RECORD=`echo $JSON | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["domain_records"]'`
+sleep 1
+
+if (( $DOMAIN_RECORD > 0 )); then
+
+    RECORD_ID=`echo $JSON | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["domain_records"][0]["id"]'`
+
+    curl -X DELETE -H "Content-Type: application/json" -H "Authorization: Bearer $ACCESS_TOKEN" "https://api.digitalocean.com/v2/domains/$PROJECT_NAME/records/$RECORD_ID"
+
+    sleep 1
+
+fi
+
+
+# Domain droplet
+curl -X POST "https://api.digitalocean.com/v2/domains/$PROJECT_NAME/records"  \
+    -d "{\"type\":\"A\",\"name\":\"$PROJECT_NAME\",\"data\":\"$DROPLET_IP\",\"priority\":null,\"port\":null,\"ttl\":1800,\"weight\":null,\"flags\":null,\"tag\":null}" \
+    -H "Authorization: Bearer $ACCESS_TOKEN" \
     -H "Content-Type: application/json" 
+sleep 1
+
+
+# Snapshot droplet
+#curl -X POST "https://api.digitalocean.com/v2/droplets/$DROPLET_ID/actions" \
+#    -d '{"type":"snapshot","name":"Newly Configured"}' \
+#    -H "Authorization: Bearer $ACCESS_TOKEN" \
+#    -H "Content-Type: application/json" 

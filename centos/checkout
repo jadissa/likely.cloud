@@ -22,7 +22,7 @@ ID=$ID
 
 VER=$VERSION_ID
 
-PROJECTPATH=/var/www/htm
+PROJECTPATH=/var/www/html
 
 PRIVATE_IP_ADDRESS=`curl -w "\n" http://169.254.169.254/metadata/v1/interfaces/private/0/ipv4/address`
 
@@ -68,7 +68,29 @@ if [ "$ID" != "centos" ] || [ "$VER" != "7" ]; then
 
 fi
 
-git clone https://github.com/dreamloud/likely.cloud.git
+cd $PROJECTPATH
+
+ssh-keygen -t rsa -f ~/.ssh/id_rsa
+
+chmod 0700 ~/.ssh/id_rsa
+
+ssh-add -K ~/.ssh/id_rsa
+
+eval "$(ssh-agent -s)"
+
+KEY_RSA=`cat ~/.ssh/id_rsa.pub`
+
+if [ "$KEY_RSA" == "" ]; then
+
+    echo 'Could not create private key'
+
+    exit
+
+fi
+
+echo $KEY_RSA
+
+git clone git@github.com:jadissa/likely.cloud.git
 
 sudo chmod -R 0775 $PROJECTPATH
 

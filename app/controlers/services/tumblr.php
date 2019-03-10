@@ -151,7 +151,7 @@ class tumblr extends controler {
         //
 		//	Authenticate user
 		//
-		$AUTHENTICATED 	= user::auth( [
+		$AUTHENTICATED 	= user::session( [
 			'USER'			=> ( array ) $USER->getAttributes(),
 			'persistent'	=> !empty( $PARSED_REQUEST['remember-me'] ) ? true : false,
 			'settings' 		=> $this->settings, 
@@ -653,7 +653,7 @@ class tumblr extends controler {
         //
 		//	Authenticate user
 		//
-		$AUTHENTICATED 	= user::auth( [
+		$AUTHENTICATED 	= user::session( [
 			'USER'			=> ( array ) $USER->getAttributes(),
 			'persistent'	=> !empty( $PARSED_REQUEST['remember-me'] ) ? true : false,
 			'settings' 		=> $this->settings, 

@@ -40,6 +40,12 @@
 
 			</div>
 
+			<div class="checkbox">
+
+				<label><input type="checkbox" name="status" data-toggle="toggle" data-on="Online" data-off="Offline" checked{{ theme_disabled == true ? ' disabled="disabled"' : ''}}></label>
+
+			</div>
+
 			{#
 			<div class="checkbox mb-3">
 
@@ -50,7 +56,7 @@
 
 			<div class="form-group">
 
-				<button class="btn btn btn-primary btn-block" type="submit"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}>Sign in</button>
+				<button class="btn btn-primary btn-block" type="submit"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}>Sign in</button>
 
 				{{ csrf.field | raw }}
 

@@ -18,37 +18,31 @@
 
     <div class="col-sm-8 rounded">
 
+		<div class="block">Activate 3rd party services to share your content with below</div>
+
         <form name="services_form" class="form" action="{{ path_for( 'users.services' ) }}" method="POST">
 
         	<div class="form-group">
 
-				<select name="service" id="service" size=20 class="form-control"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}>
+	            {% for AVAILABLE_SERVICE in AVAILABLE_SERVICES %}
 
-		            {% for AVAILABLE_SERVICE in AVAILABLE_SERVICES %}
+					{% if AVAILABLE_SERVICE.user_enabled %}
 
-						{% if old_input.service == AVAILABLE_SERVICE.name %}
+						<label class="service-app {{ AVAILABLE_SERVICE.name }}">{{ AVAILABLE_SERVICE.name }} <input type="radio" name="service" value="{{ AVAILABLE_SERVICE.name }}" class="{{ AVAILABLE_SERVICE.name }}" checked="checked"></input></label>
 
-							<option value="{{ SERVICE.name }}" selected="selected">{{ AVAILABLE_SERVICE.name }}</option>
+					{% else %}
 
-						{% elseif loop.first %}
+						<label class="service-app {{ AVAILABLE_SERVICE.name }}">{{ AVAILABLE_SERVICE.name }} <input type="radio" name="service" value="{{ AVAILABLE_SERVICE.name }}" class="{{ AVAILABLE_SERVICE.name }}"></input></label>
 
-							<option value="{{ SERVICE.name }}" selected="selected">{{ AVAILABLE_SERVICE.name }}</option>
+					{% endif %}
 
-						{% else %}
-
-							<option value="{{ SERVICE.name }}">{{ AVAILABLE_SERVICE.name }}</option>
-
-						{% endif %}
-
-		            {% endfor %}
-
-		        </select>
+	            {% endfor %}
 
 		    </div>
 
 		    <div class="form-group{{ ERRORS.uname ? ' has-danger' : '' }}">
 
-				<input type="text" name="uname" id="uname" placeholder="Username" autocomplete="username" class="form-control {{ ERRORS.uname ? 'form-control-danger' : '' }}"{{ theme_disabled == true ? ' disabled="disabled"' : ''}} value="{{ old_input.uname }}">
+				<input type="text" name="uname" id="uname" placeholder="Username" autocomplete="off" class="form-control {{ ERRORS.uname ? 'form-control-danger' : '' }}"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}">
 
 				{% if ERRORS.uname %}
 
@@ -57,13 +51,13 @@
 				{% endif %}
 
 			</div>
-
+	{#
 			<div class="checkbox mb-3">
 
 				<label><input type="checkbox" name="status" id="status" checked="checked"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}> Let others know where you're from!</label>
 
 			</div>
-
+	#}
 			<div class="form-group">
 
 				<button class="btn btn btn-primary btn-block" type="submit"{{ theme_disabled == true ? ' disabled="disabled"' : ''}}>Add Service</button>

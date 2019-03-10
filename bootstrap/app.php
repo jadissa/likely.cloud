@@ -12,7 +12,7 @@ $settings_file  = $_SERVER['DOCUMENT_ROOT'] . '/../app/settings.json';
 
 if( !is_file( $settings_file ) ) {
 
-    die( 'Not configured ' . $settings_file );
+    die( 'Not configured ' );
 
 }
 

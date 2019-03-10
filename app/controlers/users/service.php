@@ -32,13 +32,16 @@ class service extends controler {
 
 		$AVAILABLE_SERVICES	= [];
 
+
 		foreach( $ACTIVE_SERVICES as $ACTIVE_SERVICE ) {
 
-			if( empty( $USER_SERVICES[ $ACTIVE_SERVICE->id ] ) ) {
+			if( !empty( $USER_SERVICES[ $ACTIVE_SERVICE->id ] ) ) {
 
-				array_push( $AVAILABLE_SERVICES, $ACTIVE_SERVICE );
+				$ACTIVE_SERVICE->setAttribute( 'user_enabled', true );
 
 			}
+
+			array_push( $AVAILABLE_SERVICES, $ACTIVE_SERVICE );
 
 		}
 
@@ -60,6 +63,17 @@ class service extends controler {
 	 * 	@return object
 	 */
 	public function post( $REQUEST, $RESPONSE ) {
+
+		//
+		//	Parse request
+		//
+		$PARSED_REQUEST 	= $REQUEST->getParsedBody();
+
+		if( !empty( $this->settings['debug'] ) and !empty( $PARSED_REQUEST ) ) {
+
+			$this->logger->addInfo( serialize( $PARSED_REQUEST ) );
+
+		}
 
 		return $RESPONSE;
 

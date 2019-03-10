@@ -219,7 +219,7 @@ class user extends Model  {
 	/**
 	 * 	Gets a list of users within context
 	 *
-	 *	@param 	string 	$context (online, invisible)
+	 *	@param 	string 	$context (online, offline)
 	 *
 	 * 	@return array
 	 */
@@ -342,7 +342,7 @@ class user extends Model  {
 	 * 	
 	 * 	@return bool
 	 */
-	public function auth( array $DATA ) {
+	public function session( array $DATA ) {
 
 		if( empty( $DATA ) ) {
 
