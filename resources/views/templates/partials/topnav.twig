@@ -1,47 +1,76 @@
-<nav class="navigation-content container navbar navbar-toggleable-md navbar-inverse bg-inverse rounded">
+<nav class="navbar rounded">
 
-	<button class="navbar-toggler navbar-toggler-left" type="button" data-toggle="collapse" data-target="#likely-navigation" aria-controls="likely-navigation" aria-expanded="false" aria-label="Toggle navigation">
+	{#
+	<button class="expand">
 
-		<span class="navbar-toggler-icon"></span>
+		<i class="fas fa-expand fa-2"></i>
+		
+		<i class="fas fa-sliders-h fa-2"></i>
+
+		<i class="fas fa-users-cog fa-2"></i>
+
+		<i class="fas fa-share-square fa-2"></i>
+
+		<i class="fas fa-compress-arrows-alt fa-2"></i>
+
+		<i class="far fa-edit fa-2"></i>
+
+		<i class="fas fa-stream fa-2"></i>
+
+		<i class="far fa-flag"></i>
+
+		<i class="fas fa-sign-out-alt"></i>
+
+		<i class="fas fa-home"></i>
+
+		<i class="fas fa-user-plus"></i>
 
 	</button>
+	#}
+	<ul>
 
-	<div class="collapse navbar-collapse" id="likely-navigation">
+		{% if user is not empty %}
 
-		<ul class="navbar-nav mr-auto">
+			<li class="nav-item {{ current_path() == '/' ? 'active' : '' }}">
 
-			{% if user is not empty %}
-
-				<li class="nav-item {{ current_path() == '/' ? 'active' : '' }}">
-
-					<a href="{{ path_for( 'home' ) }}" class="nav-link">{{ user.uname }}{{ current_path() == '/' ? '<span class="sr-only">(current)</span>' : '' }}</a>
-
-				</li>
-
-				<li class="nav-item {{ current_path() == '/logout' ? 'active' : '' }}">
-
-					<a href="{{ path_for( 'logout' ) }}" class="nav-link">Logout{{ current_path() == '/logout' ? '<span class="sr-only">(current)</span>' : '' }}</a>
-
-				</li>
-
-			{% else %}
-
-				<li class="nav-item {{ current_path() == '/register' ? 'active' : '' }}">
-
-					<a href="{{ path_for( 'register' ) }}" class="nav-link">Register{{ current_path() == '/register' ? '<span class="sr-only">(current)</span>' : '' }}</a>
-
-				</li>
-
-			{% endif %}
-
-			<li class="nav-item {{ current_path() == '/policy' ? 'active' : '' }}">
-
-				<a href="{{ path_for( 'policy' ) }}" class="nav-link">Policy{{ current_path() == '/policy' ? '<span class="sr-only">(current)</span>' : '' }}</a>
+				<a href="{{ path_for( 'home' ) }}" class="nav-link fas fa-home">{{ current_path() == '/' ? '<span class="sr-only">(current)</span>' : '' }}</a>
 
 			</li>
 
-		</ul>
+			<li class="nav-item {{ current_path() == '/preferences' ? 'active' : '' }}">
 
-	</div>
+				<a href="{{ path_for( 'users.preferences' ) }}" class="nav-link fas fa-users-cog">{{ current_path() == '/preferences' ? '<span class="sr-only">(current)</span>' : '' }}</a>
+
+			</li>
+
+			<li class="nav-item {{ current_path() == '/services' ? 'active' : '' }}">
+
+				<a href="{{ path_for( 'users.services' ) }}" class="nav-link fas fa-share-square">{{ current_path() == '/services' ? '<span class="sr-only">(current)</span>' : '' }}</a>
+
+			</li>
+
+			<li class="nav-item {{ current_path() == '/logout' ? 'active' : '' }}">
+
+				<a href="{{ path_for( 'logout' ) }}" class="nav-link fas fa-sign-out-alt">{{ current_path() == '/logout' ? '<span class="sr-only">(current)</span>' : '' }}</a>
+
+			</li>
+
+		{% else %}
+
+			<li class="nav-item {{ current_path() == '/register' ? 'active' : '' }}">
+
+				<a href="{{ path_for( 'register' ) }}" class="nav-link fas fa-user-plus">{{ current_path() == '/register' ? '<span class="sr-only">(current)</span>' : '' }}</a>
+
+			</li>
+
+		{% endif %}
+
+		<li class="nav-item {{ current_path() == '/policy' ? 'active' : '' }}">
+
+			<a href="{{ path_for( 'policy' ) }}" class="nav-link far fa-flag">{{ current_path() == '/policy' ? '<span class="sr-only">(current)</span>' : '' }}</a>
+
+		</li>
+
+	</ul>
 
 </nav>

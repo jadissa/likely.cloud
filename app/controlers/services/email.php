@@ -148,6 +148,21 @@ class email extends controler {
 				'USER'			=> $USER,
 			 ] );
 
+	    //
+	    //	Appearing online
+	    //
+	    } else {
+
+	    	user_data::edit( [ 'status' => 'online' ] );
+
+	    	$USER 				= ( array ) $USER->getAttributes();
+
+	    	$USER['status']		= 'online';
+
+	    	$SESSION_UPDATED 	= user::session( [
+				'USER'			=> $USER,
+			 ] );
+
 	    }
 
 		$this->flash->addMessage( 'info', 'Yay you\'ve returned!' );
@@ -344,7 +359,6 @@ class email extends controler {
             'status'    => $SERVICE_STATUSES[ !empty( $PARSED_REQUEST['status'] ) ? true : false ], 
         ] );
 
-
         if( empty( $USER_SERVICE->id ) ) {
 
 			if( !empty( $this->settings['debug'] ) ) {
@@ -359,7 +373,7 @@ class email extends controler {
 
         }
 
-	    
+        
         //
 		//	Authenticate user
 		//

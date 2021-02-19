@@ -6,7 +6,7 @@ use App\controlers\controler;
 
 use App\models\user;
 
-class feed {
+class feed extends controler {
 
 
 	/**
@@ -23,18 +23,89 @@ class feed {
 
 
 	    //
-	    //	Setup feed
+	    //	Verify something to process
 	    //
-	    $FEED_DATA  = [
-	        'SERVICE_REGISTRIES'   => [],
-	    ];
-
 	    if( empty( $EXISTING_USERS ) ) {
 
 	    	return $FEED_DATA;
 
 	    }
 
+
+	    //
+	    //	Initialize feed
+	    //
+	    $FEED_DATA  = [
+	        'SERVICE_REGISTRIES'   => [],
+	    ];
+
+
+	    //
+	    //	Initialize dummy data
+	    //
+	    $GHOSTS					= ['you','fahad','Sarah♥','Syn2k','jamison','Vickie Vixen'];
+
+	    $STATES					= ['California','Ohio','Nebraska','California','California','Texas'];
+
+	    $existing_user_count	= sizeof( $EXISTING_USERS );
+
+
+	    //
+	    //	check if less than 5 registered users
+	    //
+	    while( $existing_user_count <= 5 ) {
+
+	    	//
+	    	//	Initialize
+	    	//
+	    	$user_id	= $existing_user_count++;
+
+
+	    	//
+	    	//	Resize ghosts
+	    	//
+	    	foreach( $EXISTING_USERS as $EXISTING_USER ) {
+
+	    		if( $EXISTING_USER->id == $user_id ) {
+
+	    			continue( 2 );
+
+	    		}
+
+	    	}
+	    	
+
+	    	//
+	    	//	Verify ghost
+	    	//
+	    	if( empty( $GHOSTS[ $user_id ] ) ) {
+
+	    		continue;
+
+	    	}
+
+
+	    	//
+	    	//	Add ghost 
+	    	//
+	    	$NEW_USER				= new \stdClass;
+
+	    	$NEW_USER->id 			= $user_id;
+
+	    	$NEW_USER->sname 		= $GHOSTS[ $user_id ];
+
+	    	$NEW_USER->geo 			= '{"state":"' . $STATES[ $user_id ] . '","country_name":"United States"}';
+
+	    	$NEW_USER->created_at	= date( 'Y-m-d');
+
+	    	$EXISTING_USERS->push( $NEW_USER );
+
+	    }
+	    
+
+	    //
+	    //	Build feed
+	    //
 		foreach( $EXISTING_USERS as $USER_FEED ) {
 
 	        $FEED_DATA['SERVICE_REGISTRIES'][ $USER_FEED->id ]['string_data'] = $USER_FEED->sname . ' signed up from ';
@@ -64,25 +135,6 @@ class feed {
 	        $FEED_DATA['SERVICE_REGISTRIES'][ $USER_FEED->id ]['string_data'] .= ' during ' . date( 'F', strtotime( $USER_FEED->created_at ) ) . '!';
 
 	    }
-
-	    /*
-	    $DUMMY_FEED = [
-	        'Syn2k signed up from undisclosed location, all the way out in Nowhere\'sville in November!',
-	        'jamison signed up from Nevada, all the way out in United States in November!',
-	        'fahad signed up from California, all the way out in United States in November!',
-	    ];
-
-	    $i = 999999999999;
-
-	    foreach( $DUMMY_FEED as $dummy ) {
-
-	        $FEED_DATA['SERVICE_REGISTRIES'][ $i ]['string_data']  = $dummy;
-
-	        $i++;
-	    }
-	    */
-
-	    #print'<pre>';print_r( $USER_FEED );print'</pre>';exit;
 
 	    return $FEED_DATA;
 

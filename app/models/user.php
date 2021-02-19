@@ -190,7 +190,7 @@ class user extends Model  {
 
 
 	/**
-	 * 	Gets most recent public registries
+	 * 	Gets 5 most recent public registries
 	 * 
 	 * 	@return object
 	 */
@@ -202,7 +202,7 @@ class user extends Model  {
 			->join( 'user_services', 'users.id', '=', 'user_services.uid' )
 			->join( 'services', 'user_services.sid', '=', 'services.id' )
 			->orderBy( 'users.created_at', 'desc' )
-			->limit( 20 )
+			->limit( 5 )
 			->get()->keyBy( 'id' );
 
 		if( empty( $REGISTRIES ) ) {
@@ -298,16 +298,16 @@ class user extends Model  {
 	 * 
 	 * 	@return object
 	 */
-	public function updateSession( int $id, string $session ) {
+	public function updateSession( int $id, string $session_id ) {
 
-		if( empty( $id ) or empty( $session ) ) {
+		if( empty( $id ) or empty( $session_id ) ) {
 
 			return false;
 
 		}
 
 		return user_data::where( 'uid', $id )
-            ->update( [ 'sessid' => $session ] );
+            ->update( [ 'sessid' => $session_id ] );
 
 	}
 
@@ -320,16 +320,16 @@ class user extends Model  {
 	 * 
 	 * 	@return object
 	 */
-	public function fetchSession( string $session ) {
+	public function fetchSession( string $session_id ) {
 
-		if( empty( $id ) or empty( $session ) ) {
+		if( empty( self::getId() ) or empty( $session_id ) ) {
 
 			return false;
 
 		}
 
-		return user_data::where( 'uid', $id )
-            ->where( [ 'sessid' => $session ] )
+		return user_data::where( 'uid', user::getId() )
+            ->where( [ 'sessid' => $session_id ] )
             ->get();
 
 	}
@@ -355,7 +355,7 @@ class user extends Model  {
 		//	Set session
 		//
 		$USER_SESSION_DATA 	= [
-			'uid'			=> $DATA['USER']['uid'],
+			'uid'			=> $DATA['USER']['id'],
 			'uname'			=> $DATA['USER']['uname'],
 			'status' 		=> $DATA['USER']['status'],
 			'using_cookie'	=> false,
@@ -457,17 +457,15 @@ class user extends Model  {
 
 			if( $USER = self::fetchSession( session::getId() ) ) {
 
-				if( empty( auth( $USER ) ) ) {
-
-					return false;
-
-				}
-
-			} else {
-
 				return false;
 
 			}
+
+		}
+
+		if( empty( self::getId() ) ) {
+
+			return false;
 
 		}
 
@@ -481,7 +479,7 @@ class user extends Model  {
 		//
 		//	Ping record
 		//
-		self::updateSession( user::getId(), session::getId() );
+		self::updateSession( self::getId(), session::getId() );
 
 		return true;
 
@@ -587,7 +585,7 @@ class user extends Model  {
 		//
 		//	Get user record
 		//
-		$USER_DATA 	= user_data::where( 'uid', user::getId() )->get();
+		$USER_DATA 	= user_data::where( 'uid', self::getId() )->get();
 
 		if( empty( $USER_DATA ) ) return false;
 
@@ -653,6 +651,12 @@ class user extends Model  {
 	 */
 	public function logout( $DATA ) {
 
+		if( empty( self::getId() ) ) {
+
+			return false;
+			
+		}
+
 		/*
 		//
 		//	Check for cookie
@@ -674,6 +678,8 @@ class user extends Model  {
 
 		}
 		*/
+
+		user_data::edit( [ 'status' => 'offline' ] );
 
 		return session::unset( 'user' );
 

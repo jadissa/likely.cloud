@@ -69,4 +69,40 @@ abstract class controler {
 
 	}
 
+
+	/**
+	 * 	Dumps out variable content on screen
+	 *
+	 *	@param 	mixed 	$property
+	 *
+	 * 	@return void
+	 */
+	public static function dump( $property = null ) {
+
+		if( empty( $property ) ) {
+
+			return false;
+
+		}
+
+		switch ( gettype( $property ) ) {
+
+			case 'array':
+			case 'object':
+			case 'resource':
+
+				print'<pre>';print_r( $property );print'</pre>';
+
+			break;
+
+			default:
+
+				var_dump( $property );
+
+			break;
+
+		}
+
+	}
+
 }

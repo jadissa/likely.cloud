@@ -34,7 +34,7 @@ echo
 
 # Your droplet info
 # https://cloud.digitalocean.com/settings/api/tokens
-ACCESS_TOKEN=be4f9b0abc66f1ccd7d1669327ff507130d5aa14155f1e64d5735d0bae48b979
+ACCESS_TOKEN=
 PROJECT_NAME=likely.cloud
 TAG_NAME=likely
 

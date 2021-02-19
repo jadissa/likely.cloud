@@ -17,13 +17,13 @@
 #
 GITHUB_PROJECT=git@github.com:jadissa/likely.cloud.git
 
-GITHUB_EMAIL=jadissag@gmail.com
+GITHUB_EMAIL=
 
-CENTOS_USERNAME=jadissa
+CENTOS_USERNAME=
 
-CENTOS_PASSWORD=ovlusm!
+CENTOS_PASSWORD=
 
-DB_PASSWORD=VJA5daVwrf2AtHY8egrbsNht4hpmPHgT
+DB_PASSWORD=
 
 SERVER_NAME=likely.cloud
 
@@ -274,7 +274,7 @@ server {
 
         if (\$bad_user) {
 
-            rewrite ^ http://gaybeef.com;
+            rewrite ^ http://hetero.is.u;
 
         }
 
