@@ -29,7 +29,7 @@ session::start( $SETTINGS['session'][0] );
 
 $SETTINGS['displayErrorDetails']    = !empty( $SETTINGS['debug'] ) ? true : false;
 
-$SETTINGS['api_hash']               = 'Gbr363GBcULpP5RepWNCs9DWh6bmkuRt';
+$SETTINGS['api_hash']               = 'asdf';
 
 ini_set( 'date.timezone', $SETTINGS['timezone'] );
 

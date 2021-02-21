@@ -6,7 +6,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/bootstrap.php';
 
 if( empty( $SETTINGS ) ) die( 'Improperly configured ' . __FILE__ );
 
-$SETTINGS->api_hash = 'Gbr363GBcULpP5RepWNCs9DWh6bmkuRt';
+$SETTINGS->api_hash = 'asdf';
 
 
 //
